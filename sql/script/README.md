@@ -4,21 +4,28 @@
 
 ### First Time
 
-If this is your first time running this script, perform the following steps:
+#### Install Postgres (OSX)
 
-1. If on OSX, install coreutils:
+1. Install PostgreSQL:
 
-`sudo brew install coreutils`
+`brew install postgresql`
 
-2. In the postgres command line, run the following commands:
+2. Restart your machine.
 
-```
-create role event_planner with superuser login;
-alter user event_planner password 'password';
-```
+3. Run the following command to open the postgres command line:
 
-3. Open the file ~/.pgpass. If this file does not exist, run the following
-commands in the terminal:
+`psql -w -d postgres`
+
+4. Run the following command in the postgres command line:
+
+`create user postgres with login superuser password 'password';`
+
+5. Open /usr/local/var/postgres/pg_hba.conf and add the following line:
+
+`local all postgres md5`
+
+6. Exit out of the postgres command line by entering `\q`, and then run the
+following commands:
 
 ```
 cd ~
@@ -26,7 +33,61 @@ touch .pgpass
 chmod 0600 .pgpass
 ```
 
-4. Add the following line to ~/.pgpass:
+7. Open ~/.pgpass and add the following line:
+
+`localhost:5432:*:postgres:password`
+
+#### Install Postgres (Unix)
+
+1. Install PostgreSQL:
+
+`sudo apt-get install postgresql`
+
+2. Open /etc/postgres/9.5/main/pg_hba.conf and change the following line:
+
+`local all postgres ...`
+
+to this:
+
+`local all postgres ...`
+
+3. Run the following command to open the postgres command line:
+
+`psql -U postgres`
+
+4. Run the following command in the postgres command line:
+
+`alter user postgres password 'password';`
+
+5. Exit out of the postgres command line by entering `\q`, and then run the
+following commands:
+
+```
+cd ~
+touch .pgpass
+chmod 0600 .pgpass
+```
+
+6. Open ~/.pgpass and add the following line:
+
+`localhost:5432:*:postgres:password`
+
+#### Setup Postgres for Development
+
+If this is your first time running this script, perform the following steps:
+
+1. If on OSX, install dependencies:
+
+```
+brew install coreutils
+pip install psycopg2
+```
+
+2. In the postgres command line, run the following commands:
+
+`create role event_planner with superuser login password 'password';`
+
+3. Add the following line to ~/.pgpass:
 
 `localhost:5432:*:event_planner:password`
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python
 
 # Before running, make sure of the following:
 # 1. tb_applied_patch exists as specified in data/2016-11/issue-1.patch_metadata_schema.sql
