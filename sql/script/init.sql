@@ -1,7 +1,7 @@
-create sequence sq_pk_applied_patch;
+create sequence sq_tb_applied_patch_applied_patch;
 create table tb_applied_patch
 (
-    applied_patch integer      primary key default nextval( 'sq_pk_applied_patch'::regclass ),
+    applied_patch integer      primary key default nextval( 'sq_tb_applied_patch_applied_patch'::regclass ),
     patch_folder  varchar(30)  not null,
     patch_file    varchar(200) not null,
     is_function   boolean      default false,

@@ -1,0 +1,6 @@
+{
+    "require": {
+        "slim/slim": "3.*",
+        "phpseclib/mcrypt_compat": "^1.0"
+    }
+}
