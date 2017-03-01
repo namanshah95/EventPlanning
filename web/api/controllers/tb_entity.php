@@ -43,7 +43,9 @@ SQL;
         if( query_success( $resource ) )
         {
             $data = query_fetch_all( $resource );
-            $data = json_encode( $data );
+
+            if( $data )
+                $data = json_encode( $data );
 
             $response->withHeader( 'Content-Type', 'application/json' );
 
@@ -96,8 +98,6 @@ SQL;
                 ->withHeader( 'Content-Type', 'text/html' )
                 ->write( 'A database error has occurred.' );
         }
-
-        return $response;
     }
 
     $API->get( '/entities/',         'tb_entity\get_entities' );

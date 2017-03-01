@@ -5,6 +5,7 @@
     require_once( "{$GLOBALS['webroot']}/lib/constants.php" );
     require_once( "{$GLOBALS['webroot']}/lib/postgres.php" );
     require_once( "{$GLOBALS['webroot']}/vendor/autoload.php" );
+    require_once( "{$GLOBALS['webroot']}/api/lib/controller_util.php" );
 
     get_or_connect_to_db();
 
