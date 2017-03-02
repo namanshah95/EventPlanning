@@ -1,6 +1,9 @@
 <?
     namespace tb_entity;
 
+    $API->get( '/entities/',         'tb_entity\get_entities' );
+    $API->get( '/entities/{entity}', 'tb_entity\get_entity'   );
+
     const FIELDS = [
         'entity',
         'first_name',
@@ -27,12 +30,7 @@ SQL;
             foreach( $params as $name => $value )
             {
                 if( !in_array( $name, FIELDS ) )
-                {
-                    return $response
-                        ->withStatus( constant( 'HTTP_BAD_REQUEST' ) )
-                        ->withHeader( 'Content-Type', 'text/html' )
-                        ->write( "'$name' is not a valid field." );
-                }
+                    return invalid_field_error( $response, $name );
 
                 $query .= " and $name = ?$name?";
             }
@@ -44,6 +42,9 @@ SQL;
         {
             $data = query_fetch_all( $resource );
 
+            if( empty( $data ) )
+                $data = null;
+
             if( $data )
                 $data = json_encode( $data );
 
@@ -54,12 +55,7 @@ SQL;
                 ->write( $data );
         }
         else
-        {
-            return $response
-                ->withStatus( constant( 'HTTP_INTERNAL_SERVER_ERROR' ) )
-                ->withHeader( 'Content-Type', 'text/html' )
-                ->write( 'A database error has occurred.' );
-        }
+            return database_error( $response );
     }
 
     function get_entity( $request, $response, $args )
@@ -82,6 +78,9 @@ SQL;
         {
             $data = query_fetch_one( $resource );
 
+            if( empty( $data ) )
+                $data = null;
+
             if( $data )
                 $data = json_encode( $data );
 
@@ -92,14 +91,6 @@ SQL;
                 ->write( $data );
         }
         else
-        {
-            return $response
-                ->withStatus( constant( 'HTTP_INTERNAL_SERVER_ERROR' ) )
-                ->withHeader( 'Content-Type', 'text/html' )
-                ->write( 'A database error has occurred.' );
-        }
+            return database_error( $response );
     }
-
-    $API->get( '/entities/',         'tb_entity\get_entities' );
-    $API->get( '/entities/{entity}', 'tb_entity\get_entity'   );
 ?>

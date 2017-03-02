@@ -39,6 +39,9 @@ SQL;
         {
             $data = query_fetch_all( $resource );
 
+            if( empty( $data ) )
+                $data = null;
+
             if( $data )
                 $data = json_encode( $data );
 
@@ -68,6 +71,9 @@ SQL;
         if( query_success( $resource ) )
         {
             $data = query_fetch_one( $resource );
+
+            if( empty( $data ) )
+                $data = null;
 
             if( $data )
                 $data = json_encode( $data );

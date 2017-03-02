@@ -37,6 +37,7 @@ SQL_PATH = os.path.dirname( os.path.realpath( __file__ ) )
 db_conn  = None
 database = None
 user     = None
+host     = None
 
 def file_checksum( patch_file ):
     patch_fh = open( patch_file, 'rb' )
@@ -116,11 +117,11 @@ def get_patch_record_checksum( patch_file, patch_folder ):
     return retval[0] if retval else None
 
 def apply_patch( patch_folder, patch_file ):
-    global database, user
+    global database, user, host
 
     full_patch_name = SQL_PATH + '/' + patch_folder + '/' + patch_file
     output          = subprocess.check_output(
-        [ 'psql', '-w', '-U', user, '-d', database, '-f', full_patch_name, '-1' ],
+        [ 'psql', '-w', '-h', host, '-U', user, '-d', database, '-f', full_patch_name, '-1' ],
         stderr=subprocess.STDOUT,
     )
 
@@ -197,29 +198,32 @@ def apply_patch_with_requires( hierarchy, patch_file, patch_folder ):
         print 'Patch failed to apply.\n'
 
 def usage():
-    print 'Usage: ./patch_db.py -d <database> -U <username>'
+    print 'Usage: ./patch_db.py -h <host> -d <database> -U <username>'
     exit( 0 )
 
 def main( argv ):
-    global db_conn, database, user
+    global db_conn, database, user, host
 
     try:
-        opts, args = getopt.getopt( argv, 'hd:U:' )
+        opts, args = getopt.getopt( argv, 'h:d:U:', [ 'help' ] )
     except getopt.GetoptError:
         usage()
 
     for opt, arg in opts:
-        if opt == '-h':
+        if opt == '--help':
             usage()
+        elif opt == '-h':
+            host = arg
         elif opt == '-d':
             database = arg
         elif opt == '-U':
             user = arg
 
-    if not database or not user:
+    if not database or not user or not host:
         usage()
 
     db_conn = psycopg2.connect(
+        host     = host,
         database = database,
         user     = user
     )

@@ -1,6 +1,8 @@
 <?
     if( isset( $_SERVER['CONTEXT_DOCUMENT_ROOT'] ) && $_SERVER['CONTEXT_DOCUMENT_ROOT'] )
         $GLOBALS['webroot'] = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
+    elseif( isset( $_SERVER['DOCUMENT_ROOT'] ) && $_SERVER['DOCUMENT_ROOT'] )
+        $GLOBALS['webroot'] = $_SERVER['DOCUMENT_ROOT'];
 
     require_once( "{$GLOBALS['webroot']}/lib/constants.php" );
     require_once( "{$GLOBALS['webroot']}/lib/postgres.php" );

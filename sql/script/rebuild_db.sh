@@ -1,13 +1,15 @@
 #!/bin/sh
 
+# This assumes the user "planmyth_user" has already been created as superuser.
+
 script_file=""
 script_dir="$(dirname '$(readlink -f $0)')"
 
 # SQL credentials
 user="postgres"
-db_user="event_planner"
-db="event_planner"
-db_temp="event_planner_temp"
+db_user="planmyth_user"
+db="planmyth_dev"
+db_temp="planmyth_dev_temp"
 
 # $1 = command to run
 # $2 = database name (optional)
@@ -32,7 +34,7 @@ createdb -e -U "$user" -w "$db_temp"
 echo "\nRunning schema init script..."
 pg_file "$script_dir/init.sql" "$db_temp"
 echo "\nRunning DB patcher..."
-./patch_db.py -U "$user" -d "$db_temp"
+./patch_db.py -U "$user" -d "$db_temp" -h localhost
 
 echo "\nDropping old database..."
 dropdb -e --if-exists -U "$user" -w "$db"
