@@ -42,14 +42,7 @@ SQL;
             if( empty( $data ) )
                 $data = null;
 
-            if( $data )
-                $data = json_encode( $data );
-
-            $response->withHeader( 'Content-Type', 'application/json' );
-
-            return $response
-                ->getBody()
-                ->write( $data );
+            return $response->withJson( $data );
         }
         else
             return database_error( $response );
@@ -73,16 +66,9 @@ SQL;
             $data = query_fetch_one( $resource );
 
             if( empty( $data ) )
-                $data = null;
+                return object_not_found_error( $response, 'tb_role', $role );
 
-            if( $data )
-                $data = json_encode( $data );
-
-            $response->withHeader( 'Content-Type', 'application/json' );
-
-            return $response
-                ->getBody()
-                ->write( $data );
+            return $response->withJson( $data );
         }
         else
             return database_error( $response );
@@ -112,13 +98,7 @@ SQL;
         if( query_success( $resource ) )
         {
             $data = query_fetch_one( $resource );
-            $data = json_encode( $data );
-
-            $response->withHeader( 'Content-Type', 'application/json' );
-
-            return $response
-                ->getBody()
-                ->write( $data );
+            return $response->withJson( $data );
         }
         else
             return database_error( $response );
@@ -140,18 +120,17 @@ SQL;
             $query .= "$name = ?$name?, ";
         }
 
-        $query    = preg_replace( '/, $/', ' where role = ?role?', $query );
+        $query    = preg_replace( '/, $/', ' where role = ?role? returning role', $query );
         $resource = query_execute( $query, $params );
 
         if( query_success( $resource ) )
         {
-            $data = json_encode( [ 'success' => true ] );
+            $data = query_fetch_one( $resource );
 
-            $response->withHeader( 'Content-Type', 'application/json' );
+            if( empty( $data ) )
+                return object_not_found_error( $response, 'tb_role', $role );
 
-            return $response
-                ->getBody()
-                ->write( $data );
+            return $response->withJson( $data );
         }
         else
             return database_error( $response );
@@ -163,6 +142,7 @@ SQL;
         $query = <<<SQL
 delete from tb_role
       where role = ?role?
+  returning role
 SQL;
 
         $params   = [ 'role' => $role ];
@@ -170,13 +150,12 @@ SQL;
 
         if( query_success( $resource ) )
         {
-            $data = json_encode( [ 'success' => true ] );
+            $data = query_fetch_one( $resource );
 
-            $response->withHeader( 'Content-Type', 'application/json' );
+            if( empty( $data ) )
+                return object_not_found_error( $response, 'tb_role', $role );
 
-            return $response
-                ->getBody()
-                ->write( $data );
+            return $response->withJson( $data );
         }
         else
             return database_error( $response );

@@ -9,5 +9,6 @@
                                  . ' user='     . constant( 'PSQL_USER' ) );
 
     define( 'HTTP_BAD_REQUEST',           400 );
+    define( 'HTTP_NOT_FOUND',             404 );
     define( 'HTTP_INTERNAL_SERVER_ERROR', 500 );
 ?>
