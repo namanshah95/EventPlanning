@@ -1,3 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Event Planning</string>
+
+    <string-array name="people_array">
+        <item>Alice</item>
+        <item>Bob</item>
+        <item>Alex</item>
+        <item>Grace</item>
+        <item>Emily</item>
+        <item>Cathy</item>
+        <item>Tom</item>
+        <item>James</item>
+    </string-array>
 </resources>

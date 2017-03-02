@@ -3,9 +3,21 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/colorBackground</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorText</item>
+        <!-- <item name="colorControlNormal">@color/colorUnderline</item>-->
+        <item name="android:buttonStyle">@style/MyButtonStyle</item>
+        <item name="android:textColorSecondary">@color/colorUnderline</item>
+        <item name="android:textColorHint">@color/colorhintText</item>
+
+    </style>
+
+    <style name="MyButtonStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>
