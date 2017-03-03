@@ -34,7 +34,9 @@ public class AddEvent extends AppCompatActivity {
             }
         });
 
-
+        //set actionbar title
+        getSupportActionBar().setTitle("TASK MANAGER");
+        getSupportActionBar().setSubtitle("Add Role");
     }
 
 }

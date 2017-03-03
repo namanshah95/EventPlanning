@@ -52,7 +52,9 @@ public class EditRole extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(EditRole.this, EditRole2.class));
+                Intent intent=new Intent(EditRole.this,EditRole2.class);
+                startActivityForResult(intent, 2);// Activity is started with requestCode 2
+//                startActivity(new Intent(EditRole.this, EditRole2.class));
             }
         });
 
@@ -64,17 +66,35 @@ public class EditRole extends AppCompatActivity {
             public void onClick(View v) {
                 //startActivity(new Intent(EditRole.this, EventRole.class));
                 String eventName = etEventNameEdit.getText().toString();
-                Intent intent = getIntent();
+                Intent intent = new Intent(EditRole.this, EventRole.class);
                 intent.putExtra("nameEdit", eventName);
                 String s = "yesEdit";
                 intent.putExtra("judgeEdit", s);
 
-                setResult(Activity.RESULT_OK, intent);
+                setResult(1, intent);
+//                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });
 
+        //set actionbar title
+        getSupportActionBar().setTitle("TASK MANAGER");
+        getSupportActionBar().setSubtitle("Edit Role Description");
+
 
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if(requestCode==2)
+        {
+//            String message=data.getStringExtra("MESSAGE");
+//            textView1.setText(message);
+        }
+    }
+
+
 }
 

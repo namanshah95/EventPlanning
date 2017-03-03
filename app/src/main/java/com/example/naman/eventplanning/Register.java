@@ -29,5 +29,8 @@ public class Register extends AppCompatActivity {
 
             }
         });
+
+        //set actionbar title
+        getSupportActionBar().setTitle("Register");
     }
 }

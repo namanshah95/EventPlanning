@@ -31,8 +31,15 @@ public class EditRole3 extends AppCompatActivity {
         backtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(EditRole3.this, EditRole2.class));
+//                startActivity(new Intent(EditRole3.this, EditRole2.class));
+                Intent intent = new Intent();
+                setResult(3,intent);
+                finish();
             }
         });
+
+        //set actionbar title
+        getSupportActionBar().setTitle("TASK MANAGER");
+        getSupportActionBar().setSubtitle("Selected People");
     }
 }
