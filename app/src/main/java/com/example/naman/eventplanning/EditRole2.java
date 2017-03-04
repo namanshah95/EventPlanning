@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class EditRole2 extends Activity implements
+public class EditRole2 extends AppCompatActivity implements
         OnClickListener {
     Button next;
     ListView listView;
@@ -40,15 +40,34 @@ public class EditRole2 extends Activity implements
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(EditRole2.this, EditRole.class));
+                Intent intent = new Intent();
+                setResult(2,intent);
+                finish();
+//                startActivity(new Intent(EditRole2.this, EditRole.class));
             }
         });
+
+        //set actionbar title
+        getSupportActionBar().setTitle("TASK MANAGER");
+        getSupportActionBar().setSubtitle("Select People for the Role");
     }
+
+
+
 
     private void findViewsById() {
         listView = (ListView) findViewById(R.id.list);
         next = (Button) findViewById(R.id.next);
         back = (Button) findViewById(R.id.back);
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if(requestCode==3)
+        {
+
+        }
     }
 
     public void onClick(View v) {

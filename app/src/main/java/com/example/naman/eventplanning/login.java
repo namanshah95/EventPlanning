@@ -28,5 +28,8 @@ public class login extends AppCompatActivity {
                 login.this.startActivity(registerIntent);
             }
         });
+
+        //set actionbar title
+        getSupportActionBar().setTitle("LOGIN");
     }
 }

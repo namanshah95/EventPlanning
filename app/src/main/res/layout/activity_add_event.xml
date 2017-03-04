@@ -19,7 +19,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:hint="EventName"
+        android:hint="TaskName"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 

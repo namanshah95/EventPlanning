@@ -28,6 +28,10 @@ public class EventRole extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_role);
 
+        //set actionbar title
+        getSupportActionBar().setTitle("TASK MANAGER");
+        getSupportActionBar().setSubtitle("Role List");
+
         lv = (ListView)findViewById(R.id.evenList);
         addBtn = (Button) findViewById(R.id.btnAdd);
 
@@ -97,6 +101,16 @@ public class EventRole extends AppCompatActivity {
             public void onClick(View v) {
                 Intent addIntent = new Intent(EventRole.this, AddEvent.class );
                 EventRole.this.startActivityForResult(addIntent,1);
+            }
+        });
+
+        // TEMPORARY
+        Button msgBtn = (Button) findViewById(R.id.btnMsg);
+        msgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EventRole.this, Message.class);
+                startActivity(intent);
             }
         });
 
@@ -195,10 +209,4 @@ public class EventRole extends AppCompatActivity {
     }
 
 }
-
-//class IntHolder{
-//    public int value;
-//    public IntHolder(){}
-//    public IntHolder(int v){value = v;}
-//}
 
