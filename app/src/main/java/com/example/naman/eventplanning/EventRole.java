@@ -104,6 +104,16 @@ public class EventRole extends AppCompatActivity {
             }
         });
 
+        // TEMPORARY
+        Button msgBtn = (Button) findViewById(R.id.btnMsg);
+        msgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EventRole.this, Message.class);
+                startActivity(intent);
+            }
+        });
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
