@@ -109,7 +109,7 @@ public class EventRole extends AppCompatActivity {
         msgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EventRole.this, Message.class);
+                Intent intent = new Intent(EventRole.this, Messenger.class);
                 startActivity(intent);
             }
         });
