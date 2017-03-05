@@ -16,12 +16,13 @@ create table tb_event
 
 create table tb_event_needed_role
 (
-    event_role       integer primary key default nextval( 'sq_pk_event_needed_role'::regclass ),
-    event            integer not null references tb_event ( event ),
-    role             integer not null references tb_role  ( role ),
-    estimated_budget numeric(10, 2),
-    quantity_needed  integer default 1,
-    unique ( event, role )
+    event_needed_role integer primary key default nextval( 'sq_pk_event_needed_role'::regclass ),
+    event             integer not null references tb_event ( event ),
+    needed_role       integer not null references tb_role  ( role ),
+    estimated_budget  numeric(10, 2),
+    quantity_needed   integer default 1,
+    description       text,
+    unique ( event, needed_role )
 );
 
 create table tb_event_entity_role

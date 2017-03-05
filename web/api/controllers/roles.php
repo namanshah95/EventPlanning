@@ -1,62 +1,81 @@
 <?
-    namespace tb_role;
+    namespace roles;
 
-    $API->get( '/roles/',          'tb_role\get_roles'   );
-    $API->get( '/roles/{role}',    'tb_role\get_role'    );
-    $API->post( '/roles/',         'tb_role\create_role' );
-    $API->put( '/roles/{role}',    'tb_role\update_role' );
-    $API->delete( '/roles/{role}', 'tb_role\delete_role' );
-
-    const FIELDS = [
-        'role',
-        'name'
-    ];
+    $API->get( '/roles/',          'roles\get_roles'   );
+    $API->get( '/roles/{role}',    'roles\get_role'    );
+    $API->post( '/roles/',         'roles\create_role' );
+    $API->put( '/roles/{role}',    'roles\update_role' );
+    $API->delete( '/roles/{role}', 'roles\delete_role' );
 
     function get_roles( $request, $response, $args )
     {
         $params = $request->getQueryParams();
+        $query  = <<<SQL
+select role,
+       name,
+       description
+  from tb_role
+ where true
+SQL;
 
-        $fields = [
-            'role',
-            'name'
-        ];
+        $valid_fields = [ 'role', 'name', 'description' ];
 
-        $where_clauses = [];
-
-        if( count( $params ) > 0 )
+        foreach( $params as $name => $value )
         {
-            foreach( $params as $name => $value )
-            {
-                if( !in_array( $name, FIELDS ) )
-                    return invalid_field_error( $response, $name );
+            if( !in_array( $name, $valid_fields ) )
+                return invalid_field_error( $response, $name );
 
-                $where_clauses[] = "$name = ?$name?";
-            }
+            $query .= " and $name = ?$name?";
         }
 
-        $query = construct_simple_select( 'tb_role', $fields, $where_clauses );
         return api_fetch_all( $response, $query, $params );
     }
 
     function get_role( $request, $response, $args )
     {
-        $role = $request->getAttribute( 'role' );
-
-        $fields = [
-            'role',
-            'name'
-        ];
-
-        $query  = construct_simple_select( 'tb_role', $fields, 'role = ?role?' );
+        $role   = $request->getAttribute( 'role' );
         $params = [ 'role' => $role ];
+        $query  = <<<SQL
+select role,
+       name,
+       description
+  from tb_role
+ where role = ?role?
+SQL;
 
-        return api_fetch_one_with_404( $response, $query, $params, 'tb_role', $role );
+        $retval = api_fetch_one( $response, $query, $params );
+
+        if( $retval === null )
+            return object_not_found_error( $response, 'tb_role', $role );
+
+        return $retval;
     }
 
     function create_role( $request, $response, $args )
     {
         $params = $request->getParsedBody();
-        $query  = construct_simple_insert( 'tb_role', 'role', $params );
+
+        $valid_fields = [ 'role', 'name', 'description' ];
+        $columns      = '';
+        $values       = '';
+
+        foreach( $params as $name => $value )
+        {
+            if( !in_array( $name, $valid_fields ) )
+                return invalid_field_error( $response, $name );
+
+            $columns .= "$name, ";
+            $values  .= "?$name?, ";
+        }
+
+        $columns = preg_replace( '/, $/', '', $columns );
+        $values  = preg_replace( '/, $/', '', $values  );
+
+        $query  = <<<SQL
+insert into tb_role ( $columns )
+     values ( $values )
+  returning role;
+SQL;
 
         return api_fetch_one( $response, $query, $params );
     }
@@ -66,25 +85,50 @@
         $role   = $request->getAttribute( 'role' );
         $params = $request->getParsedBody();
 
+        $valid_fields = [ 'role', 'name', 'description' ];
+        $assignments  = '';
+
         foreach( $params as $name => $value )
         {
-            if( !in_array( $name, FIELDS ) )
+            if( !in_array( $name, $valid_fields ) )
                 return invalid_field_error( $response, $name );
+
+            $assignments .= "$name = ?$name?, ";
         }
 
-        $query          = construct_simple_update( 'tb_role', 'role', $params, 'role = ?role?' );
-        $params['role'] = $role;
+        $assignments = preg_replace( '/, $/', '', $assignments );
 
-        return api_fetch_one_with_404( $response, $query, $params, 'tb_role', $role );
+        $query = <<<SQL
+   update tb_role
+      set $assignments
+    where role = ?role?
+returning role;
+SQL;
+
+        $params['role'] = $role;
+        $retval         = api_fetch_one( $response, $query, $params );
+
+        if( $retval === null )
+            return object_not_found_error( $response, 'tb_role', $role );
+
+        return $retval;
     }
 
     function delete_role( $request, $response, $args )
     {
-        $role = $request->getAttribute( 'role' );
-
-        $query  = construct_simple_delete( 'tb_role', 'role', 'role = ?role?' );
+        $role   = $request->getAttribute( 'role' );
         $params = [ 'role' => $role ];
+        $query  = <<<SQL
+delete from tb_role
+      where role = ?role?
+  returning role
+SQL;
 
-        return api_fetch_one_with_404( $response, $query, $params, 'tb_role', $role );
+        $retval = api_fetch_one( $response, $query, $params );
+
+        if( $retval === null )
+            return object_not_found_error( $response, 'tb_role', $role );
+
+        return $retval;
     }
 ?>
