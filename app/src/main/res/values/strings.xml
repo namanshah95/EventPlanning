@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Event Planning</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 
     <string-array name="people_array">
         <item>Alice</item>

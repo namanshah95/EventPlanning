@@ -2,9 +2,12 @@ package com.example.naman.eventplanning;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,11 +25,22 @@ public class EventRole extends AppCompatActivity {
     String EventName, EventNameEdit;
     String judge,judgeEdit;
     int posEdit;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_role);
+
+        //set navigation bar
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_event_role);
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
+
+        mDrawerLayout.addDrawerListener(mToggle);
+        mToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //set actionbar title
         getSupportActionBar().setTitle("TASK MANAGER");
@@ -40,19 +54,7 @@ public class EventRole extends AppCompatActivity {
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Event);
         lv.setAdapter(adapter);
 
-//        Intent intent = getIntent();
-//        EventName = intent.getStringExtra("name");
-//        judge = intent.getStringExtra("judge");
-//        System.out.println("");
-//        System.out.println(EventName);
 
-//        if(judge != null && judge.equals("yes")){
-//            System.out.println("");
-//            System.out.println("It's correct");
-//
-//            add();
-//            judge = "";
-//        }
 
         //Set selected item
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -104,17 +106,16 @@ public class EventRole extends AppCompatActivity {
             }
         });
 
-        // TEMPORARY
-        Button msgBtn = (Button) findViewById(R.id.btnMsg);
-        msgBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(EventRole.this, Messenger.class);
-                startActivity(intent);
-            }
-        });
-
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(mToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -208,5 +209,9 @@ public class EventRole extends AppCompatActivity {
         }
     }
 
+
+
 }
+
+
 
