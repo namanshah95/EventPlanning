@@ -59,6 +59,9 @@ public class Messenger extends AppCompatActivity implements MessageDataSource.Me
         });
 
         listener = MessageDataSource.addMessagesListener("sample_event_id", this);
+
+        //set actionbar title
+        getSupportActionBar().setTitle("MESSAGES");
     }
 
     private void saveMessage(Message msg) {

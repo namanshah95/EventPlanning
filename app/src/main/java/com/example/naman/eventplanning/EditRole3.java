@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 public class EditRole3 extends AppCompatActivity {
@@ -31,11 +32,23 @@ public class EditRole3 extends AppCompatActivity {
         backtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(EditRole3.this, EditRole2.class));
+            //startActivity(new Intent(EditRole3.this, EditRole2.class));
                 Intent intent = new Intent();
                 setResult(3,intent);
                 finish();
             }
+        });
+
+        //submit button
+        Button submitn = (Button) findViewById(R.id.submit);
+        submitn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),
+                        "Sumbit Sucessfully", Toast.LENGTH_SHORT).show();
+            }
+
+
         });
 
         //set actionbar title
