@@ -4,6 +4,7 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
 
+
     <string-array name="people_array">
         <item>Alice</item>
         <item>Bob</item>
@@ -14,4 +15,9 @@
         <item>Tom</item>
         <item>James</item>
     </string-array>
+
+    <string name="tab_text_manage">Task</string>
+    <string name="tab_text_report">Message</string>
+    <string name="tab_text_ask">Budget</string>
+
 </resources>

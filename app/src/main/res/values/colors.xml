@@ -8,4 +8,6 @@
     <color name="colorhintText">#8e8a8a</color>
     <color name="colorUnderline">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="tab_text_color_0">#999</color>
+    <color name="tab_text_color_1">#5cd6de</color>
 </resources>
