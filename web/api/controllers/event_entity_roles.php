@@ -79,6 +79,9 @@ SQL;
         $guest  = $request->getAttribute( 'guest' );
         $params = $request->getParsedBody();
 
+        if( count( $params ) == 0 )
+            return empty_params_error( $response );
+
         $params['event']  = $event;
         $params['entity'] = $guest;
 

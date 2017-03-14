@@ -55,6 +55,9 @@ SQL;
     {
         $params = $request->getParsedBody();
 
+        if( count( $params ) == 0 )
+            return empty_params_error( $response );
+
         $valid_fields = [ 'role', 'name', 'description' ];
         $columns      = '';
         $values       = '';
@@ -84,6 +87,9 @@ SQL;
     {
         $role   = $request->getAttribute( 'role' );
         $params = $request->getParsedBody();
+
+        if( count( $params ) == 0 )
+            return empty_params_error( $response );
 
         $valid_fields = [ 'role', 'name', 'description' ];
         $assignments  = '';

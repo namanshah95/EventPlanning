@@ -46,8 +46,12 @@ SQL;
 
     function create_event_needed_role( $request, $response, $args )
     {
-        $event           = $request->getAttribute( 'event' );
-        $params          = $request->getParsedBody();
+        $event  = $request->getAttribute( 'event' );
+        $params = $request->getParsedBody();
+
+        if( count( $params ) == 0 )
+            return empty_params_error( $response );
+
         $params['event'] = $event;
 
         $valid_fields = [
@@ -87,6 +91,9 @@ SQL;
         $event  = $request->getAttribute( 'event' );
         $role   = $request->getAttribute( 'role'  );
         $params = $request->getParsedBody();
+
+        if( count( $params ) == 0 )
+            return empty_params_error( $response );
 
         $valid_fields = [
             'estimated_budget',

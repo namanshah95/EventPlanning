@@ -19,6 +19,12 @@
         return $response->withJson( $error, constant( 'HTTP_NOT_FOUND' ) );
     }
 
+    function empty_params_error( $response )
+    {
+        $error = [ 'error' => 'No parameters were given.' ];
+        return $response->withJson( $error, constant( 'HTTP_BAD_REQUEST' ) );
+    }
+
     /* API DATABASE FUNCTIONS */
 
     function api_fetch_all( $response, $query, $params )
