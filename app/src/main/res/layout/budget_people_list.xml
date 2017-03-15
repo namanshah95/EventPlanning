@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="15dp" />
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="50sp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:inputType="numberDecimal"
+        android:gravity="center"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+    -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="0sp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Total"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:minHeight="48dp"/>
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="0sp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:inputType="numberDecimal"
+        android:hint="Expense"
+        android:textSize="18sp"
+        android:background="@drawable/budget_edittext_broder" />
+
+
+</LinearLayout>
