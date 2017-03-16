@@ -2,6 +2,9 @@ package com.example.naman.eventplanning;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.internal.NavigationMenu;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -15,6 +18,7 @@ import com.example.naman.eventplanning.fragment.EventroleFragment;
 import com.example.naman.eventplanning.fragment.BudgetFragment;
 import com.example.naman.eventplanning.fragment.MessageFragment;
 import com.example.naman.eventplanning.view.viewpager.CustomViewPager;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,10 +28,29 @@ public class MainActivity extends AppCompatActivity {
     private int lastPos = 0;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
+    private NavigationView mNavMenu;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null) {
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() == null) {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
+            }
+        };
+
         setContentView(R.layout.activity_main);
 
         //set navigation bar
@@ -66,6 +89,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         viewPager.setCurrentItem(lastPos, true);
+
+        mNavMenu = (NavigationView) findViewById(R.id.nav_menu);
+        mNavMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                System.out.println("Nav Item Selected");
+                if (item.getItemId() == R.id.SignOut) {
+                    mAuth.signOut();
+                }
+                return true;
+            }
+        });
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 
     @Override

@@ -6,4 +6,6 @@
         android:title="Event 2" />
     <item android:id="@+id/Event3"
         android:title="Event 3" />
+    <item android:id="@+id/SignOut"
+        android:title="Sign Out" />
 </menu>

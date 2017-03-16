@@ -1,5 +1,6 @@
 package com.example.naman.eventplanning;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -101,6 +102,7 @@ public class Messenger extends AppCompatActivity implements MessageDataSource.Me
                 }
                 layoutParams.gravity = Gravity.RIGHT;
             }else{
+                nameView.setTextColor(Color.BLACK);
                 nameView.setText(message.getSender() + ":\n" + message.getText());
                 if (sdk >= Build.VERSION_CODES.JELLY_BEAN) {
                     nameView.setBackground(getDrawable(R.drawable.bubble_left_gray));
