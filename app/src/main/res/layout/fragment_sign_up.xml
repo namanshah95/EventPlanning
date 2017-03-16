@@ -2,11 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:id="@+id/fragment_sign_in"
+    android:id="@+id/activity_login"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1">
+    android:layout_height="match_parent">
 
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/etName"
+        android:hint="Name"
+        android:linksClickable="false"
+        android:longClickable="false" />
 
     <EditText
         android:layout_width="match_parent"
@@ -25,19 +34,9 @@
         android:hint="Password" />
 
     <Button
-        android:text="Sign In"
+        android:text="Register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bSignIn" />
+        android:id="@+id/bRegister" />
 
-    <Button
-        android:text="New User? Sign Up Here"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/bNewUser"
-        android:layout_weight="0.04"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textColor="@android:color/darker_gray"
-        android:background="@android:color/transparent" />
 </LinearLayout>

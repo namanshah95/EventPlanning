@@ -7,55 +7,61 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.example.naman.eventplanning.LoginActivity;
 import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SignInFragment.OnFragmentInteractionListener} interface
+ * {@link SignUpFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SignInFragment#newInstance} factory method to
+ * Use the {@link SignUpFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SignInFragment extends Fragment {
+public class SignUpFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference mDatabase;
 
+    private EditText mName;
     private EditText mEmail;
     private EditText mPass;
-    private Button mSignIn;
-    private Button mNewUser;
+    private Button mRegister;
 
-    public SignInFragment() {
+    public SignUpFragment() {
         // Required empty public constructor
     }
 
-
-    public static SignInFragment newInstance() {
-        SignInFragment fragment = new SignInFragment();
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment SignUpFragment.
+     */
+    public static SignUpFragment newInstance() {
+        SignUpFragment fragment = new SignUpFragment();
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -67,40 +73,35 @@ public class SignInFragment extends Fragment {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null) {
-                    System.out.println(firebaseAuth.getCurrentUser().getUid());
+                    mDatabase.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("Name").setValue(mName.getText().toString());
                     startActivity(new Intent(getActivity(), MainActivity.class));
                 }
             }
         };
-        View root = inflater.inflate(R.layout.fragment_sign_in, container, false);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        View root = inflater.inflate(R.layout.fragment_sign_up, container, false);
+        mName = (EditText) root.findViewById(R.id.etName);
         mEmail = (EditText) root.findViewById(R.id.etEmail);
         mPass = (EditText) root.findViewById(R.id.etPassword);
-        mSignIn = (Button) root.findViewById(R.id.bSignIn);
-        mNewUser = (Button) root.findViewById(R.id.bNewUser);
+        mRegister = (Button) root.findViewById(R.id.bRegister);
 
-        mSignIn.setOnClickListener(new View.OnClickListener() {
+        mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = mEmail.getText().toString();
                 String pass = mPass.getText().toString();
-                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()) {
-                            Snackbar.make(getView(), "Email or Password Incorrect", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), "Could not create new user", Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });
             }
         });
 
-        mNewUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SignUpFragment newFragment = new SignUpFragment();
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragment).commit();
-            }
-        });
         return root;
     }
 
@@ -117,7 +118,6 @@ public class SignInFragment extends Fragment {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
 
     @Override
     public void onAttach(Context context) {
