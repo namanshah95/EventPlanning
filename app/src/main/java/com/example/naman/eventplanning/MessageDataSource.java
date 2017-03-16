@@ -18,7 +18,7 @@ public class MessageDataSource {
 
     public static MessagesListener addMessagesListener(String convoId, final MessagesCallbacks callbacks){
         MessagesListener listener = new MessagesListener(callbacks);
-        mDatabase.child(convoId).addChildEventListener(listener);
+        mDatabase.child("messages").child(convoId).addChildEventListener(listener);
         return listener;
 
     }

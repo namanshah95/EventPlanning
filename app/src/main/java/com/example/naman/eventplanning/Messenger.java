@@ -14,8 +14,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ import java.util.List;
 
 
 public class Messenger extends AppCompatActivity implements MessageDataSource.MessagesCallbacks{
+    private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
     private ArrayList<Message> messageList;
@@ -32,11 +37,14 @@ public class Messenger extends AppCompatActivity implements MessageDataSource.Me
     private ListView mMessageList;
     private Button mSendButton;
 
+    private String senderName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messenger);
 
+        mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mMessageList = (ListView) findViewById(R.id.message_list);
@@ -50,7 +58,7 @@ public class Messenger extends AppCompatActivity implements MessageDataSource.Me
             public void onClick(View view) {
                 EditText text_box = (EditText) findViewById(R.id.new_message);
                 String text = text_box.getText().toString();
-                String sender = "TBD"; // TODO: Replace with mAuth.getUID()
+                String sender = mAuth.getCurrentUser().getUid();
                 Message msg = new Message(text, sender);
                 if (!text.equals("")) {
                     saveMessage(msg);
@@ -67,8 +75,8 @@ public class Messenger extends AppCompatActivity implements MessageDataSource.Me
 
     private void saveMessage(Message msg) {
         // TODO: Replace all sample_event_id with current event id
-        String key = mDatabase.child("sample_event_id").push().getKey();
-        mDatabase.child("sample_event_id").child(key).setValue(new MessageHelper(msg));
+        String key = mDatabase.child("messages").child("sample_event_id").push().getKey();
+        mDatabase.child("messages").child("sample_event_id").child(key).setValue(new MessageHelper(msg));
     }
 
     @Override
@@ -93,7 +101,7 @@ public class Messenger extends AppCompatActivity implements MessageDataSource.Me
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)nameView.getLayoutParams();
 
             int sdk = Build.VERSION.SDK_INT;
-            if (message.getSender().equals("TBD")){
+            if (message.getSender().equals(mAuth.getCurrentUser().getUid())){
                 nameView.setText(message.getText());
                 if (sdk >= Build.VERSION_CODES.JELLY_BEAN) {
                     nameView.setBackground(getDrawable(R.drawable.bubble_right_green));
@@ -103,7 +111,8 @@ public class Messenger extends AppCompatActivity implements MessageDataSource.Me
                 layoutParams.gravity = Gravity.RIGHT;
             }else{
                 nameView.setTextColor(Color.BLACK);
-                nameView.setText(message.getSender() + ":\n" + message.getText());
+                setSenderName(message);
+                nameView.setText(senderName + ":\n" + message.getText());
                 if (sdk >= Build.VERSION_CODES.JELLY_BEAN) {
                     nameView.setBackground(getDrawable(R.drawable.bubble_left_gray));
                 } else{
@@ -115,6 +124,20 @@ public class Messenger extends AppCompatActivity implements MessageDataSource.Me
             nameView.setLayoutParams(layoutParams);
             return convertView;
         }
+    }
+
+    private void setSenderName(Message message) {
+        mDatabase.child("users").child(message.getSender()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                senderName = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                senderName = "ERROR";
+            }
+        });
     }
 
     private class MessageHelper {
