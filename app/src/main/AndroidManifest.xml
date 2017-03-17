@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.example.naman.eventplanning.AppController"
+        android:name=".AppController"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -37,10 +37,11 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".LoginActivity"></activity>
-
+        <activity android:name=".LoginActivity" />
         <activity android:name=".Budget" />
-        <activity android:name=".EditBudget"></activity>
+        <activity android:name=".EditBudget" />
+        <activity android:name=".GuestEventRole" />
+        <activity android:name=".GuestEditRole"></activity>
     </application>
 
 </manifest>

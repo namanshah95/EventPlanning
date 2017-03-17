@@ -25,6 +25,7 @@
         android:id="@+id/textView2"
         android:layout_width="fill_parent"
         android:layout_height="48dp"
+        android:layout_toRightOf="@+id/textView"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_weight="0.5"

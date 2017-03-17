@@ -13,7 +13,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.naman.eventplanning.EventRole"
+    tools:context="com.example.naman.eventplanning.GuestEventRole"
     android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
@@ -42,28 +42,6 @@
             android:dividerHeight="2px"
             android:choiceMode = "singleChoice"
             android:layout_gravity="start"/>
-
-        <Button
-            android:text="Add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnAdd"
-            android:layout_alignBaseline="@+id/btnMsg"
-            android:layout_alignBottom="@+id/btnMsg"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <Button
-            android:text="Message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnMsg"
-            android:layout_marginBottom="28dp"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/btnAdd"
-            android:layout_toEndOf="@+id/btnAdd"
-            android:layout_marginLeft="24dp"
-            android:layout_marginStart="24dp" />
 
 
 

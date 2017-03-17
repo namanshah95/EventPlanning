@@ -16,11 +16,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class EventRole extends AppCompatActivity {
+public class GuestEventRole extends AppCompatActivity {
     ListView lv;
-    Button addBtn;
-    ArrayList<String> Event = new ArrayList<>();
+    //ArrayList<String> Event = new ArrayList<>();
     ArrayAdapter<String> adapter;
     String EventName, EventNameEdit;
     String judge,judgeEdit;
@@ -28,10 +28,13 @@ public class EventRole extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
 
+    ArrayList<String> Event = new ArrayList<String>(
+            Arrays.asList("Drivers","Snack Bringers","Table Setup"));
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_role);
+        setContentView(R.layout.activity_guest_event_role);
 
         //set navigation bar
         mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_event_role);
@@ -47,7 +50,6 @@ public class EventRole extends AppCompatActivity {
         getSupportActionBar().setSubtitle("Task List");
 
         lv = (ListView)findViewById(R.id.evenList);
-        addBtn = (Button) findViewById(R.id.btnAdd);
 
 
         //ADAPPTER
@@ -64,24 +66,14 @@ public class EventRole extends AppCompatActivity {
 //                lv.setItemChecked(1,true);
 //                Object listItem = lv.getItemAtPosition(position);
                 posEdit = position;
-                Intent editIntent = new Intent(EventRole.this, EditRole.class );
+                Intent editIntent = new Intent(GuestEventRole.this, GuestEditRole.class );
                 editIntent.putExtra("EventName", Event.get(position));
-                EventRole.this.startActivityForResult(editIntent,1);
+                GuestEventRole.this.startActivityForResult(editIntent,1);
 
             }
         });
 
-//////////////////////////////////////////////////////
-        // TEMPORARY
-                Button msgBtn = (Button) findViewById(R.id.btnMsg);
-                msgBtn.setOnClickListener(new View.OnClickListener() {
-                         @Override
-                         public void onClick(View view) {
-                                 Intent intent = new Intent(EventRole.this, Messenger.class);
-                                 startActivity(intent);
-                             }
-                     });
-        //////////////////////////////////////////////////////
+
 
         //swipe to delete
         SwipeDismissListViewTouchListener touchListener =
@@ -105,18 +97,6 @@ public class EventRole extends AppCompatActivity {
                             }
                         });
         lv.setOnTouchListener(touchListener);
-
-
-
-
-        // Handle events
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addIntent = new Intent(EventRole.this, AddEvent.class );
-                EventRole.this.startActivityForResult(addIntent,1);
-            }
-        });
 
     }
 
