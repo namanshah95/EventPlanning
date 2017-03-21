@@ -68,6 +68,7 @@ public class EventroleFragment extends Fragment {
         addBtn = (Button) view.findViewById(R.id.btnAdd);
 
         //ADAPPTER
+        Event = new ArrayList<>();
         adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Event);
         lv.setAdapter(adapter);
 
