@@ -96,14 +96,14 @@ public class EventroleFragment extends Fragment {
 
 //////////////////////////////////////////////////////
         // TEMPORARY
-        Button msgBtn = (Button) view.findViewById(R.id.btnMsg);
-        msgBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), Messenger.class);
-                startActivity(intent);
-            }
-        });
+        //Button msgBtn = (Button) view.findViewById(R.id.btnMsg);
+        //msgBtn.setOnClickListener(new View.OnClickListener() {
+          //  @Override
+            //public void onClick(View view) {
+              //  Intent intent = new Intent(getContext(), Messenger.class);
+                //startActivity(intent);
+            //}
+        //});
 
         //swipe to delete
         SwipeDismissListViewTouchListener touchListener =
