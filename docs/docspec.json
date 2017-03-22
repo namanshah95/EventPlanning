@@ -1,0 +1,17 @@
+{
+    "/event/{event}/roles/" : {
+        "method" : "GET",
+        "description" : "Returns all roles needed for a specific event.",
+        "output" : {
+            "*event_needed_role" : "Record PK.",
+            "event" : "The PK of the event.",
+            "*needed_role" : "The PK of the role needed by the event.",
+            "*needed_role_name" : "The name of the role needed by the event.",
+            "*estimated_budget" : "The amount of money that should be dedicated to this role.",
+            "*quantity_needed" : "The number of people needed to perform this role.",
+            "*description" : "The description of the role needed by the event."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    }
+}
