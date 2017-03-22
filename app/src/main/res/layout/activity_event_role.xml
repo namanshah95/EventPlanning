@@ -48,22 +48,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnAdd"
-            android:layout_alignBaseline="@+id/btnMsg"
-            android:layout_alignBottom="@+id/btnMsg"
+            android:layout_marginBottom="28dp"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-        <Button
-            android:text="Message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnMsg"
-            android:layout_marginBottom="28dp"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/btnAdd"
-            android:layout_toEndOf="@+id/btnAdd"
-            android:layout_marginLeft="24dp"
-            android:layout_marginStart="24dp" />
+
 
 
 
