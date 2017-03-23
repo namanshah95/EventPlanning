@@ -24,12 +24,12 @@ select enr.event_needed_role,
 SQL;
 
         $validFields = [
-            'event_needed_role',
-            'needed_role',
-            'needed_role_name',
-            'estimated_budget',
-            'quantity_needed',
-            'description'
+            'event_needed_role' => 'enr.event_needed_role',
+            'needed_role'       => 'enr.needed_role',
+            'needed_role_name'  => 'r.name',
+            'estimated_budget'  => 'enr.estimated_budget',
+            'quantity_needed'   => 'enr.quantity_needed',
+            'description'       => 'coalesce( enr.description, r.description )'
         ];
 
         foreach( $params as $name => $value )
@@ -37,7 +37,7 @@ SQL;
             if( !in_array( $name, $valid_fields ) )
                 return invalid_field_error( $response, $name );
 
-            $query .= " and $name = ?$name?";
+            $query .= " and {$valid_fields[$name]} = ?$name?";
         }
 
         $params['event'] = $event;

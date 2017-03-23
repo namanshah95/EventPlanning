@@ -11,7 +11,8 @@
     $API->get( '/event/{event}/owner/', 'event_entity_roles\get_event_owner' );
 
     /* EVENT -> ENTITY */
-    $API->post( '/event/{event}/entities/{entity}/roles/', 'event_entity_roles\add_role_to_event_entity' );
+    $API->post( '/event/{event}/entities/{entity}/roles/',      'event_entity_roles\add_role_to_event_entity' );
+    $API->put( '/event/{event}/entities/{entity}/roles/{role}', 'event_entity_roles\update_event_entity_role' );
 
     /* ENTITY -> EVENT */
     $API->get( '/entity/{entity}/events/', 'event_entity_roles\get_events_by_entity' );
@@ -37,7 +38,8 @@ select eer.event_entity_role,
        e.name as event_name,
        eer.entity,
        eer.role,
-       r.name as role_name
+       r.name as role_name,
+       eer.estimated_budget
   from tb_event_entity_role eer
   join tb_event e
     on eer.event = e.event
@@ -52,7 +54,8 @@ SQL;
             'event_entity_role' => 'eer.event_entity_role',
             'entity'            => 'eer.entity',
             'role'              => 'eer.role',
-            'role_name'         => 'r.name'
+            'role_name'         => 'r.name',
+            'estimated_budget'  => 'eer.estimated_budget'
         ];
 
         foreach( $params as $name => $value )
@@ -98,7 +101,8 @@ select eer.event_entity_role,
        e.name as event_name,
        eer.entity,
        eer.role,
-       r.name as role_name
+       r.name as role_name,
+       eer.estimated_budget
   from tb_event_entity_role eer
   join tb_event e
     on eer.event = e.event
@@ -223,7 +227,8 @@ select eer.event_entity_role,
        e.name as event_name,
        eer.entity,
        eer.role,
-       r.name as role_name
+       r.name as role_name,
+       eer.estimated_budget
   from tb_event_entity_role eer
   join tb_event e
     on eer.event = e.event
@@ -238,7 +243,8 @@ SQL;
             'event_entity_role' => 'eer.event_entity_role',
             'entity'            => 'eer.entity',
             'role'              => 'eer.role',
-            'role_name'         => 'r.name'
+            'role_name'         => 'r.name',
+            'estimated_budget'  => 'eer.estimated_budget'
         ];
 
         foreach( $params as $name => $value )
@@ -266,7 +272,8 @@ select eer.event_entity_role,
        e.name as event_name,
        eer.entity,
        eer.role,
-       r.name as role_name
+       r.name as role_name,
+       eer.estimated_budget
   from tb_event_entity_role eer
   join tb_event e
     on eer.event = e.event
@@ -279,7 +286,8 @@ SQL;
             'event_entity_role' => 'eer.event_entity_role',
             'entity'            => 'eer.entity',
             'role'              => 'eer.role',
-            'role_name'         => 'r.name'
+            'role_name'         => 'r.name',
+            'estimated_budget'  => 'eer.estimated_budget'
         ];
 
         foreach( $params as $name => $value )
@@ -292,5 +300,53 @@ SQL;
 
         $params['entity'] = $entity;
         return api_fetch_all( $response, $query, $params );
+    }
+
+    function update_event_entity_role( $request, $response, $args )
+    {
+        $event  = $request->getAttribute( 'event' );
+        $entity = $request->getAttribute( 'entity' );
+        $role   = $request->getAttribute( 'role' );
+
+        $params = $request->getParsedBody();
+
+        if( count( $params ) == 0 )
+            return empty_params_error( $response );
+
+        $valid_fields = [
+            'estimated_budget'
+        ];
+
+        $assignments = '';
+
+        foreach( $params as $name => $value )
+        {
+            if( !in_array( $name, $valid_fields ) )
+                return invalid_field_error( $response, $name );
+
+            $assignments .= "$name = ?$name?, ";
+        }
+
+        $assignments = preg_replace( '/, $/', '', $assignments );
+
+        $query = <<<SQL
+   update tb_event_entity_role
+      set $assignments
+    where event  = ?event?
+      and entity = ?entity?
+      and role   = ?role?
+returning event_entity_role
+SQL;
+
+        $params['event']  = $event;
+        $params['entity'] = $entity;
+        $params['role']   = $role;
+
+        $retval = api_fetch_one( $response, $query, $params );
+
+        if( $retval === null )
+            return object_not_found_error( $response, 'tb_event_entity_role', $role );
+
+        return $retval;
     }
 ?>

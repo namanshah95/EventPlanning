@@ -120,7 +120,8 @@
             "event_name" : "The name of the event.",
             "*entity" : "The PK of the guest.",
             "*role" : "The PK of the role.",
-            "role_name" : "The name of the role."
+            "*role_name" : "The name of the role.",
+            "*estimated_budget" : "The budget that the guest should dedicate to this role."
         },
         "http_body_params" : null,
         "http_header_params" : null
@@ -133,7 +134,7 @@
             "event_name" : "The name of the event.",
             "*entity" : "The PK of the guest.",
             "*role" : "The PK of the role.",
-            "role_name" : "The name of the role."
+            "*role_name" : "The name of the role."
         },
         "http_body_params" : null,
         "http_header_params" : null
@@ -167,7 +168,8 @@
             "event_name" : "The name of the event.",
             "*entity" : "The PK of the guest.",
             "*role" : "The PK of the role.",
-            "role_name" : "The name of the role."
+            "*role_name" : "The name of the role.",
+            "*estimated_budget" : "The budget that the guest should dedicate to this role."
         },
         "http_body_params" : null,
         "http_header_params" : null
@@ -196,9 +198,22 @@
             "event_name" : "The name of the event.",
             "*entity" : "The PK of the guest.",
             "*role" : "The PK of the role.",
-            "role_name" : "The name of the role."
+            "*role_name" : "The name of the role.",
+            "*estimated_budget" : "The budget that the guest should dedicate to this role."
         },
         "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "PUT /event/{event}/entities/{entity}/roles/{role}" : {
+        "description" : "Updates the role information for a specific entity at a specific event. Note that the entity may be either the owner or a guest of the event.",
+        "output" : {
+            "event_entity_role" : "The PK of the record that was updated."
+        },
+        "http_body_params" : {
+            "estimated_budget" : {
+                "description" : "The new amount of money that the entity should dedicate to this role."
+            }
+        },
         "http_header_params" : null
     }
 }

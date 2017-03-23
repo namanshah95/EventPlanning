@@ -32,11 +32,12 @@ HTTP Header Params & None. \\ \hline
 HTTP Body Params & None. \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{*entity} & The PK of the guest. \\ \hline
+    \texttt{*estimated\_budget} & The budget that the guest should dedicate to this role. \\ \hline
     \texttt{*event} & The PK of the event. \\ \hline
     \texttt{*event\_entity\_role} & Record PK. \\ \hline
     \texttt{*role} & The PK of the role. \\ \hline
-    \texttt{event\_name} & The name of the event. \\ \hline
-    \texttt{role\_name} & The name of the role. \\
+    \texttt{*role\_name} & The name of the role. \\ \hline
+    \texttt{event\_name} & The name of the event. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{GET /event/\{event\}/guests/} \smallskip \\
@@ -46,11 +47,12 @@ HTTP Header Params & None. \\ \hline
 HTTP Body Params & None. \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{*entity} & The PK of the guest. \\ \hline
+    \texttt{*estimated\_budget} & The budget that the guest should dedicate to this role. \\ \hline
     \texttt{*event} & The PK of the event. \\ \hline
     \texttt{*event\_entity\_role} & Record PK. \\ \hline
     \texttt{*role} & The PK of the role. \\ \hline
-    \texttt{event\_name} & The name of the event. \\ \hline
-    \texttt{role\_name} & The name of the role. \\
+    \texttt{*role\_name} & The name of the role. \\ \hline
+    \texttt{event\_name} & The name of the event. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{GET /event/\{event\}/guests/\{guest\}} \smallskip \\
@@ -63,8 +65,8 @@ Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{*event} & The PK of the event. \\ \hline
     \texttt{*event\_entity\_role} & Record PK. \\ \hline
     \texttt{*role} & The PK of the role. \\ \hline
-    \texttt{event\_name} & The name of the event. \\ \hline
-    \texttt{role\_name} & The name of the role. \\
+    \texttt{*role\_name} & The name of the role. \\ \hline
+    \texttt{event\_name} & The name of the event. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{GET /event/\{event\}/owner/} \smallskip \\
@@ -74,11 +76,12 @@ HTTP Header Params & None. \\ \hline
 HTTP Body Params & None. \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{*entity} & The PK of the guest. \\ \hline
+    \texttt{*estimated\_budget} & The budget that the guest should dedicate to this role. \\ \hline
     \texttt{*event} & The PK of the event. \\ \hline
     \texttt{*event\_entity\_role} & Record PK. \\ \hline
     \texttt{*role} & The PK of the role. \\ \hline
-    \texttt{event\_name} & The name of the event. \\ \hline
-    \texttt{role\_name} & The name of the role. \\
+    \texttt{*role\_name} & The name of the role. \\ \hline
+    \texttt{event\_name} & The name of the event. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{GET /event/\{event\}/roles/} \smallskip \\
@@ -165,6 +168,17 @@ HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
     \end{tabular} \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{role} & The PK of the role that was created. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{PUT /event/\{event\}/entities/\{entity\}/roles/\{role\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Updates the role information for a specific entity at a specific event. Note that the entity may be either the owner or a guest of the event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{estimated\_budget} & The new amount of money that the entity should dedicate to this role. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event\_entity\_role} & The PK of the record that was updated. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{PUT /event/\{event\}/roles/\{role\}} \smallskip \\
