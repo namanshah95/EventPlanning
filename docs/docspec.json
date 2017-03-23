@@ -1,6 +1,64 @@
 {
-    "/event/{event}/roles/" : {
-        "method" : "GET",
+    "GET /roles/" : {
+        "description" : "Gets all roles from the database.",
+        "output" : {
+            "*role" : "Record PK.",
+            "*name" : "The name of the role.",
+            "*description" : "The default description of the role."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "GET /roles/{role}" : {
+        "description" : "Gets a specific role from the database. This is equivalent to calling \\texttt{GET /roles/?role=\\{role\\}}.",
+        "output" : {
+            "*role" : "Record PK.",
+            "*name" : "The name of the role.",
+            "*description" : "The default description of the role."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "POST /roles/" : {
+        "description" : "Adds a new role to the database. This does not add a role to any specific event, nor does it add a role to any specific entity.",
+        "output" : {
+            "role" : "The PK of the role that was created."
+        },
+        "http_body_params" : {
+            "name" : {
+                "required" : true,
+                "description" : "The name of the role to create."
+            },
+            "description" : {
+                "description" : "The default description of the role to create."
+            }
+        },
+        "http_header_params" : null
+    },
+    "PUT /roles/{role}" : {
+        "description" : "Updates an existing role in the database.",
+        "output" : {
+            "role" : "The PK of the role that was updated."
+        },
+        "http_body_params" : {
+            "name" : {
+                "description" : "The new name the role should have."
+            },
+            "description" : {
+                "description" : "The new default description the role should have."
+            }
+        },
+        "http_header_params" : null
+    },
+    "DELETE /roles/{role}" : {
+        "description" : "Deletes an existing role from the database.",
+        "output" : {
+            "role" : "The PK of the role that was deleted."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "GET /event/{event}/roles/" : {
         "description" : "Returns all roles needed for a specific event.",
         "output" : {
             "*event_needed_role" : "Record PK.",
@@ -9,7 +67,136 @@
             "*needed_role_name" : "The name of the role needed by the event.",
             "*estimated_budget" : "The amount of money that should be dedicated to this role.",
             "*quantity_needed" : "The number of people needed to perform this role.",
-            "*description" : "The description of the role needed by the event."
+            "*description" : "The event-level description, or default description if an event-level description doesn't exist, of the role needed by the event."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "POST /event/{event}/roles/" : {
+        "description" : "Adds a needed role to a specific event.",
+        "output" : {
+            "event_needed_role" : "The PK of the record that was created."
+        },
+        "http_body_params" : {
+            "needed_role" : {
+                "required" : true,
+                "description" : "The PK of the role needed by the event."
+            },
+            "estimated_budget" : {
+                "description" : "The amount of money that should be dedicated to this role."
+            },
+            "quantity_needed" : {
+                "description" : "The number of people needed to perform this role."
+            },
+            "description" : {
+                "description" : "The event-level description of the role needed by this event."
+            }
+        },
+        "http_header_params" : null
+    },
+    "PUT /event/{event}/roles/{role}" : {
+        "description" : "Updates a specific needed role for a specific event.",
+        "output" : {
+            "event_needed_role" : "The PK of the recorded that was updated."
+        },
+        "http_body_params" : {
+            "estimated_budget" : {
+                "description" : "The new amount of money that should be dedicated to this role."
+            },
+            "quantity_needed" : {
+                "description" : "The new number of people needed to perform this role."
+            },
+            "description" : {
+                "description" : "The new event-level description of the role needed by this event."
+            }
+        },
+        "http_header_params" : null
+    },
+    "GET /event/{event}/guests/" : {
+        "description" : "Returns all guests attending a specific event and their roles. The result set does NOT include the owner of the event. Multiple records will be returned for the same guest if they have more than one role.",
+        "output" : {
+            "*event_entity_role" : "Record PK.",
+            "*event" : "The PK of the event.",
+            "event_name" : "The name of the event.",
+            "*entity" : "The PK of the guest.",
+            "*role" : "The PK of the role.",
+            "role_name" : "The name of the role."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "GET /event/{event}/guests/{guest}" : {
+        "description" : "Returns a specific guest attending a specific event and their roles. No results will be returned if the specified guest is the owner. Multiple records will be returned for the same guest if they have more than one role. This is identical to calling \\texttt{GET /event/\\{event\\}/guests/?entity={guest}}.",
+        "output" : {
+            "*event_entity_role" : "Record PK.",
+            "*event" : "The PK of the event.",
+            "event_name" : "The name of the event.",
+            "*entity" : "The PK of the guest.",
+            "*role" : "The PK of the role.",
+            "role_name" : "The name of the role."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "POST /event/{event}/guests/" : {
+        "description" : "Adds a guest to a specific event. This creates a new \\texttt{event\\_entity\\_role} record with the specific event, specified entity, and the Guest role.",
+        "output" : {
+            "event_entity_role" : "The PK of the record that was created."
+        },
+        "http_body_params" : {
+            "entity" : {
+                "required" : true,
+                "description" : "The PK of the entity who should be added to the specified event as a guest."
+            }
+        },
+        "http_header_params" : null
+    },
+    "DELETE /event/{event}/guests/{guest}" : {
+        "description" : "Completely removes a specified guest from an event. This removes every \\texttt{event\\_entity\\_role} record that has the specified guest as the entity.",
+        "output" : {
+            "event_entity_role" : "The PK of the record that was deleted."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "GET /event/{event}/owner/" : {
+        "description" : "Gets the owner of a specific event and their roles. Multiple records will be returned for the owner if they have more than one role.",
+        "output" : {
+            "*event_entity_role" : "Record PK.",
+            "*event" : "The PK of the event.",
+            "event_name" : "The name of the event.",
+            "*entity" : "The PK of the guest.",
+            "*role" : "The PK of the role.",
+            "role_name" : "The name of the role."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "POST /event/{event}/entities/{entity}/roles/" : {
+        "description" : "Adds a role to a specific entity attending a specific event. Note that the specified entity can be either the owner or a guest. Additionally, because this creates a new \\texttt{event\\_entity\\_role} record, if an entity is not already associated with an event, calling this route will associate them with the event.",
+        "output" : {
+            "event_entity_role" : "The PK of the record that was created."
+        },
+        "http_body_params" : {
+            "role" : {
+                "required" : true,
+                "description" : "The role that should be given to the specified entity attending the specified event."
+            },
+            "estimated_budget" : {
+                "description" : "The budget that the entity should allocate to performing the role."
+            }
+        },
+        "http_header_params" : null
+    },
+    "GET /entity/{entity}/events/" : {
+        "description" : "Gets all events that a specified entity is either the owner of or a guest of, and the roles they have for those events. Multiple records will be returned for the same event if the entity has more than one role for that event.",
+        "output" : {
+            "*event_entity_role" : "Record PK.",
+            "*event" : "The PK of the event.",
+            "event_name" : "The name of the event.",
+            "*entity" : "The PK of the guest.",
+            "*role" : "The PK of the role.",
+            "role_name" : "The name of the role."
         },
         "http_body_params" : null,
         "http_header_params" : null

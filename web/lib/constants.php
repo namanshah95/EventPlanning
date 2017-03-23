@@ -11,4 +11,7 @@
     define( 'HTTP_BAD_REQUEST',           400 );
     define( 'HTTP_NOT_FOUND',             404 );
     define( 'HTTP_INTERNAL_SERVER_ERROR', 500 );
+
+    define( 'ROLE_OWNER', -1 );
+    define( 'ROLE_GUEST', -2 );
 ?>

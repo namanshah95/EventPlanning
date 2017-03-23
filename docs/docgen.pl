@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use feature 'switch';
+
 use JSON;
 
 my $NO_HTTP_HEADER_PARAMS = <<'END_TEX';
@@ -13,20 +15,23 @@ my $NO_HTTP_BODY_PARAMS = <<'END_TEX';
 HTTP Body Params & None. \\ \hline
 END_TEX
 
-sub _http_header_params($)
+sub http_header_params($)
 {
     my ( $http_header_params ) = @_;
 
     return $NO_HTTP_HEADER_PARAMS unless $http_header_params;
 
     my $retval = <<'END_TEX';
-HTTP Header Params & \begin{tabular}{|l|l|}
+HTTP Header Params & \begin{tabular}{|p{4cm}|p{8cm}|}
 END_TEX
 
     foreach my $param_name ( sort keys %$http_header_params )
     {
-        my $description =  $http_header_params->{$param_name};
-        $param_name     =~ s/_/\\_/g;
+        my $description = $http_header_params->{$param_name}->{description};
+        my $required    = $http_header_params->{$param_name}->{required};
+
+        $param_name =~ s/_/\\_/g;
+        $param_name =  "\\textcolor{red}{$param_name}" if defined $required && $required;
 
         $retval .= <<"END_TEX";
     \\texttt{$param_name} & $description \\\\ \\hline
@@ -41,20 +46,23 @@ END_TEX
     return $retval;
 }
 
-sub _http_body_params($)
+sub http_body_params($)
 {
     my ( $http_body_params ) = @_;
 
     return $NO_HTTP_BODY_PARAMS unless $http_body_params;
 
     my $retval = <<'END_TEX';
-HTTP Body Params & \begin{tabular}{|l|l|}
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
 END_TEX
 
     foreach my $param_name ( sort keys %$http_body_params )
     {
-        my $description =  $http_body_params->{$param_name};
-        $param_name     =~ s/_/\\_/g;
+        my $description = $http_body_params->{$param_name}->{description};
+        my $required    = $http_body_params->{$param_name}->{required};
+
+        $param_name =~ s/_/\\_/g;
+        $param_name =  "\\textcolor{red}{$param_name}" if defined $required && $required;
 
         $retval .= <<"END_TEX";
     \\texttt{$param_name} & $description \\\\ \\hline
@@ -69,12 +77,12 @@ END_TEX
     return $retval;
 }
 
-sub _output($)
+sub output($)
 {
     my ( $output ) = @_;
 
     my $retval = <<'END_TEX';
-Output & \begin{tabular}{|l|l|}
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
 END_TEX
 
     foreach my $param_name ( sort keys %$output )
@@ -95,28 +103,29 @@ END_TEX
     return $retval;
 }
 
-sub _route_hash_to_tex($$)
+sub route_hash_to_tex($$)
 {
-    my ( $route, $route_hash ) = @_;
+    my ( $full_route, $route_hash ) = @_;
+
+    my ( $method, $route ) = split( /\s+/, $full_route, 2 );
 
     $route =~ s/{/\\{/g;
     $route =~ s/}/\\}/g;
 
-    my $method      = $route_hash->{method};
     my $description = $route_hash->{description};
 
     my $retval = <<"END_TEX";
 \\item \\textbf{$method $route} \\smallskip \\\\
-\\begin{tabular}{|l|l|} \\hline
+\\begin{tabular}{|p{4cm}|p{12.85cm}|} \\hline
 Description & $description \\\\ \\hline
 END_TEX
 
-    $retval .= _http_header_params( $route_hash->{http_header_params} );
-    $retval .= _http_body_params( $route_hash->{http_body_params} );
-    $retval .= _output( $route_hash->{output} );
+    $retval .= http_header_params( $route_hash->{http_header_params} );
+    $retval .= http_body_params( $route_hash->{http_body_params} );
+    $retval .= output( $route_hash->{output} );
 
     $retval .= <<'END_TEX';
-\end{tabular}
+\end{tabular} \bigskip
 END_TEX
 
     return $retval;
@@ -132,12 +141,31 @@ $docspec   .= $_ while <$docspec_fh>;
 close $docspec_fh;
 
 my $docspec_struct = decode_json( $docspec );
-my $latex_body     = <<'END_TEX';
+my $gets           = {};
+my $posts          = {};
+my $puts           = {};
+my $deletes        = {};
+
+foreach my $full_route ( keys( %$docspec_struct ) )
+{
+    my ( $method, $route ) = split( /\s+/, $full_route, 2 );
+
+    given( $method )
+    {
+        when( 'GET'    ) { $gets->{$full_route}    = $docspec_struct->{$full_route} }
+        when( 'POST'   ) { $posts->{$full_route}   = $docspec_struct->{$full_route} }
+        when( 'PUT'    ) { $puts->{$full_route}    = $docspec_struct->{$full_route} }
+        when( 'DELETE' ) { $deletes->{$full_route} = $docspec_struct->{$full_route} }
+    }
+}
+
+my $latex_body = <<'END_TEX';
 \documentclass{article}
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{color}
 \usepackage[margin=0.5in]{geometry}
 
 \def\arraystretch{1.5}
@@ -145,14 +173,28 @@ my $latex_body     = <<'END_TEX';
 
 \begin{document}
 
-Output fields marked with * can be passed into the HTTP request header to filter results.
+Notes:
+\begin{enumerate}
+    \item Output fields marked with * can be passed into the HTTP request header to filter results.
+    \item Parameters in red are required.
+    \item The following HTTP methods signify the following:
+    \begin{enumerate}
+        \item GET is used to retrieve data from the database.
+        \item POST is used to insert new data into the database.
+        \item PUT is used to update existing data in the database.
+        \item DELETE is used to remove existing data from the database.
+    \end{enumerate}
+\end{enumerate}
 
 \begin{itemize}
 END_TEX
 
-foreach my $route ( sort keys %$docspec_struct )
+foreach my $method ( ( $gets, $posts, $puts, $deletes ) )
 {
-    $latex_body .= _route_hash_to_tex( $route, $docspec_struct->{$route} );
+    foreach my $route( sort keys %$method )
+    {
+        $latex_body .= route_hash_to_tex( $route, $docspec_struct->{$route} );
+    }
 }
 
 $latex_body .= <<'END_TEX';

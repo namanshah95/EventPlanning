@@ -1,0 +1,215 @@
+\documentclass{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage[margin=0.5in]{geometry}
+
+\def\arraystretch{1.5}
+\renewcommand{\labelitemi}{$\diamond$}
+
+\begin{document}
+
+Notes:
+\begin{enumerate}
+    \item Output fields marked with * can be passed into the HTTP request header to filter results.
+    \item Parameters in red are required.
+    \item The following HTTP methods signify the following:
+    \begin{enumerate}
+        \item GET is used to retrieve data from the database.
+        \item POST is used to insert new data into the database.
+        \item PUT is used to update existing data in the database.
+        \item DELETE is used to remove existing data from the database.
+    \end{enumerate}
+\end{enumerate}
+
+\begin{itemize}
+\item \textbf{GET /entity/\{entity\}/events/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Gets all events that a specified entity is either the owner of or a guest of, and the roles they have for those events. Multiple records will be returned for the same event if the entity has more than one role for that event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*entity} & The PK of the guest. \\ \hline
+    \texttt{*event} & The PK of the event. \\ \hline
+    \texttt{*event\_entity\_role} & Record PK. \\ \hline
+    \texttt{*role} & The PK of the role. \\ \hline
+    \texttt{event\_name} & The name of the event. \\ \hline
+    \texttt{role\_name} & The name of the role. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{GET /event/\{event\}/guests/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Returns all guests attending a specific event and their roles. The result set does NOT include the owner of the event. Multiple records will be returned for the same guest if they have more than one role. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*entity} & The PK of the guest. \\ \hline
+    \texttt{*event} & The PK of the event. \\ \hline
+    \texttt{*event\_entity\_role} & Record PK. \\ \hline
+    \texttt{*role} & The PK of the role. \\ \hline
+    \texttt{event\_name} & The name of the event. \\ \hline
+    \texttt{role\_name} & The name of the role. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{GET /event/\{event\}/guests/\{guest\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Returns a specific guest attending a specific event and their roles. No results will be returned if the specified guest is the owner. Multiple records will be returned for the same guest if they have more than one role. This is identical to calling \texttt{GET /event/\{event\}/guests/?entity={guest}}. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*entity} & The PK of the guest. \\ \hline
+    \texttt{*event} & The PK of the event. \\ \hline
+    \texttt{*event\_entity\_role} & Record PK. \\ \hline
+    \texttt{*role} & The PK of the role. \\ \hline
+    \texttt{event\_name} & The name of the event. \\ \hline
+    \texttt{role\_name} & The name of the role. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{GET /event/\{event\}/owner/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Gets the owner of a specific event and their roles. Multiple records will be returned for the owner if they have more than one role. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*entity} & The PK of the guest. \\ \hline
+    \texttt{*event} & The PK of the event. \\ \hline
+    \texttt{*event\_entity\_role} & Record PK. \\ \hline
+    \texttt{*role} & The PK of the role. \\ \hline
+    \texttt{event\_name} & The name of the event. \\ \hline
+    \texttt{role\_name} & The name of the role. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{GET /event/\{event\}/roles/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Returns all roles needed for a specific event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*description} & The event-level description, or default description if an event-level description doesn't exist, of the role needed by the event. \\ \hline
+    \texttt{*estimated\_budget} & The amount of money that should be dedicated to this role. \\ \hline
+    \texttt{*event\_needed\_role} & Record PK. \\ \hline
+    \texttt{*needed\_role} & The PK of the role needed by the event. \\ \hline
+    \texttt{*needed\_role\_name} & The name of the role needed by the event. \\ \hline
+    \texttt{*quantity\_needed} & The number of people needed to perform this role. \\ \hline
+    \texttt{event} & The PK of the event. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{GET /roles/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Gets all roles from the database. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*description} & The default description of the role. \\ \hline
+    \texttt{*name} & The name of the role. \\ \hline
+    \texttt{*role} & Record PK. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{GET /roles/\{role\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Gets a specific role from the database. This is equivalent to calling \texttt{GET /roles/?role=\{role\}}. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*description} & The default description of the role. \\ \hline
+    \texttt{*name} & The name of the role. \\ \hline
+    \texttt{*role} & Record PK. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{POST /event/\{event\}/entities/\{entity\}/roles/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Adds a role to a specific entity attending a specific event. Note that the specified entity can be either the owner or a guest. Additionally, because this creates a new \texttt{event\_entity\_role} record, if an entity is not already associated with an event, calling this route will associate them with the event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{estimated\_budget} & The budget that the entity should allocate to performing the role. \\ \hline
+    \texttt{\textcolor{red}{role}} & The role that should be given to the specified entity attending the specified event. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event\_entity\_role} & The PK of the record that was created. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{POST /event/\{event\}/guests/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Adds a guest to a specific event. This creates a new \texttt{event\_entity\_role} record with the specific event, specified entity, and the Guest role. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{\textcolor{red}{entity}} & The PK of the entity who should be added to the specified event as a guest. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event\_entity\_role} & The PK of the record that was created. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{POST /event/\{event\}/roles/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Adds a needed role to a specific event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{description} & The event-level description of the role needed by this event. \\ \hline
+    \texttt{estimated\_budget} & The amount of money that should be dedicated to this role. \\ \hline
+    \texttt{\textcolor{red}{needed\_role}} & The PK of the role needed by the event. \\ \hline
+    \texttt{quantity\_needed} & The number of people needed to perform this role. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event\_needed\_role} & The PK of the record that was created. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{POST /roles/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Adds a new role to the database. This does not add a role to any specific event, nor does it add a role to any specific entity. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{description} & The default description of the role to create. \\ \hline
+    \texttt{\textcolor{red}{name}} & The name of the role to create. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{role} & The PK of the role that was created. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{PUT /event/\{event\}/roles/\{role\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Updates a specific needed role for a specific event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{description} & The new event-level description of the role needed by this event. \\ \hline
+    \texttt{estimated\_budget} & The new amount of money that should be dedicated to this role. \\ \hline
+    \texttt{quantity\_needed} & The new number of people needed to perform this role. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event\_needed\_role} & The PK of the recorded that was updated. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{PUT /roles/\{role\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Updates an existing role in the database. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{description} & The new default description the role should have. \\ \hline
+    \texttt{name} & The new name the role should have. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{role} & The PK of the role that was updated. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{DELETE /event/\{event\}/guests/\{guest\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Completely removes a specified guest from an event. This removes every \texttt{event\_entity\_role} record that has the specified guest as the entity. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event\_entity\_role} & The PK of the record that was deleted. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{DELETE /roles/\{role\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Deletes an existing role from the database. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{role} & The PK of the role that was deleted. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\end{itemize}
+
+\end{document}
