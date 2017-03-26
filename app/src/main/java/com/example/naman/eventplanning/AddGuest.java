@@ -8,27 +8,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-/**
- * Created by mengdili on 3/25/17.
- */
-
-public class AddEventActivity extends AppCompatActivity {
+public class AddGuest extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_event);
+        setContentView(R.layout.activity_add_guest2);
 
-        final EditText etEventName = (EditText) findViewById(R.id.etEventName1);
-        final Button bEventSubmit =  (Button) findViewById(R.id.bEventSubmit1);
+        final EditText etGuestEmail = (EditText) findViewById(R.id.etGuestEmail);
+        final Button bEventSubmit =  (Button) findViewById(R.id.bGuestSubmit);
 
         bEventSubmit.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                String eventName = etEventName.getText().toString();
+                String guestEmail = etGuestEmail.getText().toString();
                 Intent intent = getIntent();
-                intent.putExtra("name", eventName);
+                intent.putExtra("email", guestEmail);
                 String s = "yes";
                 intent.putExtra("judge", s);
 
@@ -40,7 +36,7 @@ public class AddEventActivity extends AppCompatActivity {
 
         //set actionbar title
         getSupportActionBar().setTitle("TASK MANAGER");
-        getSupportActionBar().setSubtitle("Add Event");
+        getSupportActionBar().setSubtitle("Add Role");
     }
 
 }
