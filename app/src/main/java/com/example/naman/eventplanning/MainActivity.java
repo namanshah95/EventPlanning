@@ -16,7 +16,9 @@ import android.widget.RadioGroup;
 
 import com.example.naman.eventplanning.fragment.EventroleFragment;
 import com.example.naman.eventplanning.fragment.BudgetFragment;
+import com.example.naman.eventplanning.fragment.GuestFragment;
 import com.example.naman.eventplanning.fragment.MessageFragment;
+
 import com.example.naman.eventplanning.view.viewpager.CustomViewPager;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -75,15 +77,19 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.task_manage) {
                     getSupportActionBar().setSubtitle("Task Manage");
-                    lastPos = 0;
+                    lastPos = 1;
                     viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.message) {
                     getSupportActionBar().setSubtitle("Message");
-                    lastPos = 1;
+                    lastPos = 2;
                     viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.budget) {
                     getSupportActionBar().setSubtitle("Budget");
-                    lastPos = 2;
+                    lastPos = 3;
+                    viewPager.setCurrentItem(lastPos, true);
+                } else if (checkedId == R.id.guest){
+                    getSupportActionBar().setSubtitle("Guest");
+                    lastPos = 0;
                     viewPager.setCurrentItem(lastPos, true);
                 }
             }
@@ -128,9 +134,11 @@ public class MainActivity extends AppCompatActivity {
 
     private class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-        private EventroleFragment tab1Fragment;
-        private MessageFragment tab2Fragment;
-        private BudgetFragment tab3Fragment;
+        private GuestFragment tab1Fragment;
+        private EventroleFragment tab2Fragment;
+        private MessageFragment tab3Fragment;
+        private BudgetFragment tab4Fragment;
+
 
         public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -140,20 +148,27 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:// tab1
-                    if (tab1Fragment == null) {
-                        tab1Fragment = new EventroleFragment();
+                    if (tab1Fragment == null){
+                        tab1Fragment = new GuestFragment();
                     }
                     return tab1Fragment;
+
                 case 1:// tab2
                     if (tab2Fragment == null) {
-                        tab2Fragment = new MessageFragment();
+                        tab2Fragment = new EventroleFragment();
                     }
                     return tab2Fragment;
                 case 2:// tab3
                     if (tab3Fragment == null) {
-                        tab3Fragment = new BudgetFragment();
+                        tab3Fragment = new MessageFragment();
                     }
                     return tab3Fragment;
+                case 3:// tab4
+                    if (tab4Fragment == null) {
+                        tab4Fragment = new BudgetFragment();
+                    }
+                    return tab4Fragment;
+
                 default:
                     break;
             }
@@ -167,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
     }
 

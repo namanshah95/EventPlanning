@@ -192,19 +192,6 @@ public class EventroleFragment extends Fragment {
 
     }
 
-//    private void delete(){
-//        int pos= lv.getCheckedItemPosition();
-//        if (pos > -1) {
-//            //remove
-//            adapter.remove(Event.get(pos));
-//            //refresh
-//            adapter.notifyDataSetChanged();
-//            Toast.makeText(getContext(), "Deleted ", Toast.LENGTH_SHORT).show();
-//        }
-//        else{
-//            Toast.makeText(getContext(), "!! Nothing to Delete", Toast.LENGTH_SHORT).show();
-//        }
-//    }
 
     private void update(){
         if(!EventNameEdit.isEmpty() && EventNameEdit.length()> 0){

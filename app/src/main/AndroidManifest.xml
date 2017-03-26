@@ -26,6 +26,7 @@
         <activity android:name=".EditRole2" />
         <activity android:name=".EditRole3" />
         <activity android:name=".Messenger" />
+        <activity android:name=".AddGuest" />
         <activity android:name=".MainActivity" />
 
         <service android:name=".MyFirebaseMessagingService">
