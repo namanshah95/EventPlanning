@@ -37,10 +37,10 @@ public class home_activity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(6000);
+                    Thread.sleep(3000);
                     Intent intent = new Intent();
 
-                        intent.setClass(home_activity.this, MainActivity.class);
+                        intent.setClass(home_activity.this, EventActivity.class);
 
                     startActivity(intent);
                     finish();

@@ -1,12 +1,17 @@
 package com.example.naman.eventplanning;
 
+/**
+ * Created by mengdili on 3/25/17.
+ */
+
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,25 +20,75 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class EventRole extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+
+public class EventActivity extends AppCompatActivity {
     ListView lv;
     Button addBtn;
-    ArrayList<String> Event = new ArrayList<>();
+    ArrayList<String> Event = new ArrayList<String>(
+            Arrays.asList("Birthday","Small Party","Happy Party"));
     ArrayAdapter<String> adapter;
     String EventName, EventNameEdit;
     String judge,judgeEdit;
     int posEdit;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
+    private NavigationView mNavMenu;
+
+
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_role);
+
+
+
+        /*mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null) {
+            startActivity(new Intent(EventActivity.this, LoginActivity.class));
+        }
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() == null) {
+                    startActivity(new Intent(EventActivity.this, LoginActivity.class));
+                }
+            }
+        };*/
+
+
+
+
+        setContentView(R.layout.addeventactivity);
+
+
+
+        mNavMenu = (NavigationView) findViewById(R.id.nav_menu);
+        mNavMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                System.out.println("Nav Item Selected");
+                if (item.getItemId() == R.id.SignOut) {
+                    mAuth.signOut();
+                }
+                return true;
+            }
+        });
+
+
+
+
 
         //set navigation bar
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_event_role);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
 
@@ -44,10 +99,10 @@ public class EventRole extends AppCompatActivity {
 
         //set actionbar title
         getSupportActionBar().setTitle("TASK MANAGER");
-        getSupportActionBar().setSubtitle("Task List");
+        getSupportActionBar().setSubtitle("Event List");
 
-        lv = (ListView)findViewById(R.id.evenList);
-        addBtn = (Button) findViewById(R.id.btnAdd);
+        lv = (ListView)findViewById(R.id.evenList1);
+        addBtn = (Button) findViewById(R.id.btnAdd1);
 
 
         //ADAPPTER
@@ -60,28 +115,15 @@ public class EventRole extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                view.setSelected(true);
-//                lv.setItemChecked(1,true);
-//                Object listItem = lv.getItemAtPosition(position);
+
                 posEdit = position;
-                Intent editIntent = new Intent(EventRole.this, EditRole.class );
+                Intent editIntent = new Intent(EventActivity.this, MainActivity.class );
                 editIntent.putExtra("EventName", Event.get(position));
-                EventRole.this.startActivityForResult(editIntent,1);
+                EventActivity.this.startActivityForResult(editIntent,1);
 
             }
         });
 
-//////////////////////////////////////////////////////
-        // TEMPORARY
-               // Button msgBtn = (Button) findViewById(R.id.btnMsg);
-               // msgBtn.setOnClickListener(new View.OnClickListener() {
-                //         @Override
-                //         public void onClick(View view) {
-                //                 Intent intent = new Intent(EventRole.this, Messenger.class);
-                 ///                startActivity(intent);
-                 //            }
-                  //   });
-        //////////////////////////////////////////////////////
 
         //swipe to delete
         SwipeDismissListViewTouchListener touchListener =
@@ -113,20 +155,16 @@ public class EventRole extends AppCompatActivity {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addIntent = new Intent(EventRole.this, AddEvent.class );
-                EventRole.this.startActivityForResult(addIntent,1);
+                Intent addIntent = new Intent(EventActivity.this, AddEventActivity.class );
+                EventActivity.this.startActivityForResult(addIntent,1);
             }
         });
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(mToggle.onOptionsItemSelected(item)){
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -141,7 +179,6 @@ public class EventRole extends AppCompatActivity {
                 System.out.println("");
                 System.out.println(EventNameEdit);
                 judgeEdit = data.getStringExtra("judgeEdit");
-
                 if(judge != null && judge.equals("yes")){
 
                     add();
@@ -161,7 +198,8 @@ public class EventRole extends AppCompatActivity {
 
 
         }
-    }//onActivityResult
+    }
+    //onActivityResult
 
     private void add(){
         if(!EventName.isEmpty() && EventName.length()> 0){
@@ -221,6 +259,4 @@ public class EventRole extends AppCompatActivity {
 
 
 }
-
-
 
