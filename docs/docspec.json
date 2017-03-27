@@ -237,5 +237,74 @@
         },
         "http_body_params" : null,
         "http_header_params" : null
+    },
+    "GET /events/" : {
+        "description" : "Gets all events.",
+        "output" : {
+            "*event" : "Record PK.",
+            "*name" : "The name of the event.",
+            "*start_time" : "The date and time the event begins at.",
+            "*end_time" : "The date and time the event ends at.",
+            "*created" : "The exact moment this event was created."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "GET /events/{event}" : {
+        "description" : "Gets a specific event.",
+        "output" : {
+            "event" : "Record PK.",
+            "name" : "The name of the event.",
+            "start_time" : "The date and time the event begins at.",
+            "end_time" : "The date and time the event ends at.",
+            "created" : "The exact moment this event was created."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "POST /events/" : {
+        "description" : "Creates an event.",
+        "output" : {
+            "event" : "The PK of the event that was created."
+        },
+        "http_body_params" : {
+            "name" : {
+                "description" : "The name of the event.",
+                "required" : true
+            },
+            "start_time" : {
+                "description" : "The date and time the event begins at.",
+                "required" : true
+            },
+            "end_time" : {
+                "description" : "The date and time the event ends at.",
+                "required" : true
+            }
+        }
+    },
+    "PUT /events/{event}" : {
+        "description" : "Updates an event.",
+        "output" : {
+            "event" : "The PK of the event that was updated."
+        },
+        "http_body_params" : {
+            "name" : {
+                "description" : "The name of the event."
+            },
+            "start_time" : {
+                "description" : "The date and time the event begins at."
+            },
+            "end_time" : {
+                "description" : "The date and time the event ends at."
+            }
+        }
+    },
+    "DELETE /events/{event}" : {
+        "description" : "Deletes an event.",
+        "output" : {
+            "event" : "The PK of the event that was deleted."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
     }
 }

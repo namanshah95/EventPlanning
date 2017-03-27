@@ -114,6 +114,32 @@ Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{needed\_role\_name} & The name of the role needed by the event. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
+\item \textbf{GET /events/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Gets all events. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*created} & The exact moment this event was created. \\ \hline
+    \texttt{*end\_time} & The date and time the event ends at. \\ \hline
+    \texttt{*event} & Record PK. \\ \hline
+    \texttt{*name} & The name of the event. \\ \hline
+    \texttt{*start\_time} & The date and time the event begins at. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{GET /events/\{event\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Gets a specific event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{created} & The exact moment this event was created. \\ \hline
+    \texttt{end\_time} & The date and time the event ends at. \\ \hline
+    \texttt{event} & Record PK. \\ \hline
+    \texttt{name} & The name of the event. \\ \hline
+    \texttt{start\_time} & The date and time the event begins at. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
 \item \textbf{GET /roles/} \smallskip \\
 \begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
 Description & Gets all roles from the database. \\ \hline
@@ -173,6 +199,19 @@ Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{event\_needed\_role} & The PK of the record that was created. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
+\item \textbf{POST /events/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Creates an event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{\textcolor{red}{end\_time}} & The date and time the event ends at. \\ \hline
+    \texttt{\textcolor{red}{name}} & The name of the event. \\ \hline
+    \texttt{\textcolor{red}{start\_time}} & The date and time the event begins at. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event} & The PK of the event that was created. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
 \item \textbf{POST /roles/} \smallskip \\
 \begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
 Description & Adds a new role to the database. This does not add a role to any specific event, nor does it add a role to any specific entity. \\ \hline
@@ -209,6 +248,19 @@ Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{event\_needed\_role} & The PK of the recorded that was updated. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
+\item \textbf{PUT /events/\{event\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Updates an event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{end\_time} & The date and time the event ends at. \\ \hline
+    \texttt{name} & The name of the event. \\ \hline
+    \texttt{start\_time} & The date and time the event begins at. \\
+    \end{tabular} \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event} & The PK of the event that was updated. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
 \item \textbf{PUT /roles/\{role\}} \smallskip \\
 \begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
 Description & Updates an existing role in the database. \\ \hline
@@ -237,6 +289,15 @@ HTTP Header Params & None. \\ \hline
 HTTP Body Params & None. \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{event\_needed\_role} & The PK of the record that was deleted. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{DELETE /events/\{event\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Deletes an event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event} & The PK of the event that was deleted. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{DELETE /roles/\{role\}} \smallskip \\
