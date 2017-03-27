@@ -1,6 +1,7 @@
 {
     "require": {
         "slim/slim": "3.*",
-        "phpseclib/mcrypt_compat": "^1.0"
+        "phpseclib/mcrypt_compat": "^1.0",
+        "ktamas77/firebase-php": "dev-master"
     }
 }

@@ -306,5 +306,26 @@
         },
         "http_body_params" : null,
         "http_header_params" : null
+    },
+    "GET /entities/{entity}" : {
+        "description" : "Gets an entity from the Firebase database. This finds the external Firebase ID associated with the specified entity PK, and then uses the external Firebase ID to get all of the entity's credentials from Firebase.",
+        "output" : {
+            "FIREBASE OUTPUT" : "Refer to the fields stored in Firebase for details on what this route returns."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "POST /entities/" : {
+        "description" : "Adds a new entity.",
+        "output" : {
+            "entity" : "The PK of the entity that was just created."
+        },
+        "http_body_params" : {
+            "ext_firebase_id" : {
+                "description" : "The external Firebase ID corresponding to the newly-created entity.",
+                "required" : true
+            }
+        },
+        "http_header_params" : null
     }
 }
