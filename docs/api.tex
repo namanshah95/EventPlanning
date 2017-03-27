@@ -99,6 +99,21 @@ Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{event} & The PK of the event. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
+\item \textbf{GET /event/\{event\}/roles/\{role\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Gets a specific needed role for a specific event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{*description} & The event-level description, or default description if an event-level description doesn't exist, of the role needed by the event. \\ \hline
+    \texttt{*estimated\_budget} & The amount of money that should be dedicated to this role. \\ \hline
+    \texttt{*quantity\_needed} & The number of people needed to perform this role. \\ \hline
+    \texttt{event} & The PK of the event. \\ \hline
+    \texttt{event\_needed\_role} & Record PK. \\ \hline
+    \texttt{needed\_role} & The PK of the role needed by the event. \\ \hline
+    \texttt{needed\_role\_name} & The name of the role needed by the event. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
 \item \textbf{GET /roles/} \smallskip \\
 \begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
 Description & Gets all roles from the database. \\ \hline
@@ -213,6 +228,15 @@ HTTP Header Params & None. \\ \hline
 HTTP Body Params & None. \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{event\_entity\_role} & The PK of the record that was deleted. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{DELETE /event/\{event\}/roles/\{role\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Removes a needed role from an event. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event\_needed\_role} & The PK of the record that was deleted. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{DELETE /roles/\{role\}} \smallskip \\

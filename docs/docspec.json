@@ -215,5 +215,27 @@
             }
         },
         "http_header_params" : null
+    },
+    "GET /event/{event}/roles/{role}" : {
+        "description" : "Gets a specific needed role for a specific event.",
+        "output" : {
+            "event_needed_role" : "Record PK.",
+            "event" : "The PK of the event.",
+            "needed_role" : "The PK of the role needed by the event.",
+            "needed_role_name" : "The name of the role needed by the event.",
+            "*estimated_budget" : "The amount of money that should be dedicated to this role.",
+            "*quantity_needed" : "The number of people needed to perform this role.",
+            "*description" : "The event-level description, or default description if an event-level description doesn't exist, of the role needed by the event."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
+    },
+    "DELETE /event/{event}/roles/{role}" : {
+        "description" : "Removes a needed role from an event.",
+        "output" : {
+            "event_needed_role" : "The PK of the record that was deleted."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
     }
 }
