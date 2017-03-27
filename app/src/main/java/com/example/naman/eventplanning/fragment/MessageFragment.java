@@ -1,10 +1,12 @@
 package com.example.naman.eventplanning.fragment;
 
-import android.content.res.Resources;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,20 +20,20 @@ import android.widget.TextView;
 
 import com.example.naman.eventplanning.Message;
 import com.example.naman.eventplanning.MessageDataSource;
-import com.example.naman.eventplanning.Messenger;
 import com.example.naman.eventplanning.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-/**
- * Created by mengdili on 3/10/17.
- */
 
-public class MessageFragment extends Fragment implements MessageDataSource.MessagesCallbacks {
-
+public class MessageFragment extends Fragment implements MessageDataSource.MessagesCallbacks{
+    private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
     private ArrayList<Message> messageList;
@@ -41,32 +43,31 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
     private ListView mMessageList;
     private Button mSendButton;
     private EditText text_box;
+    private String senderName;
+    private Context context;
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_messenger, null);
         initView(view);
         return view;
     }
 
-    private void initView(View view) {
-
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+    private void initView(View view){
 
         mMessageList = (ListView) view.findViewById(R.id.message_list);
+        text_box = (EditText) view.findViewById(R.id.new_message);
         messageList = new ArrayList<>();
         adapter = new MessageAdapter(messageList);
         mMessageList.setAdapter(adapter);
-        text_box = (EditText) view.findViewById(R.id.new_message);
 
         mSendButton = (Button) view.findViewById(R.id.send_message);
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //EditText text_box = (EditText) view.findViewById(R.id.new_message);
                 String text = text_box.getText().toString();
-                String sender = "TBD"; // TODO: Replace with mAuth.getUID()
+                String sender = "namanshah66@gmail.com";
                 Message msg = new Message(text, sender);
                 if (!text.equals("")) {
                     saveMessage(msg);
@@ -75,15 +76,23 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
             }
         });
 
-        listener = MessageDataSource.addMessagesListener("sample_event_id", this);
+    }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getContext();
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        listener = MessageDataSource.addMessagesListener("sample_event_id", this);
 
     }
 
     private void saveMessage(Message msg) {
         // TODO: Replace all sample_event_id with current event id
-        String key = mDatabase.child("sample_event_id").push().getKey();
-        mDatabase.child("sample_event_id").child(key).setValue(new MessageHelper(msg));
+        String key = mDatabase.child("messages").child("sample_event_id").push().getKey();
+        mDatabase.child("messages").child("sample_event_id").child(key).setValue(new MessageHelper(msg));
     }
 
     @Override
@@ -93,10 +102,9 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
     }
 
 
-
     private class MessageAdapter extends ArrayAdapter<Message> {
         MessageAdapter(ArrayList<Message> messages) {
-            super(getActivity(), R.layout.message_item, R.id.message, messages);
+            super(context, R.layout.message_item, R.id.message, messages);
         }
 
         @Override
@@ -109,7 +117,7 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)nameView.getLayoutParams();
 
             int sdk = Build.VERSION.SDK_INT;
-            if (message.getSender().equals("TBD")){
+            if (message.getSender().equals("namanshah66@gmail.com")){
                 nameView.setText(message.getText());
                 if (sdk >= Build.VERSION_CODES.JELLY_BEAN) {
                     nameView.setBackgroundResource(R.drawable.bubble_right_green);
@@ -118,7 +126,9 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
                 }
                 layoutParams.gravity = Gravity.RIGHT;
             }else{
-                nameView.setText(message.getSender() + ":\n" + message.getText());
+                nameView.setTextColor(Color.BLACK);
+                setSenderName(message);
+                nameView.setText(senderName + ":\n" + message.getText());
                 if (sdk >= Build.VERSION_CODES.JELLY_BEAN) {
                     nameView.setBackgroundResource(R.drawable.bubble_left_gray);
                 } else{
@@ -130,6 +140,20 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
             nameView.setLayoutParams(layoutParams);
             return convertView;
         }
+    }
+
+    private void setSenderName(Message message) {
+        mDatabase.child("users").child(message.getSender()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                senderName = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                senderName = "ERROR";
+            }
+        });
     }
 
     private class MessageHelper {
@@ -148,15 +172,5 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
             this.Datetime = sdf.format(msg.getDatetime());
         }
     }
-
-
-
-
-
-
-
-
 }
-
-
 
