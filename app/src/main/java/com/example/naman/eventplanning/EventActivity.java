@@ -50,7 +50,7 @@ public class EventActivity extends AppCompatActivity {
 
 
 
-        /*mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() == null) {
             startActivity(new Intent(EventActivity.this, LoginActivity.class));
         }
@@ -62,7 +62,7 @@ public class EventActivity extends AppCompatActivity {
                     startActivity(new Intent(EventActivity.this, LoginActivity.class));
                 }
             }
-        };*/
+        };
 
 
 
