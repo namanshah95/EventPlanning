@@ -9,6 +9,19 @@
     android:weightSum="1">
 
     <EditText
+        android:id="@+id/editnum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editdesp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignStart="@+id/editdesp"
+        android:layout_below="@+id/textView2"
+        android:ems="10"
+        android:hint="Number"
+        android:inputType="textPersonName" />
+
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
@@ -24,33 +37,32 @@
         android:layout_alignParentEnd="true" />
 
     <EditText
+        android:id="@+id/editMoney"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
+        android:layout_alignLeft="@+id/textView5"
+        android:layout_alignStart="@+id/textView5"
+        android:layout_below="@+id/textView5"
         android:ems="10"
-        android:id="@+id/editnum"
-        android:hint="Number"
-        android:layout_marginLeft="13dp"
-        android:layout_marginStart="13dp"
-        android:layout_below="@+id/textView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:hint="Money"
+        android:inputType="textPersonName"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
 
     <TextView
-        android:text="description"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textSize="18sp"
-        android:layout_weight="0.04"
-        android:layout_marginTop="56dp"
-        android:layout_below="@+id/etEditEventName"
         android:layout_alignLeft="@+id/editdesp"
-        android:layout_alignStart="@+id/editdesp" />
+        android:layout_alignStart="@+id/editdesp"
+        android:layout_below="@+id/etEditEventName"
+        android:layout_marginTop="36dp"
+        android:layout_weight="0.04"
+        android:text="description"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/colorText"
+        android:textSize="18sp" />
 
     <TextView
         android:text="People Needed Number"
@@ -60,21 +72,22 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18sp"
         android:layout_weight="0.04"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/editnum"
-        android:layout_alignStart="@+id/editnum" />
+        android:layout_below="@+id/editMoney"
+        android:layout_alignLeft="@+id/editMoney"
+        android:layout_alignStart="@+id/editMoney"
+        android:layout_marginTop="27dp" />
 
     <EditText
+        android:id="@+id/etEditEventName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:id="@+id/etEditEventName"
-        android:hint="TaskName"
-        android:layout_marginTop="18dp"
-        android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView" />
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="TaskName"
+        android:inputType="text" />
 
     <Button
         android:id="@+id/back"
@@ -97,4 +110,16 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="18dp"
         android:layout_marginEnd="18dp" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/back"
+        android:layout_alignStart="@+id/back"
+        android:layout_below="@+id/editdesp"
+        android:layout_marginTop="24dp"
+        android:text="Estimated Expense"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="18sp" />
 </RelativeLayout>

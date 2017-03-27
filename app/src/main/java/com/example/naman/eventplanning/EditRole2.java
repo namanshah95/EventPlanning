@@ -18,6 +18,8 @@ public class EditRole2 extends AppCompatActivity implements
     ListView listView;
     ArrayAdapter<String> adapter;
     Button back;
+    String Event;
+    String Role;
 
 
     /** Called when the activity is first created. */
@@ -27,6 +29,10 @@ public class EditRole2 extends AppCompatActivity implements
         setContentView(R.layout.activity_edit_role2);
 
         findViewsById();
+
+        Intent intent = getIntent();
+        Event = intent.getStringExtra("Event");
+        Role = intent.getStringExtra("Role");
 
         String[] sports = getResources().getStringArray(R.array.people_array);
         adapter = new ArrayAdapter<String>(this,
@@ -90,9 +96,12 @@ public class EditRole2 extends AppCompatActivity implements
         Intent intent = new Intent(getApplicationContext(),
                 EditRole3.class);
 
+
         // Create a bundle object
         Bundle b = new Bundle();
         b.putStringArray("selectedItems", outputStrArr);
+        intent.putExtra("Event", Event);
+        intent.putExtra("Role", Role);
 
         // Add the bundle to the intent.
         intent.putExtras(b);

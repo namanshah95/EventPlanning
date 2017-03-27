@@ -1,12 +1,10 @@
 package com.example.naman.eventplanning;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -21,7 +19,7 @@ public class GuestEditRole extends AppCompatActivity {
 
         final TextView etEventNameEdit = (TextView) findViewById(R.id.etEditEventName);
         final TextView etdesp = (TextView) findViewById(R.id.editdesp);
-        final TextView etnum = (TextView) findViewById(R.id.editnum);
+        final TextView etnum = (TextView) findViewById(R.id.editMoney);
         final TextView people = (TextView) findViewById(R.id.textView4);
         //final Button bEventEditSubmit =  (Button) findViewById(R.id.bEditRole);
 
