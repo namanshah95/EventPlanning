@@ -33,7 +33,7 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/task_manage"
+                android:id="@+id/guest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -44,6 +44,22 @@
                 android:padding="6dp"
                 android:checked="true"
                 android:drawablePadding="5dp"
+                android:text="Guest"
+                android:textColor="@drawable/select_tab_text_color"
+                android:textSize="@dimen/tab_text_size"/>
+
+            <RadioButton
+                android:id="@+id/task_manage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@null"
+                android:background="@android:color/transparent"
+                android:drawableTop="@drawable/task_manage"
+                android:gravity="center_horizontal"
+                android:padding="6dp"
+                android:checked="false"
+                android:drawablePadding="5dp"
                 android:text="Task"
                 android:textColor="@drawable/select_tab_text_color"
                 android:textSize="@dimen/tab_text_size"/>
@@ -52,6 +68,7 @@
                 android:id="@+id/message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:button="@null"
                 android:background="@android:color/transparent"
                 android:drawableTop="@drawable/task_manage"

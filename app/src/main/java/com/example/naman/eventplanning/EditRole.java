@@ -41,7 +41,6 @@ public class EditRole extends AppCompatActivity {
         etEventNameEdit = (EditText) findViewById(R.id.etEditEventName);
         etdesp = (EditText) findViewById(R.id.editdesp);
         etnum = (EditText) findViewById(R.id.editnum);
-        //final Button bEventEditSubmit =  (Button) findViewById(R.id.bEditRole);
 
         Intent intent = getIntent();
         RoleName = intent.getStringExtra("EventName");
@@ -52,21 +51,6 @@ public class EditRole extends AppCompatActivity {
         etEventNameEdit.setText(RoleName);
         getData(Role);
 
-        /*bEventEditSubmit.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                String eventName = etEventNameEdit.getText().toString();
-                Intent intent = getIntent();
-                intent.putExtra("nameEdit", eventName);
-                String s = "yesEdit";
-                intent.putExtra("judgeEdit", s);
-
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-
-            }
-        });*/
 
 
         //next button
@@ -80,9 +64,7 @@ public class EditRole extends AppCompatActivity {
 
 
                 changeData();
-//                Intent intent=new Intent(EditRole.this,EditRole2.class);
-//                startActivityForResult(intent, 2);// Activity is started with requestCode 2
-//                startActivity(new Intent(EditRole.this, EditRole2.class));
+
             }
         });
 
@@ -118,8 +100,7 @@ public class EditRole extends AppCompatActivity {
         // check if the request code is same as what is passed  here it is 2
         if(requestCode==2)
         {
-//            String message=data.getStringExtra("MESSAGE");
-//            textView1.setText(message);
+
         }
     }
 
@@ -178,9 +159,6 @@ public class EditRole extends AppCompatActivity {
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-//        JSONObject parameters = new JSONObject();
-//        .put("user", username);
-//        map.put("pass", password);
 
 
 

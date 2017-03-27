@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.naman.eventplanning.AddEvent;
+import com.example.naman.eventplanning.AddGuest;
 import com.example.naman.eventplanning.EditRole;
 import com.example.naman.eventplanning.Messenger;
 import com.example.naman.eventplanning.R;
@@ -37,16 +38,18 @@ import org.json.JSONObject;
 /**
  * Created by mengdili on 3/11/17.
  */
-public class EventroleFragment extends Fragment {
+public class GuestFragment extends Fragment {
 
     ListView lv;
     Button addBtn;
-    ArrayList<String> Event = new ArrayList<>();
+    ArrayList<String> guest;
     ArrayAdapter<String> adapter;
-    String EventName, EventNameEdit;
     String judge,judgeEdit;
     int posEdit;
+    String EventName;
     String PK;
+    String Entity;
+    String Event;
     boolean flag = false;
 
 
@@ -68,8 +71,8 @@ public class EventroleFragment extends Fragment {
         addBtn = (Button) view.findViewById(R.id.btnAdd);
 
         //ADAPPTER
-        Event = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Event);
+        guest = new ArrayList<>();
+        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, guest);
         lv.setAdapter(adapter);
 
         getData();
@@ -82,28 +85,13 @@ public class EventroleFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 posEdit = position;
-                EditRole(position);
-
-//                Intent editIntent = new Intent(getContext(), EditRole.class );
-//                    editIntent.putExtra("EventName", Event.get(position));
-//                    editIntent.putExtra("Role","1");
-//                    startActivityForResult(editIntent,1);
+//                EditRole(position);
 
 
 
             }
         });
 
-//////////////////////////////////////////////////////
-        // TEMPORARY
-        //Button msgBtn = (Button) view.findViewById(R.id.btnMsg);
-        //msgBtn.setOnClickListener(new View.OnClickListener() {
-          //  @Override
-            //public void onClick(View view) {
-              //  Intent intent = new Intent(getContext(), Messenger.class);
-                //startActivity(intent);
-            //}
-        //});
 
         //swipe to delete
         SwipeDismissListViewTouchListener touchListener =
@@ -121,9 +109,9 @@ public class EventroleFragment extends Fragment {
 
                                     Log.d("postion", String.valueOf(position));
 
-                                    getPK(position);
+//                                    getPK(position);
 
-                                    Event.remove(position);
+                                    guest.remove(position);
                                     adapter.notifyDataSetChanged();
 
 
@@ -138,7 +126,7 @@ public class EventroleFragment extends Fragment {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addIntent = new Intent(getContext(), AddEvent.class );
+                Intent addIntent = new Intent(getContext(), AddGuest.class );
                 startActivityForResult(addIntent,1);
             }
         });
@@ -150,10 +138,9 @@ public class EventroleFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
-                EventName = data.getStringExtra("name");
+                Entity = data.getStringExtra("email");
                 judge = data.getStringExtra("judge");
-                EventNameEdit = data.getStringExtra("nameEdit");
-                judgeEdit = data.getStringExtra("judgeEdit");
+
                 if(judge != null && judge.equals("yes")){
                     try {
                         add();
@@ -162,10 +149,7 @@ public class EventroleFragment extends Fragment {
                     }
                     judge = "";
                 }
-                if(judgeEdit != null && judgeEdit.equals("yesEdit")){
-                    update();
-                    judgeEdit = "";
-                }
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -174,16 +158,16 @@ public class EventroleFragment extends Fragment {
     }//onActivityResult
 
     private void add() throws JSONException {
-        if(!EventName.isEmpty() && EventName.length()> 0){
+        if(!Entity.isEmpty() && Entity.length()> 0){
 
             postDate();
             //Add
-            adapter.add(EventName);
+            adapter.add(Entity);
             //Refresh
             adapter.notifyDataSetChanged();
 
-            Toast.makeText(getContext(),"Added " + EventName, Toast.LENGTH_SHORT).show();
-            EventName = "";
+            Toast.makeText(getContext(),"Added " + Entity, Toast.LENGTH_SHORT).show();
+            Entity = "";
         }
         else{
 
@@ -193,23 +177,23 @@ public class EventroleFragment extends Fragment {
     }
 
 
-    private void update(){
-        if(!EventNameEdit.isEmpty() && EventNameEdit.length()> 0){
-            adapter.remove(Event.get(posEdit));
-            adapter.insert(EventNameEdit, posEdit);
-            adapter.notifyDataSetChanged();
-            Toast.makeText(getContext(),"Edited Event", Toast.LENGTH_SHORT).show();
-            EventNameEdit = "";
-        }
-        else{
-            Toast.makeText(getContext(), "!! EventName cannot be null", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void update(){
+//        if(!EventNameEdit.isEmpty() && EventNameEdit.length()> 0){
+//            adapter.remove(Event.get(posEdit));
+//            adapter.insert(EventNameEdit, posEdit);
+//            adapter.notifyDataSetChanged();
+//            Toast.makeText(getContext(),"Edited Event", Toast.LENGTH_SHORT).show();
+//            EventNameEdit = "";
+//        }
+//        else{
+//            Toast.makeText(getContext(), "!! EventName cannot be null", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     private void getData(){
         String tag_json_arry = "json_array_req";
 
-        String url = "http://planmything.tech/api/roles/";
+        String url = "http://planmything.tech/api/event/" + Event + "/guests/";
         final ProgressDialog pDialog = new ProgressDialog(getContext());
 
         pDialog.setMessage("Loading...");
@@ -230,7 +214,7 @@ public class EventroleFragment extends Fragment {
                             }
                             String name = null;
                             try {
-                                name = jsonObject.getString("name");
+                                name = jsonObject.getString("entity");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -256,7 +240,7 @@ public class EventroleFragment extends Fragment {
     private void postDate() throws JSONException {
         String tag_json_obj = "json_obj_req";
 
-        String url = "http://planmything.tech/api/roles/";
+        String url = "http://planmything.tech/api/event/" + Event + "roles/";
 
 //        ProgressDialog pDialog = new ProgressDialog(getContext());
 //        pDialog.setMessage("Loading...");
@@ -264,7 +248,7 @@ public class EventroleFragment extends Fragment {
 
 
         Map<String, String> params = new HashMap();
-        params.put("name", EventName);
+        params.put("entity", Entity);
 
         JSONObject parameters = new JSONObject(params);
 
@@ -287,18 +271,6 @@ public class EventroleFragment extends Fragment {
             }
         }) {
 
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("name", EventName);
-                return params;
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("name", "TestDelete");
-                return headers;
-            }
 
         };
 
@@ -334,121 +306,60 @@ public class EventroleFragment extends Fragment {
 
     }
 
-    private void EditRole(int position){
-        final String RoleName = Event.get(position);
-        String tag_json_arry = "json_array_req";
-
-        String url = "http://planmything.tech/api/roles/";
-        final ProgressDialog pDialog = new ProgressDialog(getContext());
-
-        pDialog.setMessage("Loading...");
-        pDialog.show();
 
 
-        JsonArrayRequest req = new JsonArrayRequest(url,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d("EditReq", response.toString());
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject jsonObject = null;
-                            try {
-                                jsonObject = response.getJSONObject(i);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            String name = null;
-                            try {
-                                name = jsonObject.getString("name");
-                                if (name.equals(RoleName)){
-                                    PK = jsonObject.getString("role");
-//                                    String Desp = jsonObject.getString("description");\
-                                    Log.d("EditReq","PK is "+ PK );
-                                    break;
-
-
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }
-                        pDialog.hide();
-                        flag = true;
-                        Intent editIntent = new Intent(getContext(), EditRole.class );
-                        editIntent.putExtra("EventName", RoleName);
-                        editIntent.putExtra("Role",PK);
-//                                    editIntent.putExtra("Description",Desp);
-
-                        startActivityForResult(editIntent,1);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("InitReq", "Error: " + error.getMessage());
-                pDialog.hide();
-            }
-        });
-
-// Adding request to request queue
-        AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
-
-
-    }
-
-    private void getPK(int position){
-
-        final String RoleName = Event.get(position);
-        String tag_json_arry = "json_array_req";
-
-        String url = "http://planmything.tech/api/roles/";
-
-        JsonArrayRequest req = new JsonArrayRequest(url,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d("GetPk", response.toString());
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject jsonObject = null;
-                            try {
-                                jsonObject = response.getJSONObject(i);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            String name = null;
-                            try {
-                                name = jsonObject.getString("name");
-                                if (name.equals(RoleName)){
-                                    PK = jsonObject.getString("role");
-//                                    String Desp = jsonObject.getString("description");\
-                                    Log.d("EditReq","PK is "+ PK );
-                                    deleteData();
-                                    break;
-
-
-                                }
-                            } catch (JSONException e) {
-
-                                e.printStackTrace();
-                            }
-
-
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("getPK","Gett Error Response code: " + error.networkResponse.statusCode );
-
-            }
-        });
-
-// Adding request to request queue
-        AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
-
-    }
-
-
+//    private void getPK(int position){
+//
+//        final String RoleName = Event.get(position);
+//        String tag_json_arry = "json_array_req";
+//
+//        String url = "http://planmything.tech/api/roles/";
+//
+//        JsonArrayRequest req = new JsonArrayRequest(url,
+//                new Response.Listener<JSONArray>() {
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//                        Log.d("GetPk", response.toString());
+//                        for (int i = 0; i < response.length(); i++) {
+//                            JSONObject jsonObject = null;
+//                            try {
+//                                jsonObject = response.getJSONObject(i);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                            String name = null;
+//                            try {
+//                                name = jsonObject.getString("name");
+//                                if (name.equals(RoleName)){
+//                                    PK = jsonObject.getString("role");
+////                                    String Desp = jsonObject.getString("description");\
+//                                    Log.d("EditReq","PK is "+ PK );
+//                                    deleteData();
+//                                    break;
+//
+//
+//                                }
+//                            } catch (JSONException e) {
+//
+//                                e.printStackTrace();
+//                            }
+//
+//
+//                        }
+//
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.d("getPK","Gett Error Response code: " + error.networkResponse.statusCode );
+//
+//            }
+//        });
+//
+//// Adding request to request queue
+//        AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
+//
+//    }
+//
+//
 }
