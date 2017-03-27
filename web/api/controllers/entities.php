@@ -2,6 +2,7 @@
     namespace entities;
 
     $API->get( '/entities/{entity}', 'entities\get_entity' );
+    $API->post( '/entities/',        'entities\add_entity' );
 
     function __firebase_fetch( $ext_firebase_id )
     {
@@ -40,5 +41,23 @@ SQL;
         }
         else
             return database_error( $response );
+    }
+
+    function add_entity( $request, $response, $args )
+    {
+        $params = $request->getParsedBody();
+        $query  = <<<SQL
+insert into tb_entity
+(
+    ext_firebase_id
+)
+values
+(
+    ?ext_firebase_id?
+)
+returning entity
+SQL;
+
+        return api_fetch_one( $response, $query, $params );
     }
 ?>
