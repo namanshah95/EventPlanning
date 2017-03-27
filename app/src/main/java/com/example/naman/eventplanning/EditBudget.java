@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class EditBudget extends AppCompatActivity {
+    String Event;
+    String Role;
+    String EstimedMoney;
+
 
     private String[] arrText =
-            new String[]{"Estimated Expense","Alice","Bob","Cathy"
+            new String[]{"Alice","Bob","Cathy"
                     ,"Tom","James"};
     private String[] arrTemp;
     private int totalExpense = 0;
@@ -29,6 +34,20 @@ public class EditBudget extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_budget);
+        final TextView estMoney = (TextView)findViewById(R.id.textView11);
+
+
+        Intent intent = getIntent();
+        Event = intent.getStringExtra("Event");
+        Role = intent.getStringExtra("Role");
+        EstimedMoney = intent.getStringExtra("Money");
+        Log.d("Role", "the role is" + Role);
+        Log.d("money", "the money is" + EstimedMoney);
+
+
+        estMoney.setText(EstimedMoney);
+
+
 
         arrTemp = new String[arrText.length];
 
@@ -37,7 +56,7 @@ public class EditBudget extends AppCompatActivity {
         listView.setAdapter(myListAdapter);
 
         Button submit =  (Button) findViewById(R.id.submit);
-        final TextView tv = (TextView)findViewById(R.id.textView2);
+        final TextView tv = (TextView)findViewById(R.id.textView10);
 
         //click submit button, total expense shows up
         submit.setOnClickListener(new View.OnClickListener(){
@@ -171,4 +190,5 @@ public class EditBudget extends AppCompatActivity {
 
 
     }
+
 }
