@@ -75,6 +75,7 @@ public class SignUpFragment extends Fragment {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null) {
                     mDatabase.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("Name").setValue(mName.getText().toString());
+                    mDatabase.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("Email").setValue((mEmail.getText().toString()));
                     startActivity(new Intent(getActivity(), EventActivity.class));
                 }
             }
