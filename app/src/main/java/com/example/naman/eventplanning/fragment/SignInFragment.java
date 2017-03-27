@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.naman.eventplanning.EventActivity;
 import com.example.naman.eventplanning.LoginActivity;
 import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.R;
@@ -68,7 +69,7 @@ public class SignInFragment extends Fragment {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null) {
                     System.out.println(firebaseAuth.getCurrentUser().getUid());
-                    startActivity(new Intent(getActivity(), MainActivity.class));
+                    startActivity(new Intent(getActivity(), EventActivity.class));
                 }
             }
         };

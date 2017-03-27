@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.naman.eventplanning.EventActivity;
 import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -74,7 +75,7 @@ public class SignUpFragment extends Fragment {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null) {
                     mDatabase.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("Name").setValue(mName.getText().toString());
-                    startActivity(new Intent(getActivity(), MainActivity.class));
+                    startActivity(new Intent(getActivity(), EventActivity.class));
                 }
             }
         };
