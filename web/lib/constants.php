@@ -14,4 +14,7 @@
 
     define( 'ROLE_OWNER', -1 );
     define( 'ROLE_GUEST', -2 );
+
+    define( 'FIREBASE_URL',     'https://event-planner-160406.firebaseio.com/' );
+    define( 'FIREBASE_AUTHKEY', 'cKZjwjMSN66IYC4bC8IDYx4CqySfSKaLIXKvofsq'     );
 ?>
