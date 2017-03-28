@@ -1,16 +1,27 @@
 package com.example.naman.eventplanning;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class EditRole2 extends AppCompatActivity implements
         OnClickListener {
@@ -119,5 +130,52 @@ public class EditRole2 extends AppCompatActivity implements
         // start the ResultActivity
         startActivity(intent);
     }
+
+    private void getPeopleList(){
+
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/event/" + Event + "/guests/";
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+    JsonArrayRequest req = new JsonArrayRequest(url,
+            new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Log.d("InitReq", response.toString());
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = response.getJSONObject(i);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        String name = null;
+                        try {
+                            name = jsonObject.getString("entity");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        adapter.add(name);
+                        adapter.notifyDataSetChanged();
+
+                    }
+                    pDialog.hide();
+                }
+            }, new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            VolleyLog.d("InitReq", "Error: " + error.getMessage());
+            pDialog.hide();
+        }
+    });
+
+// Adding request to request queue
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+ }
 }
 

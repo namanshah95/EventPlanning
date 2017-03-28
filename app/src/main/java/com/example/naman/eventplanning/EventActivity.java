@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -147,7 +148,23 @@ public class EventActivity extends AppCompatActivity {
 
 
         //ADAPPTER
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Event);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Event){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent){
+                // Get the current item from ListView
+                View view = super.getView(position,convertView,parent);
+
+
+                // Get the Layout Parameters for ListView Current Item View
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+
+                // Set the height of the Item View
+                params.height = 300;
+                view.setLayoutParams(params);
+
+                return view;
+            }
+        };
         lv.setAdapter(adapter);
 
 
@@ -309,6 +326,12 @@ public class EventActivity extends AppCompatActivity {
 
         String url = "http://planmything.tech/api/entity/" + myEntityPK + "/events/";
 
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
 
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
@@ -341,8 +364,10 @@ public class EventActivity extends AppCompatActivity {
                             }
                         }
 
-                    }
+                        pDialog.hide();}
+
                 }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("InitReq", "Error: " + error.getMessage());
