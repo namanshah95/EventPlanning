@@ -2,6 +2,7 @@ package com.example.naman.eventplanning.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Entity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,11 +58,14 @@ public class GuestFragment extends Fragment {
     int posEdit;
     String EventName;
     String PK;
-    String Entity;
-    String Event;
+    String EntityEmail, EntityName, EntityPK; // other usr's information
+    String Event; // current Event
+
+    String myEntityPK; // Curret user's PK
 
     boolean flag = false;
-    String myEmail, myName;
+    boolean exist = false;
+    String myEmail, myName; // current user's Email and Name
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -85,32 +89,40 @@ public class GuestFragment extends Fragment {
     }
 
     private void initView(View view) throws JSONException {
+
+        MainActivity activity = (MainActivity) getActivity();
+        Event = activity.getEvent();
+        myEmail = activity.getEmail();
+        myName = activity.getName();
+        myEntityPK = activity.getEntity();
+        EventName = activity.getEventName();
+        Log.d("fragment","Event is" + Event);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                myName = dataSnapshot.getValue().toString();
-                Log.d("Guest", "Name is " + myName);
+//        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                myName = dataSnapshot.getValue().toString();
+//                Log.d("Guest", "Name is " + myName);
+//
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
+//        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                myEmail = dataSnapshot.getValue().toString();
+//                Log.d("User", "Name is " + myEmail);
+//
+//            }
 
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                myEmail = dataSnapshot.getValue().toString();
-                Log.d("User", "Name is " + myEmail);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
 
         lv = (ListView) view.findViewById(R.id.evenList);
         addBtn = (Button) view.findViewById(R.id.btnAdd);
@@ -179,7 +191,8 @@ public class GuestFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                Entity = data.getStringExtra("email");
+                EntityEmail = data.getStringExtra("email");
+                Log.d("intent", "Entity's email" + EntityEmail);
                 judge = data.getStringExtra("judge");
 
                 if (judge != null && judge.equals("yes")) {
@@ -199,16 +212,10 @@ public class GuestFragment extends Fragment {
     }//onActivityResult
 
     private void add() throws JSONException {
-        if (!Entity.isEmpty() && Entity.length() > 0) {
+        if (!EntityEmail.isEmpty() && EntityEmail.length() > 0) {
+           CheckData();
 
-            postDate();
-            //Add
-            adapter.add(Entity);
-            //Refresh
-            adapter.notifyDataSetChanged();
 
-            Toast.makeText(getContext(), "Added " + Entity, Toast.LENGTH_SHORT).show();
-            Entity = "";
         } else {
 
             Toast.makeText(getContext(), "!! Nothing to Add", Toast.LENGTH_SHORT).show();
@@ -277,7 +284,7 @@ public class GuestFragment extends Fragment {
     }
 
 
-    private void postDate() throws JSONException {
+    private void postData() throws JSONException {
         String tag_json_obj = "json_obj_req";
 
         String url = "http://planmything.tech/api/event/" + Event + "/guests/";
@@ -285,7 +292,7 @@ public class GuestFragment extends Fragment {
 
 
         Map<String, String> params = new HashMap();
-        params.put("entity", Entity);
+        params.put("entity", EntityPK);
 
         JSONObject parameters = new JSONObject(params);
 
@@ -296,6 +303,12 @@ public class GuestFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("PostReq", response.toString());
+
+                        adapter.add(EntityName);
+                        //Refresh
+                        adapter.notifyDataSetChanged();
+
+                        Toast.makeText(getContext(), "Added " + EntityName, Toast.LENGTH_SHORT).show();
 
                     }
                 }, new Response.ErrorListener() {
@@ -343,6 +356,49 @@ public class GuestFragment extends Fragment {
         AppController.getInstance(getContext()).addToRequestQueue(request, tag_json_obj);
 
     }
+
+
+    // check whether the user exist
+    private void CheckData(){
+        String tag_json_arry = "json_array_req";
+        EntityEmail =  EntityEmail.replace('.',',');
+
+        String url = "http://planmything.tech/api/entities/?Email=" + EntityEmail;
+        Log.d("GetPK", "The url is " + url);
+
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("GetPk", response.toString());
+                        try {
+                            EntityName = response.getJSONObject(0).getString("Name");
+                            EntityPK = response.getJSONObject(0).getString("entity");
+                            Log.d("GetPk", "EntityName is "+ EntityName);
+                            exist = true;
+                            postData();
+                        } catch (JSONException e) {
+                            Toast.makeText(getContext(), "The person added has not signed up !", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+
+            }
+        });
+
+// Adding request to request queue
+        AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
+    }
+
+
 
 
 }

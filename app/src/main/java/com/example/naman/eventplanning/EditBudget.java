@@ -22,6 +22,8 @@ public class EditBudget extends AppCompatActivity {
     String Event;
     String Role;
     String EstimedMoney;
+    String EventName;
+    String myEmail,myEntityPK,myName;
 
 
     private String[] arrText =
@@ -41,6 +43,10 @@ public class EditBudget extends AppCompatActivity {
         Event = intent.getStringExtra("Event");
         Role = intent.getStringExtra("Role");
         EstimedMoney = intent.getStringExtra("Money");
+        EventName = intent.getStringExtra("Money");
+        myEmail= intent.getStringExtra("myEmail");
+        myName = intent.getStringExtra("myName");
+        myEntityPK = intent.getStringExtra("myEntityPK");
         Log.d("Role", "the role is" + Role);
         Log.d("money", "the money is" + EstimedMoney);
 
@@ -79,6 +85,14 @@ public class EditBudget extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),
                             "Record Saved", Toast.LENGTH_SHORT).show();
                 }
+
+                Intent intent = new Intent(EditBudget.this, MainActivity.class);
+                intent.putExtra("Event", Event);
+                intent.putExtra("myEmail", myEmail);
+                intent.putExtra("myName", myName);
+                intent.putExtra("myEntityPK", myEntityPK);
+                intent.putExtra("EventNme", EventName);
+                startActivity(intent);
 
             }
         });

@@ -29,20 +29,27 @@ public class EditRole3 extends AppCompatActivity {
 
     String[] resultArr;
     String[] resultPK;
-    String Event;
+
     String Role;
     String Entity;
+    String Event ;
+    String EventName;
+    String myEmail, myName,myEntityPK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_role3);
 
-        Bundle b = getIntent().getExtras();
+        Intent intent = getIntent();
+        EventName = intent.getStringExtra("Money");
+        myEmail= intent.getStringExtra("myEmail");
+        myName = intent.getStringExtra("myName");
+        myEntityPK = intent.getStringExtra("myEntityPK");
         Event = getIntent().getStringExtra("Event");
         Role = getIntent().getStringExtra("Role");
 
-        resultArr = b.getStringArray("selectedItems");
+        resultArr = intent.getStringArrayExtra("selectedItems");
         ListView lv = (ListView) findViewById(R.id.outputList);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -73,7 +80,14 @@ public class EditRole3 extends AppCompatActivity {
                 Log.d("Intent", "Event is " + Event);
                 Log.d("Intent", "Role is " + Role);
 
+
+
                 Intent intent = new Intent(EditRole3.this, MainActivity.class);
+                intent.putExtra("Event", Event);
+                intent.putExtra("myEmail", myEmail);
+                intent.putExtra("myName", myName);
+                intent.putExtra("myEntityPK", myEntityPK);
+                intent.putExtra("EventNme", EventName);
                 startActivityForResult(intent,1);
 
             }

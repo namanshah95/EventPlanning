@@ -19,7 +19,7 @@ public class GuestEditRole extends AppCompatActivity {
 
         final TextView etEventNameEdit = (TextView) findViewById(R.id.etEditEventName);
         final TextView etdesp = (TextView) findViewById(R.id.editdesp);
-        final TextView etnum = (TextView) findViewById(R.id.editMoney);
+        final TextView etnum = (TextView) findViewById(R.id.etMoney);
         final TextView people = (TextView) findViewById(R.id.textView4);
         //final Button bEventEditSubmit =  (Button) findViewById(R.id.bEditRole);
 

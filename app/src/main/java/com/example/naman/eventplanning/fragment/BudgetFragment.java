@@ -21,6 +21,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.naman.eventplanning.AppController;
 import com.example.naman.eventplanning.Budget;
 import com.example.naman.eventplanning.EditBudget;
+import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +50,7 @@ public class BudgetFragment extends Fragment{
     String PK;
     String Money;
     String myEmail, myName;
+    String myEntityPK, EventName;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -71,29 +73,36 @@ public class BudgetFragment extends Fragment{
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                myName = dataSnapshot.getValue().toString();
-                Log.d("Guest", "Name is " + myName);
+        MainActivity activity = (MainActivity) getActivity();
+        Event = activity.getEvent();
+        myEmail = activity.getEmail();
+        myName = activity.getName();
+        myEntityPK = activity.getEntity();
+        EventName = activity.getEventName();
 
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                myEmail = dataSnapshot.getValue().toString();
-                Log.d("User", "Name is " + myEmail);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+//        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                myName = dataSnapshot.getValue().toString();
+//                Log.d("Guest", "Name is " + myName);
+//
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
+//        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                myEmail = dataSnapshot.getValue().toString();
+//                Log.d("User", "Name is " + myEmail);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
 
 
 //
@@ -221,6 +230,10 @@ public class BudgetFragment extends Fragment{
                         editIntent.putExtra("Event", Event);
                         editIntent.putExtra("Role", PK);
                         editIntent.putExtra("Money",Money);
+                        editIntent.putExtra("myEmail", myEmail);
+                        editIntent.putExtra("myName", myName);
+                        editIntent.putExtra("myEntityPK", myEntityPK);
+                        editIntent.putExtra("EventNme", EventName);
 
                         startActivityForResult(editIntent, 1);
 

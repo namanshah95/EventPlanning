@@ -5,6 +5,7 @@ package com.example.naman.eventplanning;
  */
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,24 +22,49 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class EventActivity extends AppCompatActivity {
     ListView lv;
     Button addBtn;
-    ArrayList<String> Event = new ArrayList<String>(
-            Arrays.asList("Birthday","Small Party","Happy Party"));
+    ArrayList<String> Event;
     ArrayAdapter<String> adapter;
     String EventName, EventNameEdit;
     String judge,judgeEdit;
+    String EventPK;
+    ArrayList<String> EventPKAll;
     int posEdit;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavMenu;
+
+    String myEmail, myName, myEntityPK,event_entity_role;
+
+    private DatabaseReference mDatabase;
+
+
+    String Entity = "1";
 
 
 
@@ -48,22 +75,34 @@ public class EventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() == null) {
-            startActivity(new Intent(EventActivity.this, LoginActivity.class));
-        }
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null) {
-                    startActivity(new Intent(EventActivity.this, LoginActivity.class));
-                }
-            }
-        };
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myName = dataSnapshot.getValue().toString();
+                Log.d("Guest", "Name is " + myName);
 
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myEmail = dataSnapshot.getValue().toString();
+                getPK();
+                Log.d("User", "Email is " + myEmail);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
 
 
@@ -103,6 +142,8 @@ public class EventActivity extends AppCompatActivity {
 
         lv = (ListView)findViewById(R.id.evenList1);
         addBtn = (Button) findViewById(R.id.btnAdd1);
+        Event = new ArrayList<String>();
+        EventPKAll = new ArrayList<String>();
 
 
         //ADAPPTER
@@ -119,6 +160,11 @@ public class EventActivity extends AppCompatActivity {
                 posEdit = position;
                 Intent editIntent = new Intent(EventActivity.this, MainActivity.class );
                 editIntent.putExtra("EventName", Event.get(position));
+                editIntent.putExtra("Event", EventPKAll.get(position));
+                editIntent.putExtra("Email",myEmail);
+                editIntent.putExtra("Name", myName);
+                editIntent.putExtra("Entity",myEntityPK);
+                Log.d("transfer","Event is "+ EventPKAll.get(position) );
                 EventActivity.this.startActivityForResult(editIntent,1);
 
             }
@@ -204,6 +250,7 @@ public class EventActivity extends AppCompatActivity {
     private void add(){
         if(!EventName.isEmpty() && EventName.length()> 0){
             //Add
+            addEvent();
             adapter.add(EventName);
 
             //Refresh
@@ -211,7 +258,7 @@ public class EventActivity extends AppCompatActivity {
 
             Toast.makeText(getApplicationContext(),"Added " + EventName, Toast.LENGTH_SHORT).show();
 
-            EventName = "";
+//            EventName = "";
 
         }
         else{
@@ -255,6 +302,191 @@ public class EventActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "!! EventName cannot be null", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void getData(){
+
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/entity/" + myEntityPK + "/events/";
+
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("InitReq", response.toString());
+                        if (response != null) {
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                String name = null;
+                                String temp = null;
+                                try {
+                                    name = jsonObject.getString("event_name");
+                                    temp = jsonObject.getString("event");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                if (name != null) {
+                                    EventPKAll.add(temp);
+                                    adapter.add(name);
+                                    adapter.notifyDataSetChanged();
+                                }
+
+                            }
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+            }
+        });
+
+
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+    }
+
+    private void addEvent(){
+        String tag_json_obj = "json_obj_req";
+
+        String url = "http://planmything.tech/api/events/";
+        Map<String, String> params = new HashMap();
+        Log.d("PostReq", "EventName is " + EventName);
+        params.put("name", EventName);
+        params.put("start_time", "2017-03-06 10:14:11.799291");
+        params.put("end_time", "2017-03-06 10:14:11.799291");
+
+        JSONObject parameters = new JSONObject(params);
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                url, parameters,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("PostReq", response.toString());
+                        try {
+                            EventPK = response.getString("event");
+                            EventPKAll.add(EventPK);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        addOwner();
+
+
+                    }
+
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
+
+            }
+        }) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+        };
+
+
+        AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
+
+    }
+
+
+    private void addOwner(){
+
+        String tag_json_obj = "json_obj_req";
+
+        String url = "http://planmything.tech/api/event/" + EventPK + "/guests/";
+        Map<String, String> params = new HashMap();
+
+        params.put("entity", myEntityPK);
+
+        JSONObject parameters = new JSONObject(params);
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                url, parameters,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("PostReq", response.toString());
+                        try {
+                            event_entity_role = response.getString("event_entity_role");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
+
+            }
+        }) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+        };
+
+// Adding request to request queue
+        AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
+
+    }
+
+    private void getPK(){
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/entities/?Email=" + myEmail;
+        Log.d("GetPK", "The url is " + url);
+
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("GetPk", response.toString());
+                        try {
+                            myEntityPK = response.getJSONObject(0).getString("entity");
+                            Log.d("GetPk", "Entity is "+ myEntityPK);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        getData();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+
+            }
+        });
+
+// Adding request to request queue
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+    }
+
+
+
+
 
 
 

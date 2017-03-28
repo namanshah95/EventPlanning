@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.RadioGroup;
+import android.content.Intent;
 
 import com.example.naman.eventplanning.fragment.EventroleFragment;
 import com.example.naman.eventplanning.fragment.BudgetFragment;
@@ -46,10 +47,20 @@ public class MainActivity extends AppCompatActivity {
 
     String userName;
     String userEmail;
+    String Event; // pr of current event
+    String Entity; // pk of current user
+    String EventName; // name of current Event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        userName = intent.getStringExtra("Name");
+        userEmail = intent.getStringExtra("Email");
+        Event = intent.getStringExtra("Event");
+        Entity = intent.getStringExtra("Entity");
+        EventName = intent.getStringExtra("EventName");
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -66,32 +77,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                userName = dataSnapshot.getValue().toString();
-                Log.d("User", "Name is " + userName);
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
-
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                userEmail = dataSnapshot.getValue().toString();
-                Log.d("User", "Name is " + userEmail);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
 
 
         setContentView(R.layout.activity_main);
@@ -173,29 +159,29 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public String getMyEmail() {
-//        while (userEmail == null){
-//            try {
-//                Thread.sleep(1000);
-//            } catch(InterruptedException ex) {
-//                Thread.currentThread().interrupt();
-//            }
-//
-//        }
-        return userEmail;
-    }
+    public String getEvent() {
 
-    public String getMyName(){
-//        while (userEmail == null){
-//            try {
-//                Thread.sleep(1000);
-//            } catch(InterruptedException ex) {
-//                Thread.currentThread().interrupt();
-//            }
-//
-//        }
+        return Event;
+    }
+    public String getEntity() {
+
+        return Entity;
+    }
+    public String getName() {
+
         return userName;
     }
+    public String getEmail() {
+
+        return userEmail;
+    }
+    public String getEventName() {
+
+        return EventName;
+    }
+
+
+
 
 
 
@@ -217,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:// tab1
                     if (tab1Fragment == null){
                         tab1Fragment = new GuestFragment();
+
                     }
                     return tab1Fragment;
 
