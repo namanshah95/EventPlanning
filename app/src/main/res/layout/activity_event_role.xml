@@ -31,17 +31,17 @@
         <!-- TEMPORARY -->
 
         <ListView
+            android:id="@+id/evenList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/evenList"
             android:layout_above="@+id/btnAdd"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_gravity="start"
             android:layout_marginBottom="19dp"
+            android:choiceMode="singleChoice"
             android:divider="@color/listviewDivider"
-            android:dividerHeight="2px"
-            android:choiceMode = "singleChoice"
-            android:layout_gravity="start"/>
+            android:dividerHeight="2px" />
 
         <Button
             android:text="Add"

@@ -12,14 +12,12 @@
         android:id="@+id/editnum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editdesp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignStart="@+id/editdesp"
-        android:layout_below="@+id/textView2"
         android:ems="10"
         android:hint="Number"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -37,7 +35,7 @@
         android:layout_alignParentEnd="true" />
 
     <EditText
-        android:id="@+id/editMoney"
+        android:id="@+id/etMoney"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView5"
@@ -72,9 +70,9 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18sp"
         android:layout_weight="0.04"
-        android:layout_below="@+id/editMoney"
-        android:layout_alignLeft="@+id/editMoney"
-        android:layout_alignStart="@+id/editMoney"
+        android:layout_below="@+id/etMoney"
+        android:layout_alignLeft="@+id/etMoney"
+        android:layout_alignStart="@+id/etMoney"
         android:layout_marginTop="27dp" />
 
     <EditText

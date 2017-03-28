@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.naman.eventplanning.AddEvent;
 import com.example.naman.eventplanning.EditRole;
+import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.Messenger;
 import com.example.naman.eventplanning.R;
 import com.example.naman.eventplanning.SwipeDismissListViewTouchListener;
@@ -55,10 +56,10 @@ public class EventroleFragment extends Fragment {
     String PK, desc, p_number, money;
     boolean flag = false;
     boolean exist = false;
-    String Event = "1" ;
+    String Event;
     String EventName;
     String needed_role;
-    String myEmail, myName;
+    String myEmail, myName,myEntityPK;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -80,30 +81,12 @@ public class EventroleFragment extends Fragment {
     private void initView(View view) throws JSONException {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                myName = dataSnapshot.getValue().toString();
-                Log.d("Guest", "Name is " + myName);
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                myEmail = dataSnapshot.getValue().toString();
-                Log.d("User", "Name is " + myEmail);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+        MainActivity activity = (MainActivity) getActivity();
+        Event = activity.getEvent();
+        myEmail = activity.getEmail();
+        myName = activity.getName();
+        myEntityPK = activity.getEntity();
+        EventName = activity.getEventName();
 
 
 
@@ -112,7 +95,24 @@ public class EventroleFragment extends Fragment {
 
         //ADAPPTER
         Roles = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Roles);
+        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Roles){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent){
+                // Get the current item from ListView
+                View view = super.getView(position,convertView,parent);
+
+
+                // Get the Layout Parameters for ListView Current Item View
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+
+                // Set the height of the Item View
+                params.height = 300;
+                view.setLayoutParams(params);
+
+                return view;
+            }
+        };
+
         lv.setAdapter(adapter);
 
         getData();
@@ -126,11 +126,6 @@ public class EventroleFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 posEdit = position;
                 EditRole(position);
-
-//                Intent editIntent = new Intent(getContext(), EditRole.class );
-//                    editIntent.putExtra("RoleName", Roles.get(position));
-//                    editIntent.putExtra("Role","1");
-//                    startActivityForResult(editIntent,1);
 
 
 
@@ -504,64 +499,56 @@ public class EventroleFragment extends Fragment {
         String tag_json_arry = "json_array_req";
         Log.d("RoleName", "is " + RoleName);
 
-        String url = "http://planmything.tech/api/event/" + Event + "/roles/";
-        final ProgressDialog pDialog = new ProgressDialog(getContext());
-
-        pDialog.setMessage("Loading...");
-        pDialog.show();
-
+        String url = "http://planmything.tech/api/event/" + Event + "/roles/?needed_role_name="+ RoleName;
 
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("EditReq", response.toString());
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject jsonObject = null;
                             try {
-                                jsonObject = response.getJSONObject(i);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            String name = null;
-                            try {
-                                name = jsonObject.getString("needed_role_name");
-                                if (name.equals(RoleName)){
-                                    desc = jsonObject.getString("description");
-                                    p_number = jsonObject.getString("quantity_needed");
-                                    PK = jsonObject.getString("event_needed_role");
-                                    needed_role= jsonObject.getString("needed_role");
-//                                    String Desp = jsonObject.getString("description");\
-                                    Log.d("EditReq","PK is "+ PK );
-                                    break;
+                                String name = response.getJSONObject(0).getString("needed_role_name");
+                                String desc = response.getJSONObject(0).getString("description");
+                                String p_number = response.getJSONObject(0).getString("quantity_needed");
+                                String PK = response.getJSONObject(0).getString("event_needed_role");
+                                String needed_role= response.getJSONObject(0).getString("needed_role");
+                                String money = response.getJSONObject(0).getString("estimated_budget");
+//
+                                Log.d("EditReq","PK is "+ PK );
+                                flag = true;
+                                Intent editIntent = new Intent(getContext(), EditRole.class );
+                                editIntent.putExtra("RoleName", RoleName);
+                                editIntent.putExtra("Role",PK);
+                                editIntent.putExtra("needed_role", needed_role);
+                                editIntent.putExtra("Descripition", desc);
+                                editIntent.putExtra("PeopleNumber", p_number);
+                                editIntent.putExtra("Money", money);
+                                editIntent.putExtra("myEmail", myEmail);
+                                editIntent.putExtra("myName", myName);
+                                editIntent.putExtra("myEntityPK", myEntityPK);
+                                editIntent.putExtra("Event", Event);
+                                editIntent.putExtra("EventNme", EventName);
 
 
-                                }
+                                startActivityForResult(editIntent,1);
+
+
+
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
 
                         }
-                        pDialog.hide();
-                        flag = true;
-                        Intent editIntent = new Intent(getContext(), EditRole.class );
-                        editIntent.putExtra("RoleName", RoleName);
-                        editIntent.putExtra("Role",PK);
-                        editIntent.putExtra("needed_role", needed_role);
-                        editIntent.putExtra("Descripition", desc);
-                        editIntent.putExtra("PeopleNumber", p_number);
-                        editIntent.putExtra("Money", money);
-                        editIntent.putExtra("Event", Event);
 
 
-                        startActivityForResult(editIntent,1);
-                    }
+
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("InitReq", "Error: " + error.getMessage());
-                pDialog.hide();
+
             }
         });
 
@@ -617,7 +604,7 @@ public class EventroleFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("getPK","Gett Error Response code: " + error.networkResponse.statusCode );
+                Log.d("getPK","Get Error Response code: " + error.networkResponse.statusCode );
 
             }
         });
