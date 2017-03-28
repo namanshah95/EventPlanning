@@ -29,6 +29,12 @@ import java.util.Map;
 
 import com.android.volley.*;
 import com.android.volley.toolbox.*;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +58,11 @@ public class EventroleFragment extends Fragment {
     String Event = "1" ;
     String EventName;
     String needed_role;
+    String myEmail, myName;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
 
 
     @Nullable
@@ -67,6 +78,33 @@ public class EventroleFragment extends Fragment {
     }
 
     private void initView(View view) throws JSONException {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myName = dataSnapshot.getValue().toString();
+                Log.d("Guest", "Name is " + myName);
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myEmail = dataSnapshot.getValue().toString();
+                Log.d("User", "Name is " + myEmail);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
 
 
         lv = (ListView) view.findViewById(R.id.evenList);
@@ -116,7 +154,7 @@ public class EventroleFragment extends Fragment {
 
                                     Log.d("postion", String.valueOf(position));
 
-                                    getPK(position);
+//                                    getPK(position);
 
                                     Roles.remove(position);
                                     adapter.notifyDataSetChanged();
@@ -201,6 +239,7 @@ public class EventroleFragment extends Fragment {
         }
     }
 
+    // Init list all tasks
     private void getData(){
         String tag_json_arry = "json_array_req";
 
@@ -254,6 +293,7 @@ public class EventroleFragment extends Fragment {
 
 
 
+    // Judge whether the roles in role table
     private void findData() {
         String tag_json_arry = "json_array_req";
 
@@ -279,8 +319,8 @@ public class EventroleFragment extends Fragment {
                                 if (name.equals(RoleName)){
                                     Log.d("findData", "RoleName is " + RoleName);
                                     exist = true;
-                                    PK = jsonObject.getString("role");
-                                    Log.d("findData","PK is "+ PK );
+                                    needed_role = jsonObject.getString("role");
+                                    Log.d("findData","needRole is "+ needed_role );
                                     break;
 
 
@@ -317,6 +357,7 @@ public class EventroleFragment extends Fragment {
 
     }
 
+
     // add role to roles
     private void addData(){
 
@@ -342,7 +383,7 @@ public class EventroleFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         Log.d("PostReq", response.toString());
                         try {
-                            PK = response.getString("role");
+                            needed_role = response.getString("role");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -389,16 +430,13 @@ public class EventroleFragment extends Fragment {
         exist = false;
         String tag_json_obj = "json_obj_req";
 
-       String url = "http://planmything.tech/api/event/" + Event + "/roles/";
+        String url = "http://planmything.tech/api/event/" + Event + "/roles/";
 
         final ProgressDialog pDialog = new ProgressDialog(getContext());
-//        pDialog.setMessage("Loading...");
-//        pDialog.show();
 
 
         Map<String, String> params = new HashMap();
-        params.put("needed_role", PK);
-//        params.put("needed_role_name", RoleName);
+        params.put("needed_role", needed_role);
 
 
         JSONObject parameters = new JSONObject(params);
@@ -422,10 +460,10 @@ public class EventroleFragment extends Fragment {
             }
         }) {
 
-             @Override
-              public String getBodyContentType() {
-                   return "application/json";
-              }
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
 
         };
 
@@ -437,9 +475,8 @@ public class EventroleFragment extends Fragment {
 
     private void deleteData() {
         String tag_json_obj = "json_obj_req";
-//        String url = "http://planmything.tech/api/roles/" + PK;
-        String url = "http://planmything.tech/api/event/" + Event + "/roles/" + PK;
-        Log.d("DeleteReq" + ": ", "Delete PK is" + PK);
+        String url = "http://planmything.tech/api/event/" + Event + "/roles/" + needed_role;
+        Log.d("DeleteReq" + ": ", "Delete needed_role is" + needed_role);
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -457,7 +494,6 @@ public class EventroleFragment extends Fragment {
                         }
                     }
                 });
-//    requesQueue.add(request);
         AppController.getInstance(getContext()).addToRequestQueue(request, tag_json_obj);
 
     }
@@ -468,7 +504,6 @@ public class EventroleFragment extends Fragment {
         String tag_json_arry = "json_array_req";
         Log.d("RoleName", "is " + RoleName);
 
-//        String url = "http://planmything.tech/api/roles/";
         String url = "http://planmything.tech/api/event/" + Event + "/roles/";
         final ProgressDialog pDialog = new ProgressDialog(getContext());
 
@@ -495,6 +530,7 @@ public class EventroleFragment extends Fragment {
                                     desc = jsonObject.getString("description");
                                     p_number = jsonObject.getString("quantity_needed");
                                     PK = jsonObject.getString("event_needed_role");
+                                    needed_role= jsonObject.getString("needed_role");
 //                                    String Desp = jsonObject.getString("description");\
                                     Log.d("EditReq","PK is "+ PK );
                                     break;
@@ -512,6 +548,7 @@ public class EventroleFragment extends Fragment {
                         Intent editIntent = new Intent(getContext(), EditRole.class );
                         editIntent.putExtra("RoleName", RoleName);
                         editIntent.putExtra("Role",PK);
+                        editIntent.putExtra("needed_role", needed_role);
                         editIntent.putExtra("Descripition", desc);
                         editIntent.putExtra("PeopleNumber", p_number);
                         editIntent.putExtra("Money", money);
@@ -534,12 +571,15 @@ public class EventroleFragment extends Fragment {
 
     }
 
+
+    //get the position to delete
+
     private void getPK(int position){
 
         final String RoleName = Roles.get(position);
         String tag_json_arry = "json_array_req";
 
-        String url = "http://planmything.tech/api/roles/";
+        String url = "http://planmything.tech/evnet/" + Event +"/roles/";
 
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
@@ -555,11 +595,11 @@ public class EventroleFragment extends Fragment {
                             }
                             String name = null;
                             try {
-                                name = jsonObject.getString("name");
+                                name = jsonObject.getString("needed_role_name");
                                 if (name.equals(RoleName)){
-                                    PK = jsonObject.getString("role");
+                                    needed_role = jsonObject.getString("needed_role");
 //                                    String Desp = jsonObject.getString("description");\
-                                    Log.d("EditReq","PK is "+ PK );
+                                    Log.d("EditReq","needed_role is "+ needed_role);
                                     deleteData();
                                     break;
 
