@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.RadioGroup;
 
@@ -21,9 +22,17 @@ import com.example.naman.eventplanning.fragment.MessageFragment;
 
 import com.example.naman.eventplanning.view.viewpager.CustomViewPager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
+    private DatabaseReference mDatabase;
     private CustomViewPager viewPager;
     private ViewPagerAdapter adapter;
     private RadioGroup rgTab;
@@ -35,10 +44,14 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    String userName;
+    String userEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -52,6 +65,34 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                userName = dataSnapshot.getValue().toString();
+                Log.d("User", "Name is " + userName);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                userEmail = dataSnapshot.getValue().toString();
+                Log.d("User", "Name is " + userEmail);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
 
         setContentView(R.layout.activity_main);
 
@@ -131,6 +172,32 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public String getMyEmail() {
+//        while (userEmail == null){
+//            try {
+//                Thread.sleep(1000);
+//            } catch(InterruptedException ex) {
+//                Thread.currentThread().interrupt();
+//            }
+//
+//        }
+        return userEmail;
+    }
+
+    public String getMyName(){
+//        while (userEmail == null){
+//            try {
+//                Thread.sleep(1000);
+//            } catch(InterruptedException ex) {
+//                Thread.currentThread().interrupt();
+//            }
+//
+//        }
+        return userName;
+    }
+
+
 
     private class ViewPagerAdapter extends FragmentStatePagerAdapter {
 

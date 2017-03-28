@@ -64,7 +64,7 @@ public class EditBudget extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 totalExpense = 0;
-                for(int i = 1; i < arrTemp.length; i++){
+                for(int i = 0; i < arrTemp.length; i++){
                     if(!arrTemp[i].equals("")) {
                         totalExpense += Integer.parseInt(arrTemp[i]);
                     }
@@ -72,10 +72,7 @@ public class EditBudget extends AppCompatActivity {
                 }
 
                 //show alert if total expense larger than estimated expense
-                if(arrTemp[0].equals("")){
-                    arrTemp[0] = "0";
-                }
-                if(totalExpense > Integer.parseInt(arrTemp[0])){
+                if(totalExpense > Float.parseFloat(EstimedMoney)){
                     Toast.makeText(getApplicationContext(),
                             "Total expense is larger than estimated!", Toast.LENGTH_SHORT).show();
                 }else{

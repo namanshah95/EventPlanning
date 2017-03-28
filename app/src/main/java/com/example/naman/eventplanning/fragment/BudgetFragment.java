@@ -22,6 +22,12 @@ import com.example.naman.eventplanning.AppController;
 import com.example.naman.eventplanning.Budget;
 import com.example.naman.eventplanning.EditBudget;
 import com.example.naman.eventplanning.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,9 +48,13 @@ public class BudgetFragment extends Fragment{
     String RoleName;
     String PK;
     String Money;
+    String myEmail, myName;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
 
-//    ArrayList<String> TaskArray = new ArrayList<String>(
+    //    ArrayList<String> TaskArray = new ArrayList<String>(
 //            Arrays.asList("Drivers","Snack Bringers","Table Setup"));
     ArrayList<String> TaskArray;
     int posEdit;
@@ -57,6 +67,34 @@ public class BudgetFragment extends Fragment{
     }
 
     private void initView(View view) {
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myName = dataSnapshot.getValue().toString();
+                Log.d("Guest", "Name is " + myName);
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myEmail = dataSnapshot.getValue().toString();
+                Log.d("User", "Name is " + myEmail);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
 
 //
 //        ArrayAdapter adapter = new ArrayAdapter<String>(getContext(),

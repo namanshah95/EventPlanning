@@ -7,12 +7,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.naman.eventplanning.AppController;
 import com.example.naman.eventplanning.EventActivity;
 import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.R;
@@ -22,6 +28,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,7 +86,7 @@ public class SignUpFragment extends Fragment {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null) {
                     mDatabase.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("Name").setValue(mName.getText().toString());
-                    mDatabase.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("Email").setValue((mEmail.getText().toString()));
+                    mDatabase.child("users").child(firebaseAuth.getCurrentUser().getUid()).child("Email").setValue((mEmail.getText().toString().replace(".", ",")));
                     startActivity(new Intent(getActivity(), EventActivity.class));
                 }
             }
@@ -98,6 +109,9 @@ public class SignUpFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()) {
                             Snackbar.make(getView(), "Could not create new user", Snackbar.LENGTH_SHORT).show();
+                        }
+                        else{
+                            postEntity();
                         }
                     }
                 });
@@ -137,6 +151,50 @@ public class SignUpFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    private void postEntity(){
+        String tag_json_obj = "json_obj_req";
+
+        String url = "http://planmything.tech/api/entities/";
+
+        Map<String, String> params = new HashMap();
+        params.put("ext_firebase_id", mAuth.getCurrentUser().getUid());
+        Log.d("SignUp", "my id is "+ mAuth.getCurrentUser().getUid().toString());
+
+
+        JSONObject parameters = new JSONObject(params);
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                url, parameters,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("SignUp", response.toString());
+//                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("SingUp", "Error: " + error.networkResponse.statusCode);
+
+            }
+        }) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+        };
+
+// Adding request to request queue
+        AppController.getInstance(getContext()).addToRequestQueue(jsonObjReq, tag_json_obj);
+
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
