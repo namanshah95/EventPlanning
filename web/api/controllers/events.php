@@ -73,8 +73,7 @@ SQL;
         $valid_fields = [
             'name',
             'start_time',
-            'end_time',
-            'created'
+            'end_time'
         ];
 
         $columns = '';
@@ -83,7 +82,7 @@ SQL;
         foreach( $params as $name => $value )
         {
             if( !in_array( $name, $valid_fields ) )
-                return invalid_field_error( $response, $name );
+                continue;
 
             $columns .= "$name, ";
             $values  .= "?$name?, ";
@@ -98,7 +97,51 @@ insert into tb_event ( $columns )
   returning event;
 SQL;
 
-        return api_fetch_one( $response, $query, $params );
+        begin_transaction();
+
+        $resource = query_execute( $query, $params );
+
+        if( query_success( $resource ) )
+            $retval = query_fetch_one( $resource );
+        else
+        {
+            rollback_transaction();
+            return database_error( $response );
+        }
+
+        $create_owner_query = <<<SQL
+insert into tb_event_entity_role
+(
+    event,
+    entity,
+    role
+)
+values
+(
+    ?event?,
+    ?entity?,
+    ?role?
+)
+SQL;
+
+        $create_owner_params = [
+            'event'  => $retval['event'],
+            'entity' => $params['owner'],
+            'role'   => constant( 'ROLE_OWNER' )
+        ];
+
+        $resource = query_execute( $create_owner_query, $create_owner_params );
+
+        if( query_success( $resource ) )
+        {
+            commit_transaction();
+            return $response->withJson( $retval );
+        }
+        else
+        {
+            rollback_transaction();
+            return database_error( $response );
+        }
     }
 
     function update_event( $request, $response, $args )

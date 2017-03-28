@@ -279,6 +279,10 @@
             "end_time" : {
                 "description" : "The date and time the event ends at.",
                 "required" : true
+            },
+            "owner" : {
+                "description" : "The entity PK of the owner of the event being created.",
+                "required" : true
             }
         }
     },
