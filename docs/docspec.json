@@ -310,7 +310,8 @@
     "GET /entities/{entity}" : {
         "description" : "Gets an entity from the Firebase database. This finds the external Firebase ID associated with the specified entity PK, and then uses the external Firebase ID to get all of the entity's credentials from Firebase.",
         "output" : {
-            "FIREBASE OUTPUT" : "Refer to the fields stored in Firebase for details on what this route returns."
+            "FIREBASE OUTPUT" : "Refer to the fields stored in Firebase for details on what this route returns.",
+            "ext_firebase_id" : "Firebase record key for this entity."
         },
         "http_body_params" : null,
         "http_header_params" : null
@@ -327,5 +328,22 @@
             }
         },
         "http_header_params" : null
+    },
+    "GET /entities/" : {
+        "description" : "",
+        "output" : {
+            "FIREBASE OUTPUT" : "Refer to the fields stored in Firebase for details on what this route returns.",
+            "entity" : "PostgreSQL record PK for this entity.",
+            "ext_firebase_id" : "Firebase record key for this entity."
+        },
+        "http_body_params" : null,
+        "http_header_params" : {
+            "Name" : {
+                "description" : "The name of this entity as stored in Firebase."
+            },
+            "Email" : {
+                "description" : "The email address of this entity as stored in Firebase."
+            }
+        }
     }
 }

@@ -25,13 +25,28 @@ Notes:
 \end{enumerate}
 
 \begin{itemize}
+\item \textbf{GET /entities/} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description &  \\ \hline
+HTTP Header Params & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{Email} & The email address of this entity as stored in Firebase. \\ \hline
+    \texttt{Name} & The name of this entity as stored in Firebase. \\
+    \end{tabular} \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{FIREBASE OUTPUT} & Refer to the fields stored in Firebase for details on what this route returns. \\ \hline
+    \texttt{entity} & PostgreSQL record PK for this entity. \\ \hline
+    \texttt{ext\_firebase\_id} & Firebase record key for this entity. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
 \item \textbf{GET /entities/\{entity\}} \smallskip \\
 \begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
 Description & Gets an entity from the Firebase database. This finds the external Firebase ID associated with the specified entity PK, and then uses the external Firebase ID to get all of the entity's credentials from Firebase. \\ \hline
 HTTP Header Params & None. \\ \hline
 HTTP Body Params & None. \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
-    \texttt{FIREBASE OUTPUT} & Refer to the fields stored in Firebase for details on what this route returns. \\
+    \texttt{FIREBASE OUTPUT} & Refer to the fields stored in Firebase for details on what this route returns. \\ \hline
+    \texttt{ext\_firebase\_id} & Firebase record key for this entity. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{GET /entity/\{entity\}/events/} \smallskip \\
