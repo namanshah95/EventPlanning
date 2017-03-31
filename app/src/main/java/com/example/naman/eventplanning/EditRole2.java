@@ -14,10 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,15 +29,19 @@ public class EditRole2 extends AppCompatActivity implements
         OnClickListener {
     Button next;
     ListView listView;
+    ArrayList<String> guests;
     ArrayAdapter<String> adapter;
     Button back;
     String Role;
-    String Event ;
+    String Event;
     String EventName;
-    String myEmail, myName,myEntityPK;
+    String myEmail, myName, myEntityPK;
+    String temp, EntityName;
 
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,15 +53,18 @@ public class EditRole2 extends AppCompatActivity implements
         Event = intent.getStringExtra("Event");
         Role = intent.getStringExtra("Role");
         EventName = intent.getStringExtra("Money");
-        myEmail= intent.getStringExtra("myEmail");
+        myEmail = intent.getStringExtra("myEmail");
         myName = intent.getStringExtra("myName");
         myEntityPK = intent.getStringExtra("myEntityPK");
 
         String[] sports = getResources().getStringArray(R.array.people_array);
+        guests = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_multiple_choice, sports);
+                android.R.layout.simple_list_item_multiple_choice, guests);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listView.setAdapter(adapter);
+
+        getData();
 
         next.setOnClickListener(this);
 
@@ -64,7 +73,7 @@ public class EditRole2 extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                setResult(2,intent);
+                setResult(2, intent);
                 finish();
 //                startActivity(new Intent(EditRole2.this, EditRole.class));
             }
@@ -76,19 +85,16 @@ public class EditRole2 extends AppCompatActivity implements
     }
 
 
-
-
     private void findViewsById() {
         listView = (ListView) findViewById(R.id.list);
         next = (Button) findViewById(R.id.next);
         back = (Button) findViewById(R.id.back);
     }
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // check if the request code is same as what is passed  here it is 2
-        if(requestCode==3)
-        {
+        //  if the request code is same as what is passed  here it is 2
+        if (requestCode == 3) {
 
         }
     }
@@ -131,8 +137,7 @@ public class EditRole2 extends AppCompatActivity implements
         startActivity(intent);
     }
 
-    private void getPeopleList(){
-
+    private void getData() {
         String tag_json_arry = "json_array_req";
 
         String url = "http://planmything.tech/api/event/" + Event + "/guests/";
@@ -142,40 +147,86 @@ public class EditRole2 extends AppCompatActivity implements
         pDialog.show();
 
 
-    JsonArrayRequest req = new JsonArrayRequest(url,
-            new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    Log.d("InitReq", response.toString());
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject jsonObject = null;
-                        try {
-                            jsonObject = response.getJSONObject(i);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        String name = null;
-                        try {
-                            name = jsonObject.getString("entity");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        adapter.add(name);
-                        adapter.notifyDataSetChanged();
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("InitReq", response.toString());
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jsonObject = null;
+                            try {
+                                jsonObject = response.getJSONObject(i);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
+                            try {
+                                temp = jsonObject.getString("entity");
+                                findName();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+                        }
+                        pDialog.hide();
                     }
-                    pDialog.hide();
-                }
-            }, new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            VolleyLog.d("InitReq", "Error: " + error.getMessage());
-            pDialog.hide();
-        }
-    });
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+        });
 
 // Adding request to request queue
         AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
- }
-}
+    }
 
+
+    private void findName(){
+
+        String tag_json_obj = "json_obj_req";
+
+        String url = "http://planmything.tech/api/entities/" +temp;
+        Log.d("findName", "The url is " + url);
+
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("GetPk", response.toString());
+                        try {
+                            EntityName = response.getString("Name");
+
+                            Log.d("FindName", "EntityName is " + EntityName);
+                            adapter.add(EntityName);
+                            adapter.notifyDataSetChanged();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("findName", "Error: " + error.getMessage());
+
+            }
+        });
+
+        AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
+
+
+
+
+    }
+
+
+
+
+}

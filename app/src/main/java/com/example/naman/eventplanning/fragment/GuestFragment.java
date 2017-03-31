@@ -28,7 +28,9 @@ import com.example.naman.eventplanning.R;
 import com.example.naman.eventplanning.SwipeDismissListViewTouchListener;
 import com.example.naman.eventplanning.AppController;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +56,7 @@ public class GuestFragment extends Fragment {
     Button addBtn;
     ArrayList<String> guest;
     ArrayAdapter<String> adapter;
+    String temp;
     String judge, judgeEdit;
     int posEdit;
     String EventName;
@@ -100,35 +103,14 @@ public class GuestFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
-//        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                myName = dataSnapshot.getValue().toString();
-//                Log.d("Guest", "Name is " + myName);
-//
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
-//        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                myEmail = dataSnapshot.getValue().toString();
-//                Log.d("User", "Name is " + myEmail);
-//
-//            }
-
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
 
         lv = (ListView) view.findViewById(R.id.evenList);
         addBtn = (Button) view.findViewById(R.id.btnAdd);
 
+
         //ADAPPTER
-        guest = new ArrayList<>();
+        guest = new ArrayList<String>();
+        //guest = new ArrayList<String>(Arrays.asList("Alice", "Bob", "Alex", "Grace","Emily", "Cathy", "Tom", "James"));
         adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, guest);
         lv.setAdapter(adapter);
 
@@ -259,14 +241,15 @@ public class GuestFragment extends Fragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            String name = null;
+
                             try {
-                                name = jsonObject.getString("entity");
+                                temp = jsonObject.getString("entity");
+                                findName();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            adapter.add(name);
-                            adapter.notifyDataSetChanged();
+
+
 
                         }
                         pDialog.hide();
@@ -311,11 +294,13 @@ public class GuestFragment extends Fragment {
                         Toast.makeText(getContext(), "Added " + EntityName, Toast.LENGTH_SHORT).show();
 
                     }
+
                 }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("PostReq", "Error: " + error.getMessage());
+
 
             }
         }) {
@@ -366,6 +351,12 @@ public class GuestFragment extends Fragment {
         String url = "http://planmything.tech/api/entities/?Email=" + EntityEmail;
         Log.d("GetPK", "The url is " + url);
 
+        final ProgressDialog pDialog = new ProgressDialog(getContext());
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
 
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
@@ -384,19 +375,63 @@ public class GuestFragment extends Fragment {
 
                         }
 
-
+                        pDialog.hide();
                     }
+
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
 
             }
         });
 
-// Adding request to request queue
         AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
     }
+
+    //find name of all guests
+    private void findName(){
+
+                String tag_json_obj = "json_obj_req";
+
+                String url = "http://planmything.tech/api/entities/" +temp;
+                Log.d("findName", "The url is " + url);
+
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                url, null,
+                new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d("GetPk", response.toString());
+                                try {
+                                    EntityName = response.getString("Name");
+
+                                    Log.d("FindName", "EntityName is " + EntityName);
+                                    adapter.add(EntityName);
+                                    adapter.notifyDataSetChanged();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("findName", "Error: " + error.getMessage());
+
+                    }
+                });
+
+                AppController.getInstance(getContext()).addToRequestQueue(jsonObjReq, tag_json_obj);
+
+
+
+
+    }
+
 
 
 

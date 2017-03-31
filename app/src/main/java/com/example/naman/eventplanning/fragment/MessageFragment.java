@@ -168,6 +168,3 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
         }
     }
 }
-
-
-

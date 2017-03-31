@@ -60,7 +60,7 @@ public class EventActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavMenu;
 
-    String myEmail, myName, myEntityPK,event_entity_role;
+    String myEmail , myName, myEntityPK,event_entity_role;
 
     private DatabaseReference mDatabase;
 
@@ -76,36 +76,47 @@ public class EventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null) {
+             Log.d("start", "work here");
+                      startActivity(new Intent(EventActivity.this, LoginActivity.class));
+        }
+        Log.d("start", "work here 1");
 
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                myName = dataSnapshot.getValue().toString();
-                Log.d("Guest", "Name is " + myName);
+        if (mAuth.getCurrentUser() != null) {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            Log.d("start", "uid is " + mAuth.getCurrentUser().getUid().toString());
 
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                myEmail = dataSnapshot.getValue().toString();
-                getPK();
-                Log.d("User", "Email is " + myEmail);
+            mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    myName = dataSnapshot.getValue().toString();
+                    Log.d("Guest", "Name is " + myName);
 
+                }
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+            mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    myEmail = dataSnapshot.getValue().toString();
+                    Log.d("User", "Email is " + myEmail);
+                    getPK();
+                    Log.d("User", "Email is " + myEmail);
 
 
+                }
+
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+        }
 
         setContentView(R.layout.addeventactivity);
 
@@ -387,6 +398,13 @@ public class EventActivity extends AppCompatActivity {
         params.put("name", EventName);
         params.put("start_time", "2017-03-06 10:14:11.799291");
         params.put("end_time", "2017-03-06 10:14:11.799291");
+        params.put("owner", myEntityPK);
+        Log.d("PostReq", "Myentity pk is " + myEntityPK);
+
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
 
         JSONObject parameters = new JSONObject(params);
 
@@ -403,9 +421,8 @@ public class EventActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        addOwner();
 
-
+                        pDialog.hide();
                     }
 
                 }, new Response.ErrorListener() {
@@ -413,6 +430,7 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
+                pDialog.hide();
 
             }
         }) {
@@ -430,53 +448,56 @@ public class EventActivity extends AppCompatActivity {
     }
 
 
-    private void addOwner(){
+//    private void addOwner(){
+//
+//        String tag_json_obj = "json_obj_req";
+//
+//        String url = "http://planmything.tech/api/event/" + EventPK + "/guests/";
+//        Map<String, String> params = new HashMap();
+//
+//        params.put("entity", myEntityPK);
+//
+//        JSONObject parameters = new JSONObject(params);
+//
+//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+//                url, parameters,
+//                new Response.Listener<JSONObject>() {
+//
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        Log.d("PostReq", response.toString());
+//                        try {
+//                            event_entity_role = response.getString("event_entity_role");
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//
+//                }, new Response.ErrorListener() {
+//
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
+//
+//            }
+//        }) {
+//
+//            @Override
+//            public String getBodyContentType() {
+//                return "application/json";
+//            }
+//
+//        };
+//
+//// Adding request to request queue
+//        AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
+//
+//    }
 
-        String tag_json_obj = "json_obj_req";
 
-        String url = "http://planmything.tech/api/event/" + EventPK + "/guests/";
-        Map<String, String> params = new HashMap();
 
-        params.put("entity", myEntityPK);
-
-        JSONObject parameters = new JSONObject(params);
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                url, parameters,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("PostReq", response.toString());
-                        try {
-                            event_entity_role = response.getString("event_entity_role");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
-
-            }
-        }) {
-
-            @Override
-            public String getBodyContentType() {
-                return "application/json";
-            }
-
-        };
-
-// Adding request to request queue
-        AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
-
-    }
-
+    //get myEnitityoPK
     private void getPK(){
         String tag_json_arry = "json_array_req";
 

@@ -38,7 +38,7 @@ public class EditBudget extends AppCompatActivity {
 
     private String[] arrText =
             new String[]{"Alice","Bob","Cathy"
-                    ,"Tom","James"};
+                    };
     private String[] arrTemp;
     private int totalExpense = 0;
     @Override

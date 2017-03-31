@@ -154,4 +154,9 @@ public class EditRole3 extends AppCompatActivity {
 
     }
 
+    // AssignSelected people to roles
+    private void assignRoles(){
+
+    }
+
 }
