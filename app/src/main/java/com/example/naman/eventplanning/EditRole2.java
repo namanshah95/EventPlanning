@@ -29,10 +29,11 @@ public class EditRole2 extends AppCompatActivity implements
         OnClickListener {
     Button next;
     ListView listView;
+    ArrayList<String> guestsPK;
     ArrayList<String> guests;
     ArrayAdapter<String> adapter;
     Button back;
-    String Role;
+    String Role, Needed_Role;
     String Event;
     String EventName;
     String myEmail, myName, myEntityPK;
@@ -56,9 +57,11 @@ public class EditRole2 extends AppCompatActivity implements
         myEmail = intent.getStringExtra("myEmail");
         myName = intent.getStringExtra("myName");
         myEntityPK = intent.getStringExtra("myEntityPK");
+        Needed_Role = intent.getStringExtra("Needed_Role");
 
         String[] sports = getResources().getStringArray(R.array.people_array);
         guests = new ArrayList<String>();
+        guestsPK = new ArrayList<>();
         adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_multiple_choice, guests);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -102,18 +105,23 @@ public class EditRole2 extends AppCompatActivity implements
     public void onClick(View v) {
         SparseBooleanArray checked = listView.getCheckedItemPositions();
         ArrayList<String> selectedItems = new ArrayList<String>();
+        ArrayList<String> selectedItemsPK = new ArrayList<>();
         for (int i = 0; i < checked.size(); i++) {
             // Item position in adapter
             int position = checked.keyAt(i);
             // Add sport if it is checked i.e.) == TRUE!
             if (checked.valueAt(i))
                 selectedItems.add(adapter.getItem(position));
+                 selectedItemsPK.add(guestsPK.get(position));
         }
 
         String[] outputStrArr = new String[selectedItems.size()];
+        String[] outputStrArrPK = new String[selectedItems.size()];
 
         for (int i = 0; i < selectedItems.size(); i++) {
             outputStrArr[i] = selectedItems.get(i);
+            outputStrArrPK[i] = selectedItemsPK.get(i);
+            Log.d("outputPK", selectedItemsPK.get(i));
         }
 
         Intent intent = new Intent(getApplicationContext(),
@@ -124,11 +132,13 @@ public class EditRole2 extends AppCompatActivity implements
 
         intent.putExtra("Event", Event);
         intent.putExtra("Role", Role);
+        intent.putExtra("Needed_Role",Needed_Role);
         intent.putExtra("myEmail", myEmail);
         intent.putExtra("myName", myName);
         intent.putExtra("myEntityPK", myEntityPK);
         intent.putExtra("EventNme", EventName);
         intent.putExtra("selectedItems", outputStrArr);
+        intent.putExtra("selectedItemsPK",outputStrArrPK);
 
         // Add the bundle to the intent.
 
@@ -162,6 +172,7 @@ public class EditRole2 extends AppCompatActivity implements
 
                             try {
                                 temp = jsonObject.getString("entity");
+
                                 findName();
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -203,6 +214,7 @@ public class EditRole2 extends AppCompatActivity implements
                             EntityName = response.getString("Name");
 
                             Log.d("FindName", "EntityName is " + EntityName);
+                            guestsPK.add(response.getString("entity"));
                             adapter.add(EntityName);
                             adapter.notifyDataSetChanged();
 

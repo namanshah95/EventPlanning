@@ -161,7 +161,7 @@ public class EditRole extends AppCompatActivity {
                         pDialog.hide();
                         Intent intent=new Intent(EditRole.this,EditRole2.class);
                         intent.putExtra("Event", Event);
-                        intent.putExtra("Role", Role);
+                        intent.putExtra("Needed_Role", Needed_Role);
                         intent.putExtra("Role", Role);
                         intent.putExtra("myEmail", myEmail);
                         intent.putExtra("myName", myName);

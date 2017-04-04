@@ -30,8 +30,7 @@ public class EditRole3 extends AppCompatActivity {
     String[] resultArr;
     String[] resultPK;
 
-    String Role;
-    String Entity;
+    String Role, Needed_Role;
     String Event ;
     String EventName;
     String myEmail, myName,myEntityPK;
@@ -48,8 +47,10 @@ public class EditRole3 extends AppCompatActivity {
         myEntityPK = intent.getStringExtra("myEntityPK");
         Event = getIntent().getStringExtra("Event");
         Role = getIntent().getStringExtra("Role");
+        Needed_Role = getIntent().getStringExtra("Needed_Role");
 
         resultArr = intent.getStringArrayExtra("selectedItems");
+        resultPK = intent.getStringArrayExtra("selectedItemsPK");
         ListView lv = (ListView) findViewById(R.id.outputList);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -63,6 +64,7 @@ public class EditRole3 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
             //startActivity(new Intent(EditRole3.this, EditRole2.class));
+
                 Intent intent = new Intent();
                 setResult(3,intent);
                 finish();
@@ -75,20 +77,8 @@ public class EditRole3 extends AppCompatActivity {
         submitn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),
-                        "Sumbit Sucessfully", Toast.LENGTH_SHORT).show();
-                Log.d("Intent", "Event is " + Event);
-                Log.d("Intent", "Role is " + Role);
+                assignRole();
 
-
-
-                Intent intent = new Intent(EditRole3.this, MainActivity.class);
-                intent.putExtra("Event", Event);
-                intent.putExtra("myEmail", myEmail);
-                intent.putExtra("myName", myName);
-                intent.putExtra("myEntityPK", myEntityPK);
-                intent.putExtra("EventNme", EventName);
-                startActivityForResult(intent,1);
 
             }
 
@@ -101,20 +91,50 @@ public class EditRole3 extends AppCompatActivity {
     }
 
     // POST /event/{event}/entities/{entity}/roles/
+    // Assign people to the role
 
-    private void postData(){
+
+    private void assignRole(){
+        for(int i= 0; i < resultPK.length; i++){
+            postData(resultPK[i]);
+
+        }
+        Toast.makeText(getApplicationContext(),
+                "Sumbit Sucessfully", Toast.LENGTH_SHORT).show();
+        Log.d("Intent", "Event is " + Event);
+        Log.d("Intent", "Role is " + Role);
+
+
+
+        Intent intent = new Intent(EditRole3.this, MainActivity.class);
+        intent.putExtra("Event", Event);
+        intent.putExtra("myEmail", myEmail);
+        intent.putExtra("myName", myName);
+        intent.putExtra("myEntityPK", myEntityPK);
+        intent.putExtra("EventNme", EventName);
+        startActivityForResult(intent,1);
+
+    }
+
+
+
+
+
+
+    private void postData(String Entity){
         String tag_json_obj = "json_obj_req";
 
         String url = "http://planmything.tech/api/event/" + Event + "/entities/" + Entity + "/roles/" ;
+        Log.d("PostReq", "The url of assigning role is "+ url);
 
         final ProgressDialog pDialog = new ProgressDialog(this);
-//        pDialog.setMessage("Loading...");
-//        pDialog.show();
+        pDialog.setMessage("Loading...");
+        pDialog.show();
 
 
         Map<String, String> params = new HashMap();
-        params.put("role", Role);
-//        params.put("needed_role_name", RoleName);
+        params.put("role", Needed_Role);
+        Log.d("PostReq", "the role is " + Needed_Role);
 
 
         JSONObject parameters = new JSONObject(params);
@@ -126,10 +146,7 @@ public class EditRole3 extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("PostReq", response.toString());
-//                        pDialog.hide();
-
-//                        Intent intent = new Intent(EditRole3.this, EventRole.class);
-//                        startActivityForResult(intent,1);
+                        pDialog.hide();
 
 
                     }
@@ -138,7 +155,7 @@ public class EditRole3 extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
-
+                pDialog.hide();
             }
         }) {
 
@@ -154,9 +171,6 @@ public class EditRole3 extends AppCompatActivity {
 
     }
 
-    // AssignSelected people to roles
-    private void assignRoles(){
 
-    }
 
 }

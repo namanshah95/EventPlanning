@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,21 +20,31 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class EditBudget extends AppCompatActivity {
+    String temp;
+    String Needed_Role;
     String Event;
     String Role;
     String EstimedMoney;
     String EventName;
     String myEmail,myEntityPK,myName;
+    String EntityName;
+    MyListAdapter myListAdapter;
+    ArrayList<String> candidates;
+    ArrayList<String> candidatesPK;
 
 
     private String[] arrText =
@@ -50,6 +61,7 @@ public class EditBudget extends AppCompatActivity {
 
 
         Intent intent = getIntent();
+        Needed_Role = intent.getStringExtra("Needed_Role");
         Event = intent.getStringExtra("Event");
         Role = intent.getStringExtra("Role");
         EstimedMoney = intent.getStringExtra("Money");
@@ -67,7 +79,7 @@ public class EditBudget extends AppCompatActivity {
 
         arrTemp = new String[arrText.length];
 
-        MyListAdapter myListAdapter = new MyListAdapter();
+        myListAdapter = new MyListAdapter();
         ListView listView = (ListView) findViewById(R.id.peopleList);
         listView.setAdapter(myListAdapter);
 
@@ -130,6 +142,123 @@ public class EditBudget extends AppCompatActivity {
         getSupportActionBar().setTitle("BUDGET MANAGER");
         getSupportActionBar().setSubtitle("Budget Record");
     }
+
+    /*
+    private void getData(){
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/event/" + Event + "/guests/?role=" + Needed_Role;
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("InitReq", response.toString());
+                        if (response != null) {
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                String name = null;
+                                try {
+                                    name = jsonObject.getString("needed_role_name");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                if (name != null) {
+//                                    TaskArray.add(name);
+                                }
+
+                            }
+                        }
+                        pDialog.hide();
+                        adapter = new ArrayAdapter<String>(getContext(),
+                                android.R.layout.simple_list_item_1, TaskArray){
+                            @Override
+                            public View getView(int position, View convertView, ViewGroup parent){
+                                // Get the current item from ListView
+                                View view = super.getView(position,convertView,parent);
+
+
+                                // Get the Layout Parameters for ListView Current Item View
+                                ViewGroup.LayoutParams params = view.getLayoutParams();
+
+                                // Set the height of the Item View
+                                params.height = 300;
+                                view.setLayoutParams(params);
+
+                                return view;
+                            }
+                        };
+//                        listView.setAdapter(adapter);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+        });
+
+
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+
+    }
+    */
+
+
+    private void findName(){
+
+        String tag_json_obj = "json_obj_req";
+
+        String url = "http://planmything.tech/api/entities/" +temp;
+        Log.d("findName", "The url is " + url);
+
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("GetPk", response.toString());
+                        try {
+                            EntityName = response.getString("Name");
+
+                            Log.d("FindName", "EntityName is " + EntityName);
+
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("findName", "Error: " + error.getMessage());
+
+            }
+        });
+
+        AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
+
+
+
+
+    }
+
+
+
 
     private class MyListAdapter extends BaseAdapter{
 
