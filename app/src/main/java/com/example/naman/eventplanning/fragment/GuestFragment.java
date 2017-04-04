@@ -222,7 +222,8 @@ public class GuestFragment extends Fragment {
     private void getData() {
         String tag_json_arry = "json_array_req";
 
-        String url = "http://planmything.tech/api/event/" + Event + "/guests/";
+        String url = "http://planmything.tech/api/event/" + Event + "/guests/?role=-2" ;
+        Log.d("TheError", "url is "+ url);
         final ProgressDialog pDialog = new ProgressDialog(getContext());
 
         pDialog.setMessage("Loading...");
