@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.naman.eventplanning.AddEvent;
 import com.example.naman.eventplanning.AddGuest;
+import com.example.naman.eventplanning.EditBudget;
 import com.example.naman.eventplanning.EditRole;
 import com.example.naman.eventplanning.LoginActivity;
 import com.example.naman.eventplanning.MainActivity;
@@ -72,6 +73,9 @@ public class GuestFragment extends Fragment {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    ArrayList<String> candidates;
+    ArrayList<String> candidatesPK;
+
 
 
     @Nullable
@@ -79,7 +83,7 @@ public class GuestFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
 
-        View view = inflater.inflate(R.layout.activity_event_role, null);
+        View view = inflater.inflate(R.layout.activity_add_guest, null);
         try {
             initView(view);
 
@@ -103,15 +107,34 @@ public class GuestFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
+        candidates = new ArrayList<>();
+        candidatesPK = new ArrayList<>();
 
-        lv = (ListView) view.findViewById(R.id.evenList);
+
+        lv = (ListView) view.findViewById(R.id.guestList);
         addBtn = (Button) view.findViewById(R.id.btnAdd);
 
 
         //ADAPPTER
         guest = new ArrayList<String>();
         //guest = new ArrayList<String>(Arrays.asList("Alice", "Bob", "Alex", "Grace","Emily", "Cathy", "Tom", "James"));
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, guest);
+        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, guest){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent){
+                // Get the current item from ListView
+                View view = super.getView(position,convertView,parent);
+
+
+                // Get the Layout Parameters for ListView Current Item View
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+
+                // Set the height of the Item View
+                params.height = 200;
+                view.setLayoutParams(params);
+
+                return view;
+            }
+        };
         lv.setAdapter(adapter);
 
         getData();
@@ -130,7 +153,7 @@ public class GuestFragment extends Fragment {
 
 
         //swipe to delete
-        SwipeDismissListViewTouchListener touchListener =
+        SwipeDismissListViewTouchListener touchListenerNew =
                 new SwipeDismissListViewTouchListener(
                         lv,
                         new SwipeDismissListViewTouchListener.DismissCallbacks() {
@@ -155,7 +178,7 @@ public class GuestFragment extends Fragment {
 
                             }
                         });
-        lv.setOnTouchListener(touchListener);
+        lv.setOnTouchListener(touchListenerNew);
 
         // Handle events
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -219,11 +242,11 @@ public class GuestFragment extends Fragment {
 //        }
 //    }
 
-    private void getData() {
+
+    private void getData(){
         String tag_json_arry = "json_array_req";
 
-        String url = "http://planmything.tech/api/event/" + Event + "/guests/?role=-2" ;
-        Log.d("TheError", "url is "+ url);
+        String url = "http://planmything.tech/api/event/" + Event + "/guests/?role=-2";
         final ProgressDialog pDialog = new ProgressDialog(getContext());
 
         pDialog.setMessage("Loading...");
@@ -234,26 +257,29 @@ public class GuestFragment extends Fragment {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d("InitReq", response.toString());
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject jsonObject = null;
-                            try {
-                                jsonObject = response.getJSONObject(i);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        Log.d("GuestInit", response.toString());
+                        if (response != null) {
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    candidatesPK.add(jsonObject.getString("entity"));
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
                             }
-
-                            try {
-                                temp = jsonObject.getString("entity");
-                                findName();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-
-
+                            findName();
                         }
                         pDialog.hide();
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -263,9 +289,13 @@ public class GuestFragment extends Fragment {
             }
         });
 
-// Adding request to request queue
+
         AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
+
     }
+
+
+
 
 
     private void postData() throws JSONException {
@@ -394,45 +424,66 @@ public class GuestFragment extends Fragment {
     //find name of all guests
     private void findName(){
 
-                String tag_json_obj = "json_obj_req";
+        String tag_json_arry = "json_array_req";
 
-                String url = "http://planmything.tech/api/entities/" +temp;
-                Log.d("findName", "The url is " + url);
+        String url = "http://planmything.tech/api/entities/";
+        Log.d("findName", "The url is " + url);
 
+        final ProgressDialog pDialog = new ProgressDialog(getContext());
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                url, null,
-                new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                Log.d("GetPk", response.toString());
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("GuestInit", response.toString());
+                        if (response != null) {
+                            Map<String, String> people = new HashMap();
+                            for(int i = 0; i< response.length(); i ++){
+                                JSONObject jsonObject = null;
                                 try {
-                                    EntityName = response.getString("Name");
-
-                                    Log.d("FindName", "EntityName is " + EntityName);
-                                    adapter.add(EntityName);
-                                    adapter.notifyDataSetChanged();
-
+                                    jsonObject = response.getJSONObject(i);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                try {
+                                    people.put(jsonObject.getString("entity"), jsonObject.getString("Name"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+
+                            for (int i = 0; i < candidatesPK.size(); i++) {
+                                candidates.add(people.get(candidatesPK.get(i)));
+                                adapter.add(people.get(candidatesPK.get(i)));
+                                adapter.notifyDataSetChanged();
 
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("findName", "Error: " + error.getMessage());
+
+
+
+
+                        }
+                        pDialog.hide();
 
                     }
-                });
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+        });
 
-                AppController.getInstance(getContext()).addToRequestQueue(jsonObjReq, tag_json_obj);
 
+        AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
 
 
 
     }
-
 
 
 

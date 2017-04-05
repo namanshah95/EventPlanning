@@ -48,7 +48,7 @@ public class EventroleFragment extends Fragment {
 
     ListView lv;
     Button addBtn;
-    ArrayList<String> Roles = new ArrayList<>();
+    ArrayList<String> Roles;
     ArrayAdapter<String> adapter;
     String RoleName, RoleNameEdit;
     String judge,judgeEdit;
@@ -106,7 +106,7 @@ public class EventroleFragment extends Fragment {
                 ViewGroup.LayoutParams params = view.getLayoutParams();
 
                 // Set the height of the Item View
-                params.height = 300;
+                params.height = 200;
                 view.setLayoutParams(params);
 
                 return view;
@@ -133,7 +133,7 @@ public class EventroleFragment extends Fragment {
         });
 
 
-        //swipe to delete
+
         SwipeDismissListViewTouchListener touchListener =
                 new SwipeDismissListViewTouchListener(
                         lv,
@@ -155,19 +155,20 @@ public class EventroleFragment extends Fragment {
                                     adapter.notifyDataSetChanged();
 
 
-
                                 }
 
                             }
                         });
         lv.setOnTouchListener(touchListener);
 
+
         // Handle events
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addIntent = new Intent(getContext(), AddEvent.class );
-                startActivityForResult(addIntent,1);
+//                startActivityForResult(addIntent,1);
+                startActivity(addIntent);
             }
         });
 
@@ -516,7 +517,7 @@ public class EventroleFragment extends Fragment {
 //
                                 Log.d("EditReq","PK is "+ PK );
                                 flag = true;
-                                Intent editIntent = new Intent(getContext(), EditRole.class );
+                                Intent editIntent = new Intent(getActivity(), EditRole.class );
                                 editIntent.putExtra("RoleName", RoleName);
                                 editIntent.putExtra("Role",PK);
                                 editIntent.putExtra("needed_role", needed_role);
@@ -531,6 +532,7 @@ public class EventroleFragment extends Fragment {
 
 
                                 startActivityForResult(editIntent,1);
+
 
 
 

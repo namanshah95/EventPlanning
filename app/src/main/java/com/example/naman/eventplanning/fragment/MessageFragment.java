@@ -48,7 +48,7 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
     private String senderName;
     private Context context;
 
-    String Event, myEmail, myName, myEntityPK, EventName;
+    String eventId;
 
 
     @Nullable
@@ -60,13 +60,6 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
     }
 
     private void initView(View view){
-        MainActivity activity = (MainActivity) getActivity();
-        Event = activity.getEvent();
-        myEmail = activity.getEmail();
-        myName = activity.getName();
-        myEntityPK = activity.getEntity();
-        EventName = activity.getEventName();
-        Log.d("fragment","Event is" + Event);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
@@ -99,14 +92,15 @@ public class MessageFragment extends Fragment implements MessageDataSource.Messa
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        listener = MessageDataSource.addMessagesListener("sample_event_id", this);
+        eventId = ((MainActivity)getActivity()).getEvent();
+
+        listener = MessageDataSource.addMessagesListener(eventId, this);
 
     }
 
     private void saveMessage(Message msg) {
-        // TODO: Replace all sample_event_id with current event id
-        String key = mDatabase.child("messages").child("sample_event_id").push().getKey();
-        mDatabase.child("messages").child("sample_event_id").child(key).setValue(new MessageHelper(msg));
+        String key = mDatabase.child("messages").child(eventId).push().getKey();
+        mDatabase.child("messages").child(eventId).child(key).setValue(new MessageHelper(msg));
     }
 
     @Override

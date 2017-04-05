@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.view.MenuItem;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -55,6 +56,7 @@ public class EventActivity extends AppCompatActivity {
     String judge,judgeEdit;
     String EventPK;
     ArrayList<String> EventPKAll;
+    ArrayList<String> EventNameAll;
     int posEdit;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
@@ -65,7 +67,7 @@ public class EventActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
 
 
-    String Entity = "1";
+
 
 
 
@@ -118,29 +120,9 @@ public class EventActivity extends AppCompatActivity {
 
         }
 
-        setContentView(R.layout.addeventactivity);
+       setContentView(R.layout.activity_event_list);
 
-
-
-        mNavMenu = (NavigationView) findViewById(R.id.nav_menu);
-        mNavMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                System.out.println("Nav Item Selected");
-                if (item.getItemId() == R.id.SignOut) {
-                    mAuth.signOut();
-                }
-                return true;
-            }
-        });
-
-
-
-
-
-        //set navigation bar
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_event_role);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_event_main);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
 
         mDrawerLayout.addDrawerListener(mToggle);
@@ -152,10 +134,34 @@ public class EventActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("TASK MANAGER");
         getSupportActionBar().setSubtitle("Event List");
 
-        lv = (ListView)findViewById(R.id.evenList1);
-        addBtn = (Button) findViewById(R.id.btnAdd1);
+
+
+        mNavMenu = (NavigationView) findViewById(R.id.nav_menu);
+        mNavMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Log.d("Navigation" , "works here");
+                if (item.getItemId() == R.id.SignOut) {
+                    mAuth.signOut();
+                }
+                return true;
+            }
+        });
+
+
+
+
+
+
+        //set navigation bar
+
+
+
+        lv = (ListView)findViewById(R.id.evenList);
+        addBtn = (Button) findViewById(R.id.btnAdd);
         Event = new ArrayList<String>();
         EventPKAll = new ArrayList<String>();
+        EventNameAll = new ArrayList<>();
 
 
         //ADAPPTER
@@ -170,7 +176,7 @@ public class EventActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams params = view.getLayoutParams();
 
                 // Set the height of the Item View
-                params.height = 300;
+                params.height = 200;
                 view.setLayoutParams(params);
 
                 return view;
@@ -193,7 +199,8 @@ public class EventActivity extends AppCompatActivity {
                 editIntent.putExtra("Name", myName);
                 editIntent.putExtra("Entity",myEntityPK);
                 Log.d("transfer","Event is "+ EventPKAll.get(position) );
-                EventActivity.this.startActivityForResult(editIntent,1);
+                startActivity(editIntent);
+//                EventActivity.this.startActivityForResult(editIntent,1);
 
             }
         });
@@ -235,6 +242,15 @@ public class EventActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(mToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
 
@@ -335,7 +351,7 @@ public class EventActivity extends AppCompatActivity {
 
         String tag_json_arry = "json_array_req";
 
-        String url = "http://planmything.tech/api/entity/" + myEntityPK + "/events/";
+        String url = "http://planmything.tech/api/entity/" + myEntityPK + "/events/?role=-2";
 
         final ProgressDialog pDialog = new ProgressDialog(this);
 
@@ -368,6 +384,7 @@ public class EventActivity extends AppCompatActivity {
                                 }
                                 if (name != null) {
                                     EventPKAll.add(temp);
+                                    EventNameAll.add(name);
                                     adapter.add(name);
                                     adapter.notifyDataSetChanged();
                                 }
@@ -382,6 +399,7 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
             }
         });
 
@@ -505,6 +523,13 @@ public class EventActivity extends AppCompatActivity {
         Log.d("GetPK", "The url is " + url);
 
 
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -516,12 +541,16 @@ public class EventActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                         getData();
+                        pDialog.hide();
                     }
+
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
 
             }
         });

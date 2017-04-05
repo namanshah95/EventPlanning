@@ -43,7 +43,7 @@ import java.util.Arrays;
 
 public class BudgetFragment extends Fragment{
 
-    String Event = "1";
+    String Event;
     ListView listView;
     ArrayAdapter adapter;
     String RoleName;
@@ -156,7 +156,7 @@ public class BudgetFragment extends Fragment{
                             ViewGroup.LayoutParams params = view.getLayoutParams();
 
                             // Set the height of the Item View
-                            params.height = 300;
+                            params.height = 200;
                             view.setLayoutParams(params);
 
                             return view;
@@ -230,7 +230,8 @@ public class BudgetFragment extends Fragment{
                         editIntent.putExtra("myEntityPK", myEntityPK);
                         editIntent.putExtra("EventNme", EventName);
 
-                        startActivityForResult(editIntent, 1);
+//                        startActivityForResult(editIntent, 1);
+                        startActivity(editIntent);
 
 
                     }
