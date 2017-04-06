@@ -13,4 +13,5 @@
     <color name="listviewDivider">#4DB6AC</color>
     <color name="tab_text_color_0">#999</color>
     <color name="tab_text_color_1">#5cd6de</color>
+    <color name="Alert">#e7e7e7</color>
 </resources>

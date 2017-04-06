@@ -2,12 +2,14 @@ package com.example.naman.eventplanning.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Entity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.example.naman.eventplanning.AddEvent;
 import com.example.naman.eventplanning.AddGuest;
 import com.example.naman.eventplanning.EditBudget;
 import com.example.naman.eventplanning.EditRole;
+import com.example.naman.eventplanning.EventActivity;
 import com.example.naman.eventplanning.LoginActivity;
 import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.Messenger;
@@ -152,8 +155,7 @@ public class GuestFragment extends Fragment {
         });
 
 
-        //swipe to delete
-        SwipeDismissListViewTouchListener touchListenerNew =
+        SwipeDismissListViewTouchListener touchListener =
                 new SwipeDismissListViewTouchListener(
                         lv,
                         new SwipeDismissListViewTouchListener.DismissCallbacks() {
@@ -163,22 +165,39 @@ public class GuestFragment extends Fragment {
                             }
 
                             @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
+                            public void onDismiss(ListView listView, final int[] reverseSortedPositions) {
+                                new AlertDialog.Builder(getContext(),R.style.MyDialogTheme)
+                                        .setTitle("Delete Guest")
+                                        .setMessage("Are you sure you want to delete this guest？ All data related will be deleted")
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // continue with delete
 
-                                    Log.d("postion", String.valueOf(position));
+                                                for (int position : reverseSortedPositions) {
+                                                    deleteData(position);
 
-//                                    getPK(position);
+                                                    guest.remove(position);
+                                                    adapter.notifyDataSetChanged();
 
-                                    guest.remove(position);
-                                    adapter.notifyDataSetChanged();
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // do nothing
+                                            }
+                                        })
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .show();
 
 
-                                }
 
                             }
                         });
-        lv.setOnTouchListener(touchListenerNew);
+        lv.setOnTouchListener(touchListener);
+
+
+
 
         // Handle events
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -484,6 +503,40 @@ public class GuestFragment extends Fragment {
 
 
     }
+//Delete Guests
+    private void deleteData(int position) {
+        String tag_json_obj = "json_obj_req";
+        String url = "http://planmything.tech/api/event/" + Event + "/guests/"+candidatesPK.get(position);
+        Log.d("DeleteReq: ","url is "+ url);
+        Log.d("DeleteReq: ", "Delete Event is" + candidatesPK.get(position));
+        final ProgressDialog pDialog = new ProgressDialog(getContext());
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+        JsonObjectRequest request = new JsonObjectRequest
+                (Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("DeleteReq: ", "delete onResponse : " + response.toString());
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (null != error.networkResponse) {
+                            Log.d("DeleteReq: ", "delete Error Response code: " + error.networkResponse.statusCode);
+
+                        }
+                        pDialog.hide();
+                    }
+                });
+        AppController.getInstance(getContext()).addToRequestQueue(request, tag_json_obj);
+
+    }
+
 
 
 

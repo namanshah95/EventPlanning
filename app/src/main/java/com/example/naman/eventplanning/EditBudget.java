@@ -265,7 +265,7 @@ public class EditBudget extends AppCompatActivity {
 
                             arrTemp = new String[candidates.size()];
                             arrTemp = budget.toArray(arrTemp);
-                            Log.d("Budget", "ArryTemp is " + arrTemp[0] + " " + arrTemp[1] +" " + arrTemp[2] + " " + arrTemp[3]);
+//                            Log.d("Budget", "ArryTemp is " + arrTemp[0] + " " + arrTemp[1] +" " + arrTemp[2] + " " + arrTemp[3]);
 
                             myListAdapter = new MyListAdapter();
                             ListView listView = (ListView) findViewById(R.id.peopleList);

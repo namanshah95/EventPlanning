@@ -120,23 +120,23 @@ public class MainActivity extends AppCompatActivity {
                 if (checkedId == R.id.task_manage) {
                     getSupportActionBar().setSubtitle("Task Manage");
                     lastPos = 1;
-                    viewPager.setCurrentItem(lastPos, false);
+                    viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.message) {
                     getSupportActionBar().setSubtitle("Message");
                     lastPos = 2;
-                    viewPager.setCurrentItem(lastPos, false);
+                    viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.budget) {
                     getSupportActionBar().setSubtitle("Budget");
                     lastPos = 3;
-                    viewPager.setCurrentItem(lastPos, false);
+                    viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.guest){
                     getSupportActionBar().setSubtitle("Guest");
                     lastPos = 0;
-                    viewPager.setCurrentItem(lastPos, false);
+                    viewPager.setCurrentItem(lastPos, true);
                 }
             }
         });
-        viewPager.setCurrentItem(lastPos, false);
+        viewPager.setCurrentItem(lastPos, true);
 
         mNavMenu = (NavigationView) findViewById(R.id.nav_menu);
         mNavMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -146,6 +146,18 @@ public class MainActivity extends AppCompatActivity {
                 if (item.getItemId() == R.id.SignOut) {
                     mAuth.signOut();
                 }
+                if(item.getItemId() == R.id.AddEvent){
+                    Log.d("Order", String.valueOf(item.getOrder()));
+                    Intent addIntent = new Intent(MainActivity.this, AddEventActivity.class );
+                    MainActivity.this.startActivityForResult(addIntent,1);
+
+                }
+                if(item.getItemId() == R.id.Events){
+                    Intent intent = new Intent(MainActivity.this, EventActivity.class);
+                    startActivity(intent);
+                }
+
+
                 return true;
             }
         });

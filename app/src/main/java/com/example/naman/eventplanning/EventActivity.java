@@ -6,14 +6,17 @@ package com.example.naman.eventplanning;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,7 +134,7 @@ public class EventActivity extends AppCompatActivity {
 
 
         //set actionbar title
-        getSupportActionBar().setTitle("TASK MANAGER");
+        getSupportActionBar().setTitle("EVENT PLANNING");
         getSupportActionBar().setSubtitle("Event List");
 
 
@@ -144,6 +147,17 @@ public class EventActivity extends AppCompatActivity {
                 if (item.getItemId() == R.id.SignOut) {
                     mAuth.signOut();
                 }
+                if(item.getItemId() == R.id.AddEvent){
+                    Log.d("Order", String.valueOf(item.getOrder()));
+                    Intent addIntent = new Intent(EventActivity.this, AddEventActivity.class );
+                    EventActivity.this.startActivityForResult(addIntent,1);
+
+                }
+                if(item.getItemId() == R.id.Events){
+                    Intent intent = new Intent(EventActivity.this, EventActivity.class);
+                    startActivity(intent);
+                }
+
                 return true;
             }
         });
@@ -217,13 +231,32 @@ public class EventActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
+                            public void onDismiss(ListView listView, final int[] reverseSortedPositions) {
+                                new AlertDialog.Builder(EventActivity.this,R.style.MyDialogTheme)
+                                        .setTitle("Delete Event")
+                                        .setMessage("Are you sure you want to delete this Event？ All data related will be deleted")
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // continue with delete
 
-                                    Event.remove(position);
-                                    adapter.notifyDataSetChanged();
+                                                for (int position : reverseSortedPositions) {
+                                                    deleteData(position);
 
-                                }
+                                                    Event.remove(position);
+                                                    adapter.notifyDataSetChanged();
+
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // do nothing
+                                            }
+                                        })
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .show();
+
+
 
                             }
                         });
@@ -310,22 +343,7 @@ public class EventActivity extends AppCompatActivity {
         }
 
     }
-    private void delete(){
-        int pos= lv.getCheckedItemPosition();
-        if (pos > -1)
-        {
-            //remove
-            adapter.remove(Event.get(pos));
 
-            //refresh
-            adapter.notifyDataSetChanged();
-            Toast.makeText(getApplicationContext(), "Deleted ", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(getApplicationContext(), "!! Nothing to Delete", Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
     private void update(){
 
@@ -351,7 +369,7 @@ public class EventActivity extends AppCompatActivity {
 
         String tag_json_arry = "json_array_req";
 
-        String url = "http://planmything.tech/api/entity/" + myEntityPK + "/events/?role=-2";
+        String url = "http://planmything.tech/api/entity/" + myEntityPK + "/events/";
 
         final ProgressDialog pDialog = new ProgressDialog(this);
 
@@ -376,13 +394,15 @@ public class EventActivity extends AppCompatActivity {
                                 }
                                 String name = null;
                                 String temp = null;
+                                String role = null;
                                 try {
+                                    role = jsonObject.getString("role");
                                     name = jsonObject.getString("event_name");
                                     temp = jsonObject.getString("event");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                if (name != null) {
+                                if (name != null && (role.equals("-1") || role.equals("-2"))) {
                                     EventPKAll.add(temp);
                                     EventNameAll.add(name);
                                     adapter.add(name);
@@ -390,6 +410,9 @@ public class EventActivity extends AppCompatActivity {
                                 }
 
                             }
+
+
+
                         }
 
                         pDialog.hide();}
@@ -550,13 +573,46 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("InitReq", "Error: " + error.getMessage());
-                pDialog.hide();
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
 
             }
         });
 
-// Adding request to request queue
+
         AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+    }
+
+// Delete Event
+    private void deleteData(int position) {
+        String tag_json_obj = "json_obj_req";
+        String url = "http://planmything.tech/api/events/" + EventPKAll.get(position);
+        Log.d("DeleteReq" + ": ", "Delete Event is" + EventPKAll.get(position));
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+        JsonObjectRequest request = new JsonObjectRequest
+                (Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("DeleteReq: ", "delete onResponse : " + response.toString());
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (null != error.networkResponse) {
+                            Log.d("DeleteReq: ", "delete Error Response code: " + error.networkResponse.statusCode);
+
+                        }
+                        pDialog.hide();
+                    }
+                });
+        AppController.getInstance(this).addToRequestQueue(request, tag_json_obj);
+
     }
 
 
