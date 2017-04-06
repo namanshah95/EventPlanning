@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.view.MenuItem;
 
@@ -183,8 +184,8 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public View getView(int position, View convertView, ViewGroup parent){
                 // Get the current item from ListView
-                View view = super.getView(position,convertView,parent);
 
+                View view = super.getView(position,convertView,parent);
 
                 // Get the Layout Parameters for ListView Current Item View
                 ViewGroup.LayoutParams params = view.getLayoutParams();
@@ -195,6 +196,8 @@ public class EventActivity extends AppCompatActivity {
 
                 return view;
             }
+
+
         };
         lv.setAdapter(adapter);
 
