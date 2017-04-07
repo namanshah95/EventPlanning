@@ -145,7 +145,7 @@ public class EditBudget extends AppCompatActivity {
 //
 //                Intent intent = new Intent(EditBudget.this, MainActivity.class);
 //
-//                intent.putExtra("Check","Budget");
+//                intent.putExtra("Check","budget");
 //                intent.putExtra("Event", Event);
 //                intent.putExtra("myEmail", myEmail);
 //                intent.putExtra("myName", myName);
@@ -160,7 +160,7 @@ public class EditBudget extends AppCompatActivity {
 
         //set actionbar title
         getSupportActionBar().setTitle("BUDGET MANAGER");
-        getSupportActionBar().setSubtitle("Budget Record");
+        getSupportActionBar().setSubtitle("budget Record");
     }
 
 
@@ -190,7 +190,7 @@ public class EditBudget extends AppCompatActivity {
                                 }
                                 try {
                                     candidatesPK.add(jsonObject.getString("entity"));
-                                    Log.d("Budget", "candidatesPk is "+ jsonObject.getString("entity"));
+                                    Log.d("budget", "candidatesPk is "+ jsonObject.getString("entity"));
                                     if (jsonObject.getString("estimated_budget").equals("null")){
                                         budget.add("0.0");
                                     }
@@ -265,7 +265,7 @@ public class EditBudget extends AppCompatActivity {
 
                             arrTemp = new String[candidates.size()];
                             arrTemp = budget.toArray(arrTemp);
-//                            Log.d("Budget", "ArryTemp is " + arrTemp[0] + " " + arrTemp[1] +" " + arrTemp[2] + " " + arrTemp[3]);
+//                            Log.d("budget", "ArryTemp is " + arrTemp[0] + " " + arrTemp[1] +" " + arrTemp[2] + " " + arrTemp[3]);
 
                             myListAdapter = new MyListAdapter();
                             ListView listView = (ListView) findViewById(R.id.peopleList);

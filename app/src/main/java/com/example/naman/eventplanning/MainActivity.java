@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         EventName = intent.getStringExtra("EventName");
 //        String s1 = intent.getStringExtra("Check");
 
-//        if(s1 != null && s1.equals("Budget"))
+//        if(s1 != null && s1.equals("budget"))
 //        {
 //            s1 = "";
 //            Fragment fragment = new BudgetFragment();
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
+
         if (mAuth.getCurrentUser() == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     lastPos = 2;
                     viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.budget) {
-                    getSupportActionBar().setSubtitle("Budget");
+                    getSupportActionBar().setSubtitle("budget");
                     lastPos = 3;
                     viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.guest){

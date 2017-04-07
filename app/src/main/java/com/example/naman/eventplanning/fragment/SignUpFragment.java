@@ -80,6 +80,9 @@ public class SignUpFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -91,6 +94,9 @@ public class SignUpFragment extends Fragment {
                 }
             }
         };
+
+
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         View root = inflater.inflate(R.layout.fragment_sign_up, container, false);
