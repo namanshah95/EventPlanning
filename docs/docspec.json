@@ -334,7 +334,7 @@
         "http_header_params" : null
     },
     "GET /entities/" : {
-        "description" : "",
+        "description" : "Gets an entity from the database.",
         "output" : {
             "FIREBASE OUTPUT" : "Refer to the fields stored in Firebase for details on what this route returns.",
             "entity" : "PostgreSQL record PK for this entity.",
@@ -349,5 +349,13 @@
                 "description" : "The email address of this entity as stored in Firebase."
             }
         }
+    },
+    "DELETE /event/{event}/guests/{guest}/roles/{role}" : {
+        "description" : "Removes a role from an event guest.",
+        "output" : {
+            "event_entity_role" : "The PK of the guest role that was deleted."
+        },
+        "http_body_params" : null,
+        "http_header_params" : null
     }
 }
