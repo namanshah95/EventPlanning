@@ -19,8 +19,7 @@ import com.example.naman.eventplanning.R;
 
 public class home_activity extends AppCompatActivity {
 
-    @BindView(R.id.top_img)
-    ImageView topImg;
+
     @BindView(R.id.rl_bottom)
     RelativeLayout rlBottom;
 

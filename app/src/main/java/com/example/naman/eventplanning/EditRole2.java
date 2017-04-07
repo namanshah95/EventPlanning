@@ -64,18 +64,31 @@ public class EditRole2 extends AppCompatActivity implements
         myName = intent.getStringExtra("myName");
         myEntityPK = intent.getStringExtra("myEntityPK");
         Needed_Role = intent.getStringExtra("Needed_Role");
-        candidates = new ArrayList<>();
-        candidatesPK = new ArrayList<>();
-        selected = new ArrayList<>();
+        candidates = intent.getStringArrayListExtra("candidates");
+        candidatesPK = intent.getStringArrayListExtra("candidatesPK");
+        selected = intent.getStringArrayListExtra("selected");
 
 
         adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_multiple_choice, new ArrayList<String>());
+                android.R.layout.simple_list_item_multiple_choice, candidates);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listView.setAdapter(adapter);
 
 
-        getData();
+        //getData();
+
+        for(int i = 0; i < selected.size();i++ )
+        {
+            for (int j = 0; j < candidatesPK.size(); j++){
+                if(selected.get(i).equals(candidatesPK.get(j))){
+                    listView.setItemChecked(j,true);
+                    break;
+                }
+            }
+
+        }
+
+
 
         next.setOnClickListener(this);
 

@@ -25,7 +25,7 @@
         android:id="@+id/peopleList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@color/listviewDivider"
+        android:divider="@color/white"
         android:dividerHeight="2px"
         android:layout_below="@+id/textView6"
         android:layout_alignParentLeft="true"

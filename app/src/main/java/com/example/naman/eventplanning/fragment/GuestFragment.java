@@ -337,7 +337,7 @@ public class GuestFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         Log.d("PostReq", response.toString());
 
-                        adapter.add(EntityName);
+                        guest.add(EntityName);
                         //Refresh
                         adapter.notifyDataSetChanged();
 

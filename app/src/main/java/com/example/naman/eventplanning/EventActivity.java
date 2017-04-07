@@ -147,6 +147,7 @@ public class EventActivity extends AppCompatActivity {
                 Log.d("Navigation" , "works here");
                 if (item.getItemId() == R.id.SignOut) {
                     mAuth.signOut();
+                    startActivity(new Intent(EventActivity.this, LoginActivity.class));
                 }
                 if(item.getItemId() == R.id.AddEvent){
                     Log.d("Order", String.valueOf(item.getOrder()));
@@ -331,7 +332,7 @@ public class EventActivity extends AppCompatActivity {
         if(!EventName.isEmpty() && EventName.length()> 0){
             //Add
             addEvent();
-            adapter.add(EventName);
+            Event.add(EventName);
 
             //Refresh
             adapter.notifyDataSetChanged();
@@ -589,6 +590,7 @@ public class EventActivity extends AppCompatActivity {
     private void deleteData(int position) {
         String tag_json_obj = "json_obj_req";
         String url = "http://planmything.tech/api/events/" + EventPKAll.get(position);
+        Log.d("DeleteReq" , "Delete event url is " + url);
         Log.d("DeleteReq" + ": ", "Delete Event is" + EventPKAll.get(position));
         final ProgressDialog pDialog = new ProgressDialog(this);
 

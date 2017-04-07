@@ -2,10 +2,12 @@ package com.example.naman.eventplanning.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +52,8 @@ public class EventroleFragment extends Fragment {
     Button addBtn;
     ArrayList<String> Roles;
     ArrayAdapter<String> adapter;
+    ArrayList<String> RoleAllPK;
+    ArrayList<String> RoleAllName;
     String RoleName, RoleNameEdit;
     String judge,judgeEdit;
     int posEdit;
@@ -69,7 +73,7 @@ public class EventroleFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_event_role, null);
+        View view = inflater.inflate(R.layout.activity_guest_list, null);
         try {
             initView(view);
         } catch (JSONException e) {
@@ -88,9 +92,10 @@ public class EventroleFragment extends Fragment {
         myEntityPK = activity.getEntity();
         EventName = activity.getEventName();
 
+        RoleAllName = new ArrayList<>();
+        RoleAllPK = new ArrayList<>();
 
-
-        lv = (ListView) view.findViewById(R.id.evenList);
+        lv = (ListView) view.findViewById(R.id.guestList);
         addBtn = (Button) view.findViewById(R.id.btnAdd);
 
         //ADAPPTER
@@ -133,7 +138,6 @@ public class EventroleFragment extends Fragment {
         });
 
 
-
         SwipeDismissListViewTouchListener touchListener =
                 new SwipeDismissListViewTouchListener(
                         lv,
@@ -144,31 +148,44 @@ public class EventroleFragment extends Fragment {
                             }
 
                             @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
+                            public void onDismiss(ListView listView, final int[] reverseSortedPositions) {
+                                new AlertDialog.Builder(getContext(),R.style.MyDialogTheme)
+                                        .setTitle("Delete Task")
+                                        .setMessage("Are you sure you want to delete this task？ All data related will be deleted")
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // continue with delete
 
-                                    Log.d("postion", String.valueOf(position));
+                                                for (int position : reverseSortedPositions) {
+                                                    deleteData(position);
 
-//                                    getPK(position);
+                                                    Roles.remove(position);
+                                                    adapter.notifyDataSetChanged();
 
-                                    Roles.remove(position);
-                                    adapter.notifyDataSetChanged();
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // do nothing
+                                            }
+                                        })
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .show();
 
 
-                                }
 
                             }
                         });
         lv.setOnTouchListener(touchListener);
-
 
         // Handle events
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addIntent = new Intent(getContext(), AddEvent.class );
-//                startActivityForResult(addIntent,1);
-                startActivity(addIntent);
+               startActivityForResult(addIntent,1);
+                //startActivity(addIntent);
             }
         });
 
@@ -185,6 +202,7 @@ public class EventroleFragment extends Fragment {
                 judgeEdit = data.getStringExtra("judgeEdit");
                 if(judge != null && judge.equals("yes")){
                     try {
+                        Log.d("add", "work here");
                         add();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -192,7 +210,7 @@ public class EventroleFragment extends Fragment {
                     judge = "";
                 }
                 if(judgeEdit != null && judgeEdit.equals("yesEdit")){
-                    update();
+                    //update();
                     judgeEdit = "";
                 }
             }
@@ -207,7 +225,7 @@ public class EventroleFragment extends Fragment {
 
             findData();
             //Add
-            adapter.add(RoleName);
+            Roles.add(RoleName);
             //Refresh
             adapter.notifyDataSetChanged();
 
@@ -261,12 +279,17 @@ public class EventroleFragment extends Fragment {
                                     e.printStackTrace();
                                 }
                                 String name = null;
+                                String pk = null;
                                 try {
+
                                     name = jsonObject.getString("needed_role_name");
+                                    pk = jsonObject.getString("needed_role");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                                 if (name != null) {
+                                    RoleAllPK.add(pk);
+                                    RoleAllName.add(name);
                                     adapter.add(name);
                                     adapter.notifyDataSetChanged();
                                 }
@@ -469,10 +492,11 @@ public class EventroleFragment extends Fragment {
     }
 
 
-    private void deleteData() {
+    private void deleteData(int position) {
         String tag_json_obj = "json_obj_req";
-        String url = "http://planmything.tech/api/event/" + Event + "/roles/" + needed_role;
-        Log.d("DeleteReq" + ": ", "Delete needed_role is" + needed_role);
+        String url = "http://planmything.tech/api/event/" + Event + "/roles/" + RoleAllPK.get(position);
+        Log.d("DeleteReq: ", "url is " + url);
+        Log.d("DeleteReq: ", "Delete needed_role is" + RoleAllPK.get(position));
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -561,60 +585,6 @@ public class EventroleFragment extends Fragment {
     }
 
 
-    //get the position to delete
-
-    private void getPK(int position){
-
-        final String RoleName = Roles.get(position);
-        String tag_json_arry = "json_array_req";
-
-        String url = "http://planmything.tech/evnet/" + Event +"/roles/";
-
-        JsonArrayRequest req = new JsonArrayRequest(url,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d("GetPk", response.toString());
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject jsonObject = null;
-                            try {
-                                jsonObject = response.getJSONObject(i);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            String name = null;
-                            try {
-                                name = jsonObject.getString("needed_role_name");
-                                if (name.equals(RoleName)){
-                                    needed_role = jsonObject.getString("needed_role");
-//                                    String Desp = jsonObject.getString("description");\
-                                    Log.d("EditReq","needed_role is "+ needed_role);
-                                    deleteData();
-                                    break;
-
-
-                                }
-                            } catch (JSONException e) {
-
-                                e.printStackTrace();
-                            }
-
-
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("getPK","Get Error Response code: " + error.networkResponse.statusCode );
-
-            }
-        });
-
-// Adding request to request queue
-        AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
-
-    }
 
 
 }
