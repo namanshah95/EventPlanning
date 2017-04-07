@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:windowBackground">@color/white</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -18,6 +18,10 @@
     <style name="MyButtonStyle" parent="Widget.AppCompat.Button.Colored">
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/Alert</item>
     </style>
 
 </resources>

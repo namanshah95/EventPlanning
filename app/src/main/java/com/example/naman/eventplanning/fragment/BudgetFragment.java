@@ -43,10 +43,11 @@ import java.util.Arrays;
 
 public class BudgetFragment extends Fragment{
 
-    String Event = "1";
+    String Event;
     ListView listView;
     ArrayAdapter adapter;
     String RoleName;
+    String Needed_Role;
     String PK;
     String Money;
     String myEmail, myName;
@@ -79,30 +80,6 @@ public class BudgetFragment extends Fragment{
         myName = activity.getName();
         myEntityPK = activity.getEntity();
         EventName = activity.getEventName();
-
-//        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                myName = dataSnapshot.getValue().toString();
-//                Log.d("Guest", "Name is " + myName);
-//
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
-//        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                myEmail = dataSnapshot.getValue().toString();
-//                Log.d("User", "Name is " + myEmail);
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
 
 
 //
@@ -179,7 +156,7 @@ public class BudgetFragment extends Fragment{
                             ViewGroup.LayoutParams params = view.getLayoutParams();
 
                             // Set the height of the Item View
-                            params.height = 300;
+                            params.height = 200;
                             view.setLayoutParams(params);
 
                             return view;
@@ -228,6 +205,7 @@ public class BudgetFragment extends Fragment{
                                 if (name.equals(RoleName)){
 
                                     Log.d("RoleName","works here" );
+                                    Needed_Role = jsonObject.getString("needed_role");
                                     PK = jsonObject.getString("event_needed_role");
                                     Money = jsonObject.getString("estimated_budget");
                                     Log.d("GetPk","PK is "+ PK );
@@ -243,6 +221,7 @@ public class BudgetFragment extends Fragment{
 
                         }
                         Intent editIntent = new Intent(getContext(), EditBudget.class);
+                        editIntent.putExtra("Needed_Role", Needed_Role);
                         editIntent.putExtra("Event", Event);
                         editIntent.putExtra("Role", PK);
                         editIntent.putExtra("Money",Money);
@@ -251,7 +230,8 @@ public class BudgetFragment extends Fragment{
                         editIntent.putExtra("myEntityPK", myEntityPK);
                         editIntent.putExtra("EventNme", EventName);
 
-                        startActivityForResult(editIntent, 1);
+//                        startActivityForResult(editIntent, 1);
+                        startActivity(editIntent);
 
 
                     }

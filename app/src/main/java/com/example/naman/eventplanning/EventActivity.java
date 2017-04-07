@@ -6,14 +6,17 @@ package com.example.naman.eventplanning;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +24,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.view.MenuItem;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -55,6 +60,7 @@ public class EventActivity extends AppCompatActivity {
     String judge,judgeEdit;
     String EventPK;
     ArrayList<String> EventPKAll;
+    ArrayList<String> EventNameAll;
     int posEdit;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
@@ -65,7 +71,7 @@ public class EventActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
 
 
-    String Entity = "1";
+
 
 
 
@@ -118,29 +124,9 @@ public class EventActivity extends AppCompatActivity {
 
         }
 
-        setContentView(R.layout.addeventactivity);
+       setContentView(R.layout.activity_event_list);
 
-
-
-        mNavMenu = (NavigationView) findViewById(R.id.nav_menu);
-        mNavMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                System.out.println("Nav Item Selected");
-                if (item.getItemId() == R.id.SignOut) {
-                    mAuth.signOut();
-                }
-                return true;
-            }
-        });
-
-
-
-
-
-        //set navigation bar
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_event_role);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_event_main);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
 
         mDrawerLayout.addDrawerListener(mToggle);
@@ -149,13 +135,48 @@ public class EventActivity extends AppCompatActivity {
 
 
         //set actionbar title
-        getSupportActionBar().setTitle("TASK MANAGER");
+        getSupportActionBar().setTitle("EVENT PLANNING");
         getSupportActionBar().setSubtitle("Event List");
 
-        lv = (ListView)findViewById(R.id.evenList1);
-        addBtn = (Button) findViewById(R.id.btnAdd1);
+
+
+        mNavMenu = (NavigationView) findViewById(R.id.nav_menu);
+        mNavMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Log.d("Navigation" , "works here");
+                if (item.getItemId() == R.id.SignOut) {
+                    mAuth.signOut();
+                }
+                if(item.getItemId() == R.id.AddEvent){
+                    Log.d("Order", String.valueOf(item.getOrder()));
+                    Intent addIntent = new Intent(EventActivity.this, AddEventActivity.class );
+                    EventActivity.this.startActivityForResult(addIntent,1);
+
+                }
+                if(item.getItemId() == R.id.Events){
+                    Intent intent = new Intent(EventActivity.this, EventActivity.class);
+                    startActivity(intent);
+                }
+
+                return true;
+            }
+        });
+
+
+
+
+
+
+        //set navigation bar
+
+
+
+        lv = (ListView)findViewById(R.id.evenList);
+        addBtn = (Button) findViewById(R.id.btnAdd);
         Event = new ArrayList<String>();
         EventPKAll = new ArrayList<String>();
+        EventNameAll = new ArrayList<>();
 
 
         //ADAPPTER
@@ -163,18 +184,20 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public View getView(int position, View convertView, ViewGroup parent){
                 // Get the current item from ListView
-                View view = super.getView(position,convertView,parent);
 
+                View view = super.getView(position,convertView,parent);
 
                 // Get the Layout Parameters for ListView Current Item View
                 ViewGroup.LayoutParams params = view.getLayoutParams();
 
                 // Set the height of the Item View
-                params.height = 300;
+                params.height = 200;
                 view.setLayoutParams(params);
 
                 return view;
             }
+
+
         };
         lv.setAdapter(adapter);
 
@@ -193,7 +216,8 @@ public class EventActivity extends AppCompatActivity {
                 editIntent.putExtra("Name", myName);
                 editIntent.putExtra("Entity",myEntityPK);
                 Log.d("transfer","Event is "+ EventPKAll.get(position) );
-                EventActivity.this.startActivityForResult(editIntent,1);
+                startActivity(editIntent);
+//                EventActivity.this.startActivityForResult(editIntent,1);
 
             }
         });
@@ -210,13 +234,32 @@ public class EventActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
+                            public void onDismiss(ListView listView, final int[] reverseSortedPositions) {
+                                new AlertDialog.Builder(EventActivity.this,R.style.MyDialogTheme)
+                                        .setTitle("Delete Event")
+                                        .setMessage("Are you sure you want to delete this Event？ All data related will be deleted")
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // continue with delete
 
-                                    Event.remove(position);
-                                    adapter.notifyDataSetChanged();
+                                                for (int position : reverseSortedPositions) {
+                                                    deleteData(position);
 
-                                }
+                                                    Event.remove(position);
+                                                    adapter.notifyDataSetChanged();
+
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // do nothing
+                                            }
+                                        })
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .show();
+
+
 
                             }
                         });
@@ -235,6 +278,15 @@ public class EventActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(mToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
 
@@ -294,22 +346,7 @@ public class EventActivity extends AppCompatActivity {
         }
 
     }
-    private void delete(){
-        int pos= lv.getCheckedItemPosition();
-        if (pos > -1)
-        {
-            //remove
-            adapter.remove(Event.get(pos));
 
-            //refresh
-            adapter.notifyDataSetChanged();
-            Toast.makeText(getApplicationContext(), "Deleted ", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(getApplicationContext(), "!! Nothing to Delete", Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
     private void update(){
 
@@ -360,19 +397,25 @@ public class EventActivity extends AppCompatActivity {
                                 }
                                 String name = null;
                                 String temp = null;
+                                String role = null;
                                 try {
+                                    role = jsonObject.getString("role");
                                     name = jsonObject.getString("event_name");
                                     temp = jsonObject.getString("event");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                if (name != null) {
+                                if (name != null && (role.equals("-1") || role.equals("-2"))) {
                                     EventPKAll.add(temp);
+                                    EventNameAll.add(name);
                                     adapter.add(name);
                                     adapter.notifyDataSetChanged();
                                 }
 
                             }
+
+
+
                         }
 
                         pDialog.hide();}
@@ -382,6 +425,7 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
             }
         });
 
@@ -505,6 +549,13 @@ public class EventActivity extends AppCompatActivity {
         Log.d("GetPK", "The url is " + url);
 
 
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -516,18 +567,55 @@ public class EventActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                         getData();
+                        pDialog.hide();
                     }
+
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
                 VolleyLog.d("InitReq", "Error: " + error.getMessage());
 
             }
         });
 
-// Adding request to request queue
+
         AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+    }
+
+// Delete Event
+    private void deleteData(int position) {
+        String tag_json_obj = "json_obj_req";
+        String url = "http://planmything.tech/api/events/" + EventPKAll.get(position);
+        Log.d("DeleteReq" + ": ", "Delete Event is" + EventPKAll.get(position));
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+        JsonObjectRequest request = new JsonObjectRequest
+                (Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("DeleteReq: ", "delete onResponse : " + response.toString());
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (null != error.networkResponse) {
+                            Log.d("DeleteReq: ", "delete Error Response code: " + error.networkResponse.statusCode);
+
+                        }
+                        pDialog.hide();
+                    }
+                });
+        AppController.getInstance(this).addToRequestQueue(request, tag_json_obj);
+
     }
 
 

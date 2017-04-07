@@ -89,13 +89,13 @@ public class EditRole extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //startActivity(new Intent(EditRole.this, EventRole.class));
-                String eventName = etEventNameEdit.getText().toString();
-                Intent intent = new Intent(EditRole.this, EventRole.class);
-                intent.putExtra("nameEdit", eventName);
-                String s = "yesEdit";
-                intent.putExtra("judgeEdit", s);
-
-                setResult(1, intent);
+//                String eventName = etEventNameEdit.getText().toString();
+//                Intent intent = new Intent(EditRole.this, EventRole.class);
+//                intent.putExtra("nameEdit", eventName);
+//                String s = "yesEdit";
+//                intent.putExtra("judgeEdit", s);
+//
+//                setResult(1, intent);
 //                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -161,7 +161,7 @@ public class EditRole extends AppCompatActivity {
                         pDialog.hide();
                         Intent intent=new Intent(EditRole.this,EditRole2.class);
                         intent.putExtra("Event", Event);
-                        intent.putExtra("Role", Role);
+                        intent.putExtra("Needed_Role", Needed_Role);
                         intent.putExtra("Role", Role);
                         intent.putExtra("myEmail", myEmail);
                         intent.putExtra("myName", myName);
@@ -187,6 +187,9 @@ public class EditRole extends AppCompatActivity {
 
 
     }
+
+
+
 
 
 }

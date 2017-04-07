@@ -53,13 +53,13 @@ public class GuestEditRole extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //startActivity(new Intent(EditRole.this, EventRole.class));
-                String eventName = etEventNameEdit.getText().toString();
-                Intent intent = new Intent(GuestEditRole.this, GuestEventRole.class);
-                intent.putExtra("nameEdit", eventName);
-                String s = "yesEdit";
-                intent.putExtra("judgeEdit", s);
-
-                setResult(1, intent);
+//                String eventName = etEventNameEdit.getText().toString();
+//                Intent intent = new Intent(GuestEditRole.this, GuestEventRole.class);
+//                intent.putExtra("nameEdit", eventName);
+//                String s = "yesEdit";
+//                intent.putExtra("judgeEdit", s);
+//
+//                setResult(1, intent);
 //                setResult(Activity.RESULT_OK, intent);
                 finish();
             }

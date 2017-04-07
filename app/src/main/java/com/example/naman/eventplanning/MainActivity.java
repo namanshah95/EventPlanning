@@ -8,6 +8,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.RadioGroup;
 import android.content.Intent;
+
 
 import com.example.naman.eventplanning.fragment.EventroleFragment;
 import com.example.naman.eventplanning.fragment.BudgetFragment;
@@ -61,6 +63,19 @@ public class MainActivity extends AppCompatActivity {
         Event = intent.getStringExtra("Event");
         Entity = intent.getStringExtra("Entity");
         EventName = intent.getStringExtra("EventName");
+//        String s1 = intent.getStringExtra("Check");
+
+//        if(s1 != null && s1.equals("Budget"))
+//        {
+//            s1 = "";
+//            Fragment fragment = new BudgetFragment();
+//            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.replace(R.id.activity_main, fragment);
+//            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//            fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+//
+//        }
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -131,12 +146,33 @@ public class MainActivity extends AppCompatActivity {
                 if (item.getItemId() == R.id.SignOut) {
                     mAuth.signOut();
                 }
+                if(item.getItemId() == R.id.AddEvent){
+                    Log.d("Order", String.valueOf(item.getOrder()));
+                    Intent addIntent = new Intent(MainActivity.this, AddEventActivity.class );
+                    MainActivity.this.startActivityForResult(addIntent,1);
+
+                }
+                if(item.getItemId() == R.id.Events){
+                    Intent intent = new Intent(MainActivity.this, EventActivity.class);
+                    startActivity(intent);
+                }
+
+
                 return true;
             }
         });
 
     }
 
+
+//    public void goToForthFragment(){
+//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//        Fragment ForthFragment = new BudgetFragment();
+//    ft.replace(R.id.fragment_container, ForthFragment);
+//    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//    ft.addToBackStack(null);
+//    ft.commit();
+//}
     @Override
     public void onStart() {
         super.onStart();
@@ -185,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private class ViewPagerAdapter extends FragmentStatePagerAdapter {
+    class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         private GuestFragment tab1Fragment;
         private EventroleFragment tab2Fragment;
@@ -203,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
                 case 0:// tab1
                     if (tab1Fragment == null){
                         tab1Fragment = new GuestFragment();
-
                     }
                     return tab1Fragment;
 

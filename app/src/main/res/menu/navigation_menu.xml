@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/Event1"
-        android:title="Event 1" />
-    <item android:id="@+id/Event2"
-        android:title="Event 2" />
-    <item android:id="@+id/Event3"
-        android:title="Event 3" />
-    <item android:id="@+id/SignOut"
-        android:title="Sign Out" />
-    <item android:id="@+id/AddEvent"
+    <item
+        android:id="@+id/Events"
+        android:icon="?android:attr/actionModePasteDrawable"
+        android:title="Events" />
+    <item
+        android:id="@+id/AddEvent"
+        android:icon="@android:drawable/ic_input_add"
         android:title="New Event" />
+    <item
+        android:id="@+id/SignOut"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:title="Sign Out" />
 </menu>

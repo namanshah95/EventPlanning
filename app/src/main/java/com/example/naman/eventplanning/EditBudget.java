@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,26 +20,40 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class EditBudget extends AppCompatActivity {
+
+    String Needed_Role;
     String Event;
     String Role;
     String EstimedMoney;
     String EventName;
     String myEmail,myEntityPK,myName;
+    String Entity;
+    MyListAdapter myListAdapter;
+    ArrayList<String> candidates;
+    ArrayList<String> candidatesPK;
+    ArrayList<String> budget;
 
 
     private String[] arrText =
             new String[]{"Alice","Bob","Cathy"
                     };
+
     private String[] arrTemp;
     private int totalExpense = 0;
     @Override
@@ -50,6 +65,7 @@ public class EditBudget extends AppCompatActivity {
 
 
         Intent intent = getIntent();
+        Needed_Role = intent.getStringExtra("Needed_Role");
         Event = intent.getStringExtra("Event");
         Role = intent.getStringExtra("Role");
         EstimedMoney = intent.getStringExtra("Money");
@@ -62,14 +78,19 @@ public class EditBudget extends AppCompatActivity {
 
 
         estMoney.setText(EstimedMoney);
+        candidates = new ArrayList<>();
+        candidatesPK = new ArrayList<>();
+        budget = new ArrayList<>();
+
+        getData();
 
 
-
-        arrTemp = new String[arrText.length];
-
-        MyListAdapter myListAdapter = new MyListAdapter();
-        ListView listView = (ListView) findViewById(R.id.peopleList);
-        listView.setAdapter(myListAdapter);
+//
+//        arrTemp = new String[candidates.size()];
+//
+//        myListAdapter = new MyListAdapter();
+//        ListView listView = (ListView) findViewById(R.id.peopleList);
+//        listView.setAdapter(myListAdapter);
 
         Button submit =  (Button) findViewById(R.id.submit);
         final TextView tv = (TextView)findViewById(R.id.textView10);
@@ -82,7 +103,8 @@ public class EditBudget extends AppCompatActivity {
                 totalExpense = 0;
                 for(int i = 0; i < arrTemp.length; i++){
                     if(!arrTemp[i].equals("")) {
-                        totalExpense += Integer.parseInt(arrTemp[i]);
+                        totalExpense += (int) Double.parseDouble(arrTemp[i]);
+                        ChangeBudget(candidatesPK.get(i), arrTemp[i]);
                     }
                     tv.setText(Integer.toString(totalExpense));
                 }
@@ -90,7 +112,7 @@ public class EditBudget extends AppCompatActivity {
                 //show alert if total expense larger than estimated expense
                 if(totalExpense > Float.parseFloat(EstimedMoney)){
                     Toast.makeText(getApplicationContext(),
-                            "Total expense is larger than estimated!", Toast.LENGTH_SHORT).show();
+                            "Recoed Saved and Total expense is larger than estimated!", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getApplicationContext(),
                             "Record Saved", Toast.LENGTH_SHORT).show();
@@ -113,16 +135,26 @@ public class EditBudget extends AppCompatActivity {
         backtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startActivity(new Intent(EditRole.this, EventRole.class));
-                //String eventName = etEventNameEdit.getText().toString();
-                Intent intent = new Intent(EditBudget.this, Budget.class);
-                //intent.putExtra("nameEdit", eventName);
-                //String s = "yesEdit";
-                //intent.putExtra("judgeEdit", s);
 
-                setResult(1, intent);
+//
+//                setResult(1, intent);
 //                setResult(Activity.RESULT_OK, intent);
-                finish();
+              finish();
+
+
+//
+//                Intent intent = new Intent(EditBudget.this, MainActivity.class);
+//
+//                intent.putExtra("Check","Budget");
+//                intent.putExtra("Event", Event);
+//                intent.putExtra("myEmail", myEmail);
+//                intent.putExtra("myName", myName);
+//                intent.putExtra("myEntityPK", myEntityPK);
+//                intent.putExtra("EventNme", EventName);
+//                startActivity(intent);
+
+
+
             }
         });
 
@@ -131,13 +163,197 @@ public class EditBudget extends AppCompatActivity {
         getSupportActionBar().setSubtitle("Budget Record");
     }
 
+
+    private void getData(){
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/event/" + Event + "/guests/?role=" + Needed_Role;
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("BudgetInit", response.toString());
+                        if (response != null) {
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    candidatesPK.add(jsonObject.getString("entity"));
+                                    Log.d("Budget", "candidatesPk is "+ jsonObject.getString("entity"));
+                                    if (jsonObject.getString("estimated_budget").equals("null")){
+                                        budget.add("0.0");
+                                    }
+                                    else{
+                                        budget.add(jsonObject.getString("estimated_budget"));
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                            findName();
+                        }
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+        });
+
+
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+
+    }
+
+
+
+    private void findName(){
+
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/entities/";
+        Log.d("findName", "The url is " + url);
+
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("BudgetInit", response.toString());
+                        if (response != null) {
+                            Map<String, String> people = new HashMap();
+                            for(int i = 0; i< response.length(); i ++){
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    people.put(jsonObject.getString("entity"), jsonObject.getString("Name"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+
+                            for (int i = 0; i < candidatesPK.size(); i++) {
+                                candidates.add(people.get(candidatesPK.get(i)));
+                                Log.d("BudgetInit", "candidates is "+ candidates.get(i));
+
+                            }
+
+                            arrTemp = new String[candidates.size()];
+                            arrTemp = budget.toArray(arrTemp);
+//                            Log.d("Budget", "ArryTemp is " + arrTemp[0] + " " + arrTemp[1] +" " + arrTemp[2] + " " + arrTemp[3]);
+
+                            myListAdapter = new MyListAdapter();
+                            ListView listView = (ListView) findViewById(R.id.peopleList);
+                            listView.setAdapter(myListAdapter);
+
+
+
+                        }
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+        });
+
+
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+
+
+
+    }
+
+    private void ChangeBudget(String Entity, String money){
+
+        String tag_json_obj = "json_obj_req";
+        String url = "http://planmything.tech/api/event/" + Event + "/entities/" + Entity + "/roles/"+ Needed_Role;
+
+        Log.d("ChangeBudget", "The url is " + url);
+
+
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+
+
+        Map<String, String> params = new HashMap();
+
+        params.put("estimated_budget", money);
+
+        JSONObject parameters = new JSONObject(params);
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.PUT,
+                url, parameters,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("PutReq", response.toString());
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("PutReq"+ ": ", "Put Error Response code: " + error.networkResponse.statusCode);
+                pDialog.hide();
+
+            }
+        });
+
+// Adding request to request queue
+        AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
+
+
+
+    }
+
+
+
+
+
+
+
+
     private class MyListAdapter extends BaseAdapter{
 
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            if(arrText != null && arrText.length != 0){
-                return arrText.length;
+            if(candidates != null && candidates.size() != 0){
+                return candidates.size();
             }
             return 0;
         }
@@ -145,7 +361,7 @@ public class EditBudget extends AppCompatActivity {
         @Override
         public Object getItem(int position) {
             // TODO Auto-generated method stub
-            return arrText[position];
+            return candidates.get(position);
         }
 
         @Override
@@ -175,32 +391,35 @@ public class EditBudget extends AppCompatActivity {
             }
 
             holder.ref = position;
+            if (candidates != null) {
 
-            holder.textView1.setText(arrText[position]);
-            holder.editText1.setText(arrTemp[position]);
-            holder.editText1.addTextChangedListener(new TextWatcher() {
+                holder.textView1.setText(candidates.get(position));
+                holder.editText1.setText(arrTemp[position]);
+                holder.editText1.addTextChangedListener(new TextWatcher() {
 
-                @Override
-                public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                    // TODO Auto-generated method stub
+                    @Override
+                    public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                        // TODO Auto-generated method stub
 
-                }
+                    }
 
-                @Override
-                public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                              int arg3) {
-                    // TODO Auto-generated method stub
+                    @Override
+                    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                  int arg3) {
+                        // TODO Auto-generated method stub
 
-                }
+                    }
 
-                @Override
-                public void afterTextChanged(Editable arg0) {
-                    // TODO Auto-generated method stub
-                    arrTemp[holder.ref] = arg0.toString();
-                }
-            });
+                    @Override
+                    public void afterTextChanged(Editable arg0) {
+                        // TODO Auto-generated method stub
+                        arrTemp[holder.ref] = arg0.toString();
+                    }
+                });
+            }
 
             return convertView;
+
         }
 
         private class ViewHolder {
