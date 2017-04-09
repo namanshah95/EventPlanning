@@ -27,7 +27,7 @@ Notes:
 \begin{itemize}
 \item \textbf{GET /entities/} \smallskip \\
 \begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
-Description &  \\ \hline
+Description & Gets an entity from the database. \\ \hline
 HTTP Header Params & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{Email} & The email address of this entity as stored in Firebase. \\ \hline
     \texttt{Name} & The name of this entity as stored in Firebase. \\
@@ -241,6 +241,7 @@ HTTP Header Params & None. \\ \hline
 HTTP Body Params & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{\textcolor{red}{end\_time}} & The date and time the event ends at. \\ \hline
     \texttt{\textcolor{red}{name}} & The name of the event. \\ \hline
+    \texttt{\textcolor{red}{owner}} & The entity PK of the owner of the event being created. \\ \hline
     \texttt{\textcolor{red}{start\_time}} & The date and time the event begins at. \\
     \end{tabular} \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
@@ -315,6 +316,15 @@ HTTP Header Params & None. \\ \hline
 HTTP Body Params & None. \\ \hline
 Output & \begin{tabular}{|p{4cm}|p{8cm}|}
     \texttt{event\_entity\_role} & The PK of the record that was deleted. \\
+    \end{tabular} \\ \hline
+\end{tabular} \bigskip
+\item \textbf{DELETE /event/\{event\}/guests/\{guest\}/roles/\{role\}} \smallskip \\
+\begin{tabular}{|p{4cm}|p{12.85cm}|} \hline
+Description & Removes a role from an event guest. \\ \hline
+HTTP Header Params & None. \\ \hline
+HTTP Body Params & None. \\ \hline
+Output & \begin{tabular}{|p{4cm}|p{8cm}|}
+    \texttt{event\_entity\_role} & The PK of the guest role that was deleted. \\
     \end{tabular} \\ \hline
 \end{tabular} \bigskip
 \item \textbf{DELETE /event/\{event\}/roles/\{role\}} \smallskip \\
