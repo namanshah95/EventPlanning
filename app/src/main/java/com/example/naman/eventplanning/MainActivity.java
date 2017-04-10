@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("viewPage", "work here");
             getSupportActionBar().setSubtitle("Task Manage");
             viewPager.setCurrentItem(1,true);
+            rgTab.check(R.id.task_manage);
         }
         else {
             viewPager.setCurrentItem(lastPos, true);
