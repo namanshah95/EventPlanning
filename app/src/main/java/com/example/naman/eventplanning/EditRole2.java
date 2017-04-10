@@ -40,8 +40,11 @@ public class EditRole2 extends AppCompatActivity implements
     String Event;
     String EventName;
     String myEmail, myName, myEntityPK;
+    String RoleName, Desp, peopleNum,Money;
     String temp, EntityName;
     ArrayList<String> candidates, candidatesPK;
+    ArrayList<Integer> selectedPosOld;
+    ArrayList<Integer> selectedPosNew;
 
     ArrayList<String>  selected;
 
@@ -69,6 +72,16 @@ public class EditRole2 extends AppCompatActivity implements
         selected = intent.getStringArrayListExtra("selected");
 
 
+        RoleName = intent.getStringExtra("RoleName");
+        Desp = intent.getStringExtra("Descripition");
+        peopleNum = intent.getStringExtra("PeopleNumber");
+        Money = intent.getStringExtra("Money");
+
+
+        selectedPosOld = new ArrayList<>();
+        selectedPosNew = new ArrayList<>();
+
+
         adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_multiple_choice, candidates);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -82,6 +95,8 @@ public class EditRole2 extends AppCompatActivity implements
             for (int j = 0; j < candidatesPK.size(); j++){
                 if(selected.get(i).equals(candidatesPK.get(j))){
                     listView.setItemChecked(j,true);
+                    selectedPosOld.add(j);
+                    Log.d("select", " selectedPosOld " + String.valueOf(j));
                     break;
                 }
             }
@@ -129,11 +144,15 @@ public class EditRole2 extends AppCompatActivity implements
         ArrayList<String> selectedItemsPK = new ArrayList<>();
         for (int i = 0; i < checked.size(); i++) {
             // Item position in adapter
+            Log.d("select", String.valueOf(checked.size()));
             int position = checked.keyAt(i);
             // Add sport if it is checked i.e.) == TRUE!
-            if (checked.valueAt(i))
+            if (checked.valueAt(i)) {
+                selectedPosNew.add(position);
                 selectedItems.add(adapter.getItem(position));
-                 selectedItemsPK.add(candidatesPK.get(position));
+                Log.d("select", " selectedPosNew " + String.valueOf(position));
+                selectedItemsPK.add(candidatesPK.get(position));
+            }
         }
 
         String[] outputStrArr = new String[selectedItems.size()];
@@ -160,13 +179,23 @@ public class EditRole2 extends AppCompatActivity implements
         intent.putExtra("EventNme", EventName);
         intent.putExtra("selectedItems", outputStrArr);
         intent.putExtra("selectedItemsPK",outputStrArrPK);
+        intent.putStringArrayListExtra("candidates", candidates);
+        intent.putStringArrayListExtra("candidatesPK", candidatesPK);
+        intent.putIntegerArrayListExtra("selectedOld",selectedPosOld);
+        intent.putIntegerArrayListExtra("selectedNew",selectedPosNew);
+        intent.putExtra("Money", Money);
+        intent.putExtra("Descripition", Desp);
+        intent.putExtra("PeopleNumber", peopleNum);
+        intent.putExtra("RoleName", RoleName);
+
 
         // Add the bundle to the intent.
 
 
         // start the ResultActivity
-        startActivity(intent);
+        startActivityForResult(intent,3);
     }
+    /*
 
     private void getData(){
         String tag_json_arry = "json_array_req";
@@ -343,7 +372,7 @@ public class EditRole2 extends AppCompatActivity implements
         AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
 
     }
-
+*/
 
 
 

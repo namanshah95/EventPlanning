@@ -1,5 +1,6 @@
 package com.example.naman.eventplanning;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -56,7 +57,7 @@ public class EditRole extends AppCompatActivity {
         etnum = (EditText) findViewById(R.id.editnum);
         etMoney = (EditText) findViewById(R.id.etMoney);
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         Needed_Role = intent.getStringExtra("needed_role");
         Event = intent.getStringExtra("Event");
         RoleName = intent.getStringExtra("RoleName");
@@ -89,7 +90,7 @@ public class EditRole extends AppCompatActivity {
         selected = new ArrayList<>();
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Selected);
         lv.setAdapter(adapter);
-        getData();
+        getOwner();
 
 
         //next button
@@ -115,16 +116,18 @@ public class EditRole extends AppCompatActivity {
         backtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startActivity(new Intent(EditRole.this, EventRole.class));
+//                startActivity(new Intent(EditRole.this, EventRole.class));
 //                String eventName = etEventNameEdit.getText().toString();
 //                Intent intent = new Intent(EditRole.this, EventRole.class);
 //                intent.putExtra("nameEdit", eventName);
 //                String s = "yesEdit";
 //                intent.putExtra("judgeEdit", s);
 //
-//                setResult(1, intent);
-//                setResult(Activity.RESULT_OK, intent);
+                Intent returnIntent = getIntent();
+                setResult(1, returnIntent);
+                setResult(Activity.RESULT_OK, returnIntent);
                 finish();
+
             }
         });
 
@@ -197,6 +200,10 @@ public class EditRole extends AppCompatActivity {
                         intent.putStringArrayListExtra("candidates", candidates);
                         intent.putStringArrayListExtra("candidatesPK",candidatesPK);
                         intent.putStringArrayListExtra("selected", selected);
+                        intent.putExtra("Money", Money);
+                        intent.putExtra("Descripition", Desp);
+                        intent.putExtra("PeopleNumber", peopleNum);
+                        intent.putExtra("RoleName", RoleName);
 
                         startActivityForResult(intent, 2);// Activity is started with requestCode 2
 
@@ -205,7 +212,9 @@ public class EditRole extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("PutReq"+ ": ", "Put Error Response code: " + error.networkResponse.statusCode);
+                if(error!= null) {
+                    Log.d("PutReq" + ": ", "Put Error Response code: " + error.networkResponse.statusCode);
+                }
                 pDialog.hide();
 
             }
@@ -217,6 +226,63 @@ public class EditRole extends AppCompatActivity {
 
 
     }
+
+
+    private void getOwner(){
+
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/event/" + Event + "/owner/?role=-1";
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("OwnerInit", response.toString());
+                        if (response != null) {
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    candidatesPK.add(jsonObject.getString("entity"));
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                            getData();
+                        }
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+
+            }
+        });
+
+
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+
+
+
+    }
+
 
     private void getData(){
         String tag_json_arry = "json_array_req";
@@ -311,7 +377,7 @@ public class EditRole extends AppCompatActivity {
 //                                adapter.notifyDataSetChanged();
 
                             }
-                            getSelected();
+                            getSelectedOwner();
 
 
                         }
@@ -333,9 +399,62 @@ public class EditRole extends AppCompatActivity {
 
     }
 
+    private void getSelectedOwner(){
+
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/event/" + Event + "/owner/?role=" + Needed_Role;
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
 
 
-    private void getSelected(){
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("BudgetInit", response.toString());
+                        if (response != null) {
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    selected.add(jsonObject.getString("entity"));
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                            getSelectedGuest();
+                        }
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+        });
+
+
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+
+
+    }
+
+
+
+    private void getSelectedGuest(){
         String tag_json_arry = "json_array_req";
 
         String url = "http://planmything.tech/api/event/" + Event + "/guests/?role=" + Needed_Role;

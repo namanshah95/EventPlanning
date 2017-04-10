@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -19,6 +20,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,12 @@ public class EditRole3 extends AppCompatActivity {
     String Event ;
     String EventName;
     String myEmail, myName,myEntityPK;
+    ArrayList<String> candidates, candidatesPK;
+    ArrayList<Integer> selectedPosOld;
+    ArrayList<Integer> selectedPosNew;
+    ArrayAdapter<String> adapter;
+
+    String RoleName, Desp, peopleNum,Money;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +57,20 @@ public class EditRole3 extends AppCompatActivity {
         Role = getIntent().getStringExtra("Role");
         Needed_Role = getIntent().getStringExtra("Needed_Role");
 
+        RoleName = intent.getStringExtra("RoleName");
+        Desp = intent.getStringExtra("Descripition");
+        peopleNum = intent.getStringExtra("PeopleNumber");
+        Money = intent.getStringExtra("Money");
+
         resultArr = intent.getStringArrayExtra("selectedItems");
         resultPK = intent.getStringArrayExtra("selectedItemsPK");
+        candidates= intent.getStringArrayListExtra("candidates");
+        candidatesPK = intent.getStringArrayListExtra("candidatesPK");
+        selectedPosNew = intent.getIntegerArrayListExtra("selectedNew");
+        selectedPosOld = intent.getIntegerArrayListExtra("selectedOld");
         ListView lv = (ListView) findViewById(R.id.outputList);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, resultArr);
         lv.setAdapter(adapter);
 
@@ -94,11 +111,36 @@ public class EditRole3 extends AppCompatActivity {
     // Assign people to the role
 
 
-    private void assignRole(){
-        for(int i= 0; i < resultPK.length; i++){
-            postData(resultPK[i]);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //  if the request code is same as what is passed  here it is 2
+        if (requestCode == 4) {
 
         }
+    }
+
+
+    private void assignRole(){
+        if (selectedPosOld.contains(0) && !selectedPosNew.contains(0)){
+           //delete Owner
+            Log.d("select", "delete owner");
+            deleteDataOwner();
+        }
+        if (!selectedPosOld.contains(0) && selectedPosNew.contains(0)){
+            Log.d("select", "post owner");
+            postData(0);
+        }
+
+        for(int i = 1;i < candidatesPK.size();i ++){
+            if (selectedPosOld.contains(i) && !selectedPosNew.contains(i)){
+                deleteData(i);
+            }
+            else if(!selectedPosOld.contains(i) && selectedPosNew.contains(i)){
+                postData(i);
+            }
+        }
+
+
         Toast.makeText(getApplicationContext(),
                 "Sumbit Sucessfully", Toast.LENGTH_SHORT).show();
         Log.d("Intent", "Event is " + Event);
@@ -107,12 +149,19 @@ public class EditRole3 extends AppCompatActivity {
 
 
         Intent intent = new Intent(EditRole3.this, MainActivity.class);
+        intent.putExtra("Check","EventRole");
         intent.putExtra("Event", Event);
         intent.putExtra("myEmail", myEmail);
         intent.putExtra("myName", myName);
         intent.putExtra("myEntityPK", myEntityPK);
-        intent.putExtra("EventNme", EventName);
-        startActivityForResult(intent,1);
+        intent.putExtra("EventName", EventName);
+        intent.putExtra("Money", Money);
+//        intent.putExtra("Descripition", Desp);
+//        intent.putExtra("PeopleNumber", peopleNum);
+//        intent.putExtra("RoleName", RoleName);
+//        intent.putExtra("needed_role", Needed_Role);
+//        intent.putExtra("Role",Role);
+        startActivity(intent);
 
     }
 
@@ -121,10 +170,10 @@ public class EditRole3 extends AppCompatActivity {
 
 
 
-    private void postData(String Entity){
+    private void postData(int position){
         String tag_json_obj = "json_obj_req";
 
-        String url = "http://planmything.tech/api/event/" + Event + "/entities/" + Entity + "/roles/" ;
+        String url = "http://planmything.tech/api/event/" + Event + "/entities/" + candidatesPK.get(position) + "/roles/" ;
         Log.d("PostReq", "The url of assigning role is "+ url);
 
         final ProgressDialog pDialog = new ProgressDialog(this);
@@ -170,6 +219,64 @@ public class EditRole3 extends AppCompatActivity {
         AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
 
     }
+
+    //DELETE /event/{event}/guests/{guest}/roles/{role}
+
+    private void deleteData(int position) {
+        String tag_json_obj = "json_obj_req";
+        String url = "http://planmything.tech/api/event/" + Event + "/guests/" + candidatesPK.get(position)+"/roles/"+ Needed_Role;
+        Log.d("DeleteReq: ", "url is " + url);
+
+        JsonObjectRequest request = new JsonObjectRequest
+                (Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("DeleteReq" + ": ", "delete onResponse : " + response.toString());
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (null != error.networkResponse) {
+                            Log.d("DeleteReq"+ ": ", "delete Error Response code: " + error.networkResponse.statusCode);
+
+                        }
+                    }
+                });
+        AppController.getInstance(this).addToRequestQueue(request, tag_json_obj);
+
+    }
+
+
+    private void deleteDataOwner() {
+        String tag_json_obj = "json_obj_req";
+        String url = "http://planmything.tech/api/event/" + Event + "/owner/roles/"+ Needed_Role;
+        Log.d("DeleteReq: ", "url is " + url);
+
+        JsonObjectRequest request = new JsonObjectRequest
+                (Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("DeleteReq" + ": ", "delete onResponse : " + response.toString());
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (null != error.networkResponse) {
+                            Log.d("DeleteReq"+ ": ", "delete Error Response code: " + error.networkResponse.statusCode);
+
+                        }
+                    }
+                });
+        AppController.getInstance(this).addToRequestQueue(request, tag_json_obj);
+
+    }
+
+
+
 
 
 

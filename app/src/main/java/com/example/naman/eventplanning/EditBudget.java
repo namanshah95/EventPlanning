@@ -82,7 +82,7 @@ public class EditBudget extends AppCompatActivity {
         candidatesPK = new ArrayList<>();
         budget = new ArrayList<>();
 
-        getData();
+        getOwner();
 
 
 //
@@ -118,13 +118,16 @@ public class EditBudget extends AppCompatActivity {
                             "Record Saved", Toast.LENGTH_SHORT).show();
                 }
 
-                Intent intent = new Intent(EditBudget.this, MainActivity.class);
-                intent.putExtra("Event", Event);
-                intent.putExtra("myEmail", myEmail);
-                intent.putExtra("myName", myName);
-                intent.putExtra("myEntityPK", myEntityPK);
-                intent.putExtra("EventNme", EventName);
-                startActivity(intent);
+
+                finish();
+
+//                Intent intent = new Intent(EditBudget.this, MainActivity.class);
+//                intent.putExtra("Event", Event);
+//                intent.putExtra("myEmail", myEmail);
+//                intent.putExtra("myName", myName);
+//                intent.putExtra("myEntityPK", myEntityPK);
+//                intent.putExtra("EventNme", EventName);
+//                startActivity(intent);
 
             }
         });
@@ -162,6 +165,76 @@ public class EditBudget extends AppCompatActivity {
         getSupportActionBar().setTitle("BUDGET MANAGER");
         getSupportActionBar().setSubtitle("budget Record");
     }
+
+
+
+    private void getOwner(){
+
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/event/" + Event + "/owner/?role="+ Needed_Role;
+        final ProgressDialog pDialog = new ProgressDialog(this);
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("OwnerInit", response.toString());
+                        if (response != null) {
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    candidatesPK.add(jsonObject.getString("entity"));
+                                    if (jsonObject.getString("estimated_budget").equals("null")){
+                                        budget.add("0.0");
+                                    }
+                                    else{
+                                        budget.add(jsonObject.getString("estimated_budget"));
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                            getData();
+                        }
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+
+            }
+        });
+
+
+        AppController.getInstance(this).addToRequestQueue(req, tag_json_arry);
+
+
+
+    }
+
+
+
+
+
+
+
 
 
     private void getData(){

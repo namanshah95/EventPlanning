@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.naman.eventplanning.AddEvent;
@@ -57,6 +58,7 @@ import org.json.JSONObject;
 public class GuestFragment extends Fragment {
 
     ListView lv;
+    TextView owner;
     Button addBtn;
     ArrayList<String> guest;
     ArrayAdapter<String> adapter;
@@ -69,6 +71,8 @@ public class GuestFragment extends Fragment {
     String Event; // current Event
 
     String myEntityPK; // Curret user's PK
+    String OwnerPk;
+    String OwnerName;
 
     boolean flag = false;
     boolean exist = false;
@@ -116,6 +120,8 @@ public class GuestFragment extends Fragment {
 
         lv = (ListView) view.findViewById(R.id.guestList);
         addBtn = (Button) view.findViewById(R.id.btnAdd);
+        owner = (TextView)view.findViewById(R.id.owner);
+
 
 
         //ADAPPTER
@@ -140,7 +146,8 @@ public class GuestFragment extends Fragment {
         };
         lv.setAdapter(adapter);
 
-        getData();
+        getOwner();
+        //getData();
 
 
         //Set selected item
@@ -176,6 +183,8 @@ public class GuestFragment extends Fragment {
                                                 for (int position : reverseSortedPositions) {
                                                     deleteData(position);
 
+                                                    candidatesPK.remove(position);
+                                                    candidates.remove(position);
                                                     guest.remove(position);
                                                     adapter.notifyDataSetChanged();
 
@@ -262,6 +271,62 @@ public class GuestFragment extends Fragment {
 //    }
 
 
+    private void getOwner(){
+
+        String tag_json_arry = "json_array_req";
+
+        String url = "http://planmything.tech/api/event/" + Event + "/owner/";
+        final ProgressDialog pDialog = new ProgressDialog(getContext());
+
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("OwnerInit", response.toString());
+                        if (response != null) {
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = response.getJSONObject(i);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    OwnerPk = jsonObject.getString("entity");
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                            getData();
+                        }
+                        pDialog.hide();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("InitReq", "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+        });
+
+
+        AppController.getInstance(getContext()).addToRequestQueue(req, tag_json_arry);
+
+
+
+    }
+
+
+
     private void getData(){
         String tag_json_arry = "json_array_req";
 
@@ -338,6 +403,8 @@ public class GuestFragment extends Fragment {
                         Log.d("PostReq", response.toString());
 
                         guest.add(EntityName);
+                        candidatesPK.add(EntityPK);
+                        candidates.add(EntityName);
                         //Refresh
                         adapter.notifyDataSetChanged();
 
@@ -366,31 +433,6 @@ public class GuestFragment extends Fragment {
 
 
 
-    private void deleteData() {
-        String tag_json_obj = "json_obj_req";
-        String url = "http://planmything.tech/api/event/" + Event + "/guests/ + PK";
-        Log.d("DeleteReq" + ": ", "Delete PK is" + PK);
-        JsonObjectRequest request = new JsonObjectRequest
-                (Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("DeleteReq" + ": ", "delete onResponse : " + response.toString());
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (null != error.networkResponse) {
-                            Log.d("DeleteReq" + ": ", "delete Error Response code: " + error.networkResponse.statusCode);
-
-                        }
-                    }
-                });
-//    requesQueue.add(request);
-        AppController.getInstance(getContext()).addToRequestQueue(request, tag_json_obj);
-
-    }
 
 
     // check whether the user exist
@@ -473,6 +515,8 @@ public class GuestFragment extends Fragment {
                                     e.printStackTrace();
                                 }
                             }
+
+                            owner.setText(people.get(OwnerPk));
 
 
                             for (int i = 0; i < candidatesPK.size(); i++) {

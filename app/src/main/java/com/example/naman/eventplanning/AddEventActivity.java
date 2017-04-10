@@ -27,7 +27,7 @@ public class AddEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String eventName = etEventName.getText().toString();
-                Intent intent = getIntent();
+                Intent intent = new Intent();
                 intent.putExtra("name", eventName);
                 String s = "yes";
                 intent.putExtra("judge", s);

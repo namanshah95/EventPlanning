@@ -15,14 +15,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:descendantFocusability="blocksDescendants">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/navi"
-        android:orientation="horizontal">
-
-    </LinearLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -33,14 +25,15 @@
             android:id="@+id/guestList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/btnAdd"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_below="@+id/textView13"
+            android:layout_marginTop="15dp"
             android:layout_gravity="start"
-            android:layout_marginBottom="19dp"
             android:choiceMode="singleChoice"
             android:divider="@color/listviewDivider"
-            android:dividerHeight="2px" />
+            android:dividerHeight="2px"
+            android:layout_above="@+id/btnAdd" />
 
         <Button
             android:text="Add"
@@ -51,20 +44,44 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp" />
 
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="38dp"
+            android:text="Owner"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView9"
+            android:layout_alignStart="@+id/textView9"
+            android:layout_below="@+id/textView9"
+            android:layout_marginTop="25dp"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/owner"
+            android:layout_alignStart="@+id/owner"
+            android:layout_below="@+id/owner"
+            android:layout_marginTop="40dp"
+            android:text="Guests"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
 
     </RelativeLayout>
-
-    <android.support.design.widget.NavigationView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:menu="@menu/navigation_menu"
-        android:layout_gravity="start">
-    </android.support.design.widget.NavigationView>
-
-
 
 
 </android.support.v4.widget.DrawerLayout>

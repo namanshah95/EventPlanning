@@ -160,6 +160,8 @@ public class EventroleFragment extends Fragment {
                                                     deleteData(position);
 
                                                     Roles.remove(position);
+                                                    RoleAllName.remove(position);
+                                                    RoleAllPK.remove(position);
                                                     adapter.notifyDataSetChanged();
 
                                                 }
@@ -225,6 +227,8 @@ public class EventroleFragment extends Fragment {
 
             findData();
             //Add
+            RoleAllName.add(RoleName);
+            RoleAllPK.add(needed_role);
             Roles.add(RoleName);
             //Refresh
             adapter.notifyDataSetChanged();

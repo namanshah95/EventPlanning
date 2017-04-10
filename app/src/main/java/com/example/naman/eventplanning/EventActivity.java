@@ -149,12 +149,7 @@ public class EventActivity extends AppCompatActivity {
                     mAuth.signOut();
                     startActivity(new Intent(EventActivity.this, LoginActivity.class));
                 }
-                if(item.getItemId() == R.id.AddEvent){
-                    Log.d("Order", String.valueOf(item.getOrder()));
-                    Intent addIntent = new Intent(EventActivity.this, AddEventActivity.class );
-                    EventActivity.this.startActivityForResult(addIntent,1);
 
-                }
                 if(item.getItemId() == R.id.Events){
                     Intent intent = new Intent(EventActivity.this, EventActivity.class);
                     startActivity(intent);
@@ -247,9 +242,12 @@ public class EventActivity extends AppCompatActivity {
                                                     deleteData(position);
 
                                                     Event.remove(position);
+                                                    EventPKAll.remove(position);
+                                                    EventNameAll.remove(position);
                                                     adapter.notifyDataSetChanged();
 
                                                 }
+
                                             }
                                         })
                                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -371,6 +369,10 @@ public class EventActivity extends AppCompatActivity {
 
     private void getData(){
 
+//        Event.clear();
+//        EventPKAll = new ArrayList<>();
+//        EventNameAll = new ArrayList<>();
+
         String tag_json_arry = "json_array_req";
 
         String url = "http://planmything.tech/api/entity/" + myEntityPK + "/events/";
@@ -409,7 +411,7 @@ public class EventActivity extends AppCompatActivity {
                                 if (name != null && (role.equals("-1") || role.equals("-2"))) {
                                     EventPKAll.add(temp);
                                     EventNameAll.add(name);
-                                    adapter.add(name);
+                                    Event.add(name);
                                     adapter.notifyDataSetChanged();
                                 }
 
@@ -463,6 +465,7 @@ public class EventActivity extends AppCompatActivity {
                         try {
                             EventPK = response.getString("event");
                             EventPKAll.add(EventPK);
+                            EventNameAll.add(EventName);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -491,54 +494,6 @@ public class EventActivity extends AppCompatActivity {
         AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
 
     }
-
-
-//    private void addOwner(){
-//
-//        String tag_json_obj = "json_obj_req";
-//
-//        String url = "http://planmything.tech/api/event/" + EventPK + "/guests/";
-//        Map<String, String> params = new HashMap();
-//
-//        params.put("entity", myEntityPK);
-//
-//        JSONObject parameters = new JSONObject(params);
-//
-//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-//                url, parameters,
-//                new Response.Listener<JSONObject>() {
-//
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        Log.d("PostReq", response.toString());
-//                        try {
-//                            event_entity_role = response.getString("event_entity_role");
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                    }
-//
-//                }, new Response.ErrorListener() {
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
-//
-//            }
-//        }) {
-//
-//            @Override
-//            public String getBodyContentType() {
-//                return "application/json";
-//            }
-//
-//        };
-//
-//// Adding request to request queue
-//        AppController.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
-//
-//    }
 
 
 

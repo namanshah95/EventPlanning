@@ -95,6 +95,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="back"
+
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/textView"
         android:layout_alignEnd="@+id/textView"
@@ -105,6 +106,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select People"
+
         android:layout_alignBaseline="@+id/back"
         android:layout_alignBottom="@+id/back"
         android:layout_alignParentRight="true"
@@ -141,6 +143,8 @@
         android:textStyle="bold" />
 
     <ListView
+
+        android:isScrollContainer="false"
         android:id="@+id/peopleSelected"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

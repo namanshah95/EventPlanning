@@ -4,11 +4,7 @@
     <item
         android:id="@+id/Events"
         android:icon="?android:attr/actionModePasteDrawable"
-        android:title="Events" />
-    <item
-        android:id="@+id/AddEvent"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="New Event" />
+        android:title="My Events" />
     <item
         android:id="@+id/SignOut"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"

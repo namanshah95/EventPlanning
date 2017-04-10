@@ -63,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
         Event = intent.getStringExtra("Event");
         Entity = intent.getStringExtra("Entity");
         EventName = intent.getStringExtra("EventName");
-//        String s1 = intent.getStringExtra("Check");
+        String s1 = intent.getStringExtra("Check");
 
-//        if(s1 != null && s1.equals("budget"))
+//        if(s1 != null && s1.equals("EventRole"))
 //        {
 //            s1 = "";
-//            Fragment fragment = new BudgetFragment();
+//            Fragment fragment = new EventroleFragment();
 //            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //            fragmentTransaction.replace(R.id.activity_main, fragment);
 //            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -111,8 +111,11 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setSubtitle("Task Manage");
 
         viewPager = (CustomViewPager) findViewById(R.id.viewPager);
+
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+
+
         rgTab = (RadioGroup) findViewById(R.id.rg_tab);
 
         rgTab.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -137,7 +140,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        viewPager.setCurrentItem(lastPos, true);
+
+        if(s1 != null && s1.equals("EventRole")){
+            Log.d("viewPage", "work here");
+            getSupportActionBar().setSubtitle("Task Manage");
+            viewPager.setCurrentItem(1);
+        }
+        else {
+            viewPager.setCurrentItem(lastPos, true);
+        }
+
 
         mNavMenu = (NavigationView) findViewById(R.id.nav_menu);
         mNavMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -147,12 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 if (item.getItemId() == R.id.SignOut) {
                     mAuth.signOut();
                 }
-                if(item.getItemId() == R.id.AddEvent){
-                    Log.d("Order", String.valueOf(item.getOrder()));
-                    Intent addIntent = new Intent(MainActivity.this, AddEventActivity.class );
-                    MainActivity.this.startActivityForResult(addIntent,1);
 
-                }
                 if(item.getItemId() == R.id.Events){
                     Intent intent = new Intent(MainActivity.this, EventActivity.class);
                     startActivity(intent);
@@ -166,14 +173,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    public void goToForthFragment(){
-//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        Fragment ForthFragment = new BudgetFragment();
-//    ft.replace(R.id.fragment_container, ForthFragment);
-//    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//    ft.addToBackStack(null);
-//    ft.commit();
-//}
+
     @Override
     public void onStart() {
         super.onStart();
@@ -247,11 +247,13 @@ public class MainActivity extends AppCompatActivity {
                     if (tab2Fragment == null) {
                         tab2Fragment = new EventroleFragment();
                     }
+
                     return tab2Fragment;
                 case 2:// tab3
                     if (tab3Fragment == null) {
                         tab3Fragment = new MessageFragment();
                     }
+
                     return tab3Fragment;
                 case 3:// tab4
                     if (tab4Fragment == null) {
