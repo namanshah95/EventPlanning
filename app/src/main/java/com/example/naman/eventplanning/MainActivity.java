@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         if(s1 != null && s1.equals("EventRole")){
             Log.d("viewPage", "work here");
             getSupportActionBar().setSubtitle("Task Manage");
-            viewPager.setCurrentItem(1);
+            viewPager.setCurrentItem(1,true);
         }
         else {
             viewPager.setCurrentItem(lastPos, true);

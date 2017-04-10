@@ -83,7 +83,7 @@ public class EditRole2 extends AppCompatActivity implements
 
 
         adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_multiple_choice, candidates);
+                R.layout.checkedmylist, candidates);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listView.setAdapter(adapter);
 

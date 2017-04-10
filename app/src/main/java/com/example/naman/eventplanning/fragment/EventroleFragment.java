@@ -100,23 +100,7 @@ public class EventroleFragment extends Fragment {
 
         //ADAPPTER
         Roles = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Roles){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent){
-                // Get the current item from ListView
-                View view = super.getView(position,convertView,parent);
-
-
-                // Get the Layout Parameters for ListView Current Item View
-                ViewGroup.LayoutParams params = view.getLayoutParams();
-
-                // Set the height of the Item View
-                params.height = 200;
-                view.setLayoutParams(params);
-
-                return view;
-            }
-        };
+        adapter = new ArrayAdapter<String>(getContext(), R.layout.mylist, Roles);
 
         lv.setAdapter(adapter);
 

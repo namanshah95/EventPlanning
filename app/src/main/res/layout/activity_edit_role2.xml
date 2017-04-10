@@ -47,10 +47,10 @@
 
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:text="ASSIGN TASK"
         android:textColor="@color/colorPrimary"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:textStyle="bold" />
 
 

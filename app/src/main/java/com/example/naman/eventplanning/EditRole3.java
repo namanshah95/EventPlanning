@@ -71,7 +71,7 @@ public class EditRole3 extends AppCompatActivity {
         ListView lv = (ListView) findViewById(R.id.outputList);
 
         adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, resultArr);
+                R.layout.mylist, resultArr);
         lv.setAdapter(adapter);
 
         //back button
