@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.example.naman.eventplanning.AddEvent;
 import com.example.naman.eventplanning.EditRole;
+import com.example.naman.eventplanning.ListViewAdapter;
+import com.example.naman.eventplanning.ListViewAdapterRect;
 import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.Messenger;
 import com.example.naman.eventplanning.R;
@@ -100,7 +102,7 @@ public class EventroleFragment extends Fragment {
 
         //ADAPPTER
         Roles = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(getContext(), R.layout.mylist, Roles);
+        adapter = new ListViewAdapterRect(getContext(), R.layout.item_listview, Roles);
 
         lv.setAdapter(adapter);
 

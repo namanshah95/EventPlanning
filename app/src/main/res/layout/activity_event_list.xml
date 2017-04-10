@@ -49,6 +49,7 @@
             android:dividerHeight="2px" />
 
         <Button
+            android:layout_marginTop="10dp"
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -21,6 +21,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.naman.eventplanning.AppController;
 import com.example.naman.eventplanning.Budget;
 import com.example.naman.eventplanning.EditBudget;
+import com.example.naman.eventplanning.ListViewAdapter;
+import com.example.naman.eventplanning.ListViewAdapterRect;
 import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -144,8 +146,7 @@ public class BudgetFragment extends Fragment{
                             }
                         }
                         pDialog.hide();
-                        adapter = new ArrayAdapter<String>(getContext(),
-                                R.layout.mylist, TaskArray);
+                        adapter = new ListViewAdapterRect(getContext(), R.layout.item_listview, TaskArray);
                         listView.setAdapter(adapter);
                     }
                 }, new Response.ErrorListener() {

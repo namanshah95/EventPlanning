@@ -11,17 +11,18 @@
     tools:context="com.example.naman.eventplanning.AddEvent">
 
     <EditText
+        android:id="@+id/etEventName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/etEventName"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="TaskName"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="TaskName"
+        android:inputType="textPersonName"
+        android:textSize="18sp" />
 
     <Button
         android:text="Submit"

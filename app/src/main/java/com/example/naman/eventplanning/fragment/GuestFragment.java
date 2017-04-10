@@ -26,6 +26,7 @@ import com.example.naman.eventplanning.AddGuest;
 import com.example.naman.eventplanning.EditBudget;
 import com.example.naman.eventplanning.EditRole;
 import com.example.naman.eventplanning.EventActivity;
+import com.example.naman.eventplanning.ListViewAdapter;
 import com.example.naman.eventplanning.LoginActivity;
 import com.example.naman.eventplanning.MainActivity;
 import com.example.naman.eventplanning.Messenger;
@@ -58,10 +59,13 @@ import org.json.JSONObject;
 public class GuestFragment extends Fragment {
 
     ListView lv;
-    TextView owner;
+    ListView lv_owner;
+
     Button addBtn;
     ArrayList<String> guest;
+    ArrayList<String> owner;
     ArrayAdapter<String> adapter;
+    ArrayAdapter<String> adapter_owner;
     String temp;
     String judge, judgeEdit;
     int posEdit;
@@ -120,18 +124,22 @@ public class GuestFragment extends Fragment {
 
         lv = (ListView) view.findViewById(R.id.guestList);
         addBtn = (Button) view.findViewById(R.id.btnAdd);
-        owner = (TextView)view.findViewById(R.id.owner);
+        lv_owner = (ListView) view.findViewById(R.id.ownerList);
 
 
 
         //ADAPPTER
         guest = new ArrayList<String>();
+        owner = new ArrayList<>();
         //guest = new ArrayList<String>(Arrays.asList("Alice", "Bob", "Alex", "Grace","Emily", "Cathy", "Tom", "James"));
-        adapter = new ArrayAdapter<String>(getContext(), R.layout.mylist, guest);
+        adapter = new ListViewAdapter(getContext(), R.layout.item_listview, guest);
+        adapter_owner = new ListViewAdapter(getContext(), R.layout.item_listview, owner);
         lv.setAdapter(adapter);
+        lv_owner.setAdapter(adapter_owner);
+
 
         getOwner();
-        //getData();
+        getData();
 
 
         //Set selected item
@@ -289,7 +297,7 @@ public class GuestFragment extends Fragment {
 
 
                             }
-                            getData();
+
                         }
                         pDialog.hide();
 
@@ -500,12 +508,13 @@ public class GuestFragment extends Fragment {
                                 }
                             }
 
-                            owner.setText(people.get(OwnerPk));
+                            owner.add((people.get(OwnerPk)));
+                            adapter_owner.notifyDataSetChanged();
 
 
                             for (int i = 0; i < candidatesPK.size(); i++) {
                                 candidates.add(people.get(candidatesPK.get(i)));
-                                adapter.add(people.get(candidatesPK.get(i)));
+                                guest.add(people.get(candidatesPK.get(i)));
                                 adapter.notifyDataSetChanged();
 
                             }

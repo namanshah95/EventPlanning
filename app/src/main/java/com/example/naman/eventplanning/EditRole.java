@@ -91,6 +91,7 @@ public class EditRole extends AppCompatActivity {
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Selected);
         lv.setAdapter(adapter);
         getOwner();
+        getData();
 
 
         //next button
@@ -254,7 +255,7 @@ public class EditRole extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 try {
-                                    candidatesPK.add(jsonObject.getString("entity"));
+                                    candidatesPK.add(0,jsonObject.getString("entity"));
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -262,7 +263,7 @@ public class EditRole extends AppCompatActivity {
 
 
                             }
-                            getData();
+                            //getData();
                         }
                         pDialog.hide();
 

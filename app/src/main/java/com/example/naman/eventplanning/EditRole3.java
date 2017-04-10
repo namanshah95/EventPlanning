@@ -203,7 +203,8 @@ public class EditRole3 extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
+                if(error!= null)
+                    Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
                 pDialog.hide();
             }
         }) {

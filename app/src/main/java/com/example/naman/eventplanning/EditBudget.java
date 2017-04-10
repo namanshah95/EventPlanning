@@ -83,6 +83,7 @@ public class EditBudget extends AppCompatActivity {
         budget = new ArrayList<>();
 
         getOwner();
+        getData();
 
 
 //
@@ -194,7 +195,7 @@ public class EditBudget extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 try {
-                                    candidatesPK.add(jsonObject.getString("entity"));
+                                    candidatesPK.add(0,jsonObject.getString("entity"));
                                     if (jsonObject.getString("estimated_budget").equals("null")){
                                         budget.add("0.0");
                                     }
@@ -208,7 +209,7 @@ public class EditBudget extends AppCompatActivity {
 
 
                             }
-                            getData();
+                          //  getData();
                         }
                         pDialog.hide();
 

@@ -35,11 +35,25 @@
             android:dividerHeight="2px"
             android:layout_above="@+id/btnAdd" />
 
+        <ListView
+            android:id="@+id/ownerList"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_below="@+id/textView9"
+            android:layout_gravity="start"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:choiceMode="singleChoice"
+            android:divider="@color/listviewDivider"
+            android:dividerHeight="2px" />
+
         <Button
             android:text="Add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnAdd"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="28dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp" />
@@ -49,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="30dp"
+            android:layout_alignLeft="@+id/ownerList"
             android:layout_marginTop="38dp"
             android:text="Owner"
             android:textColor="@color/colorPrimary"
@@ -57,24 +71,13 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView9"
-            android:layout_alignStart="@+id/textView9"
-            android:layout_below="@+id/textView9"
-            android:layout_marginTop="25dp"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
-
-        <TextView
             android:id="@+id/textView13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/owner"
-            android:layout_alignStart="@+id/owner"
-            android:layout_below="@+id/owner"
-            android:layout_marginTop="40dp"
+            android:layout_alignLeft="@+id/ownerList"
+            android:layout_alignStart="@+id/ownerList"
+            android:layout_below="@+id/ownerList"
+            android:layout_marginTop="20dp"
             android:text="Guests"
             android:textColor="@color/colorPrimary"
             android:textSize="24sp"
