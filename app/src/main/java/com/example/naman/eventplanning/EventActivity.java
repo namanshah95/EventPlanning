@@ -282,9 +282,7 @@ public class EventActivity extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK){
                 EventName = data.getStringExtra("name");
                 judge = data.getStringExtra("judge");
-                EventNameEdit = data.getStringExtra("nameEdit");
-                System.out.println("");
-                System.out.println(EventNameEdit);
+
                 judgeEdit = data.getStringExtra("judgeEdit");
                 if(judge != null && judge.equals("yes")){
 

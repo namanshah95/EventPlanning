@@ -213,11 +213,11 @@ public class EventroleFragment extends Fragment {
 
             findData();
             //Add
-            RoleAllName.add(RoleName);
-            RoleAllPK.add(needed_role);
-            Roles.add(RoleName);
-            //Refresh
-            adapter.notifyDataSetChanged();
+//            RoleAllName.add(RoleName);
+//            RoleAllPK.add(needed_role);
+//            Roles.add(RoleName);
+//            //Refresh
+//            adapter.notifyDataSetChanged();
 
             Toast.makeText(getContext(),"Added " + RoleName, Toast.LENGTH_SHORT).show();
 //            RoleName = "";
@@ -307,6 +307,10 @@ public class EventroleFragment extends Fragment {
         String tag_json_arry = "json_array_req";
 
         String url = "http://planmything.tech/api/roles/";
+        final ProgressDialog pDialog = new ProgressDialog(getContext());
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
 
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
@@ -351,12 +355,14 @@ public class EventroleFragment extends Fragment {
                         else{
                             addData();
                         }
+                        pDialog.hide();
 
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("getPK","Gett Error Response code: " + error.networkResponse.statusCode );
+                pDialog.hide();
 
             }
         });
@@ -375,8 +381,8 @@ public class EventroleFragment extends Fragment {
         String url = "http://planmything.tech/api/roles/";
 
         final ProgressDialog pDialog = new ProgressDialog(getContext());
-//        pDialog.setMessage("Loading...");
-//        pDialog.show();
+        pDialog.setMessage("Loading...");
+        pDialog.show();
 
 
         Map<String, String> params = new HashMap();
@@ -402,16 +408,21 @@ public class EventroleFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        pDialog.hide();
 
                     }
+
 
                 }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+
                 Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
+                pDialog.hide();
 
             }
+
         }) {
 
             @Override
@@ -442,9 +453,11 @@ public class EventroleFragment extends Fragment {
         String url = "http://planmything.tech/api/event/" + Event + "/roles/";
 
         final ProgressDialog pDialog = new ProgressDialog(getContext());
+        pDialog.setMessage("Loading...");
+        pDialog.show();
 
 
-        Map<String, String> params = new HashMap();
+        final Map<String, String> params = new HashMap();
         params.put("needed_role", needed_role);
 
 
@@ -457,7 +470,14 @@ public class EventroleFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("PostReq", response.toString());
-//                        pDialog.hide();
+
+                        pDialog.hide();
+                        RoleAllName.add(RoleName);
+                        RoleAllPK.add(needed_role);
+                        Roles.add(RoleName);
+                        //Refresh
+                        adapter.notifyDataSetChanged();
+
 
                     }
                 }, new Response.ErrorListener() {
@@ -465,6 +485,7 @@ public class EventroleFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("PostReq", "Error: " + error.networkResponse.statusCode);
+                pDialog.hide();
 
             }
         }) {

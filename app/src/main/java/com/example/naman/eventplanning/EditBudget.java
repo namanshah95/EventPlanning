@@ -48,14 +48,16 @@ public class EditBudget extends AppCompatActivity {
     ArrayList<String> candidates;
     ArrayList<String> candidatesPK;
     ArrayList<String> budget;
+    TextView tv;
 
+    boolean transfer = true;
 
     private String[] arrText =
             new String[]{"Alice","Bob","Cathy"
                     };
 
     private String[] arrTemp;
-    private int totalExpense = 0;
+    private double totalExpense = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -94,33 +96,44 @@ public class EditBudget extends AppCompatActivity {
 //        listView.setAdapter(myListAdapter);
 
         Button submit =  (Button) findViewById(R.id.submit);
-        final TextView tv = (TextView)findViewById(R.id.textView10);
+        tv = (TextView)findViewById(R.id.textView10);
 
         //click submit button, total expense shows up
         submit.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                totalExpense = 0;
+                totalExpense = 0.00;
                 for(int i = 0; i < arrTemp.length; i++){
-                    if(!arrTemp[i].equals("")) {
-                        totalExpense += (int) Double.parseDouble(arrTemp[i]);
+                    totalExpense +=  Double.parseDouble(arrTemp[i]);
+                    if(!arrTemp[i].equals("") && !(Double.parseDouble(arrTemp[i])==Double.parseDouble(budget.get(i))) ){
+                        if(candidatesPK.get(i).equals(myEntityPK)){
                         ChangeBudget(candidatesPK.get(i), arrTemp[i]);
+
+                        }
+                        else{
+                            transfer = false;
+                            Toast.makeText(getApplicationContext(),"please only modify your own budget", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
-                    tv.setText(Integer.toString(totalExpense));
+//                    tv.setText(Integer.toString(totalExpense));
                 }
+                if(transfer) {
+                    tv.setText(Double.toString(totalExpense));
 
-                //show alert if total expense larger than estimated expense
-                if(totalExpense > Float.parseFloat(EstimedMoney)){
-                    Toast.makeText(getApplicationContext(),
-                            "Recoed Saved and Total expense is larger than estimated!", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getApplicationContext(),
-                            "Record Saved", Toast.LENGTH_SHORT).show();
+                    //show alert if total expense larger than estimated expense
+                    if (totalExpense > Float.parseFloat(EstimedMoney)) {
+                        Toast.makeText(getApplicationContext(),
+                                "Recoed Saved but Total expense is larger than estimated!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                "Record Saved", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                    finish();
                 }
-
-
-                finish();
 
 //                Intent intent = new Intent(EditBudget.this, MainActivity.class);
 //                intent.putExtra("Event", Event);
@@ -197,11 +210,12 @@ public class EditBudget extends AppCompatActivity {
                                 try {
                                     candidatesPK.add(0,jsonObject.getString("entity"));
                                     if (jsonObject.getString("estimated_budget").equals("null")){
-                                        budget.add("0.00");
+                                        budget.add(0,"0.00");
                                     }
                                     else{
-                                        budget.add(jsonObject.getString("estimated_budget"));
+                                        budget.add(0,jsonObject.getString("estimated_budget"));
                                     }
+
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -340,6 +354,12 @@ public class EditBudget extends AppCompatActivity {
                             arrTemp = new String[candidates.size()];
                             arrTemp = budget.toArray(arrTemp);
 //                            Log.d("budget", "ArryTemp is " + arrTemp[0] + " " + arrTemp[1] +" " + arrTemp[2] + " " + arrTemp[3]);
+
+                            double sum = 0.0;
+                            for(int i = 0; i < arrTemp.length;i ++){
+                                sum += Double.parseDouble(arrTemp[i]);
+                            }
+                            tv.setText(String.valueOf(sum));
 
                             myListAdapter = new MyListAdapter();
                             ListView listView = (ListView) findViewById(R.id.peopleList);
