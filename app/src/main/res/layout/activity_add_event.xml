@@ -25,11 +25,12 @@
         android:textSize="18sp" />
 
     <Button
-        android:text="Submit"
+        android:id="@+id/bEventSubmit"
+        style="@style/MyButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/bEventSubmit"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:text="Submit" />
 </RelativeLayout>

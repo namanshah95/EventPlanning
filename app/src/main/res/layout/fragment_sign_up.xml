@@ -34,9 +34,10 @@
         android:hint="Password" />
 
     <Button
-        android:text="Register"
+        android:id="@+id/bRegister"
+        style="@style/MyButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bRegister" />
+        android:text="Register" />
 
 </LinearLayout>

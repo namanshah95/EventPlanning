@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                     lastPos = 2;
                     viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.budget) {
-                    getSupportActionBar().setSubtitle("budget");
+                    getSupportActionBar().setSubtitle("Budget");
                     lastPos = 3;
                     viewPager.setCurrentItem(lastPos, true);
                 } else if (checkedId == R.id.guest){

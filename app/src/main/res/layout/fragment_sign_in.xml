@@ -25,10 +25,11 @@
         android:hint="Password" />
 
     <Button
-        android:text="Sign In"
+        android:id="@+id/bSignIn"
+        style="@style/MyButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bSignIn" />
+        android:text="Sign In" />
 
     <Button
         android:text="New User? Sign Up Here"

@@ -197,7 +197,7 @@ public class EditBudget extends AppCompatActivity {
                                 try {
                                     candidatesPK.add(0,jsonObject.getString("entity"));
                                     if (jsonObject.getString("estimated_budget").equals("null")){
-                                        budget.add("0.0");
+                                        budget.add("0.00");
                                     }
                                     else{
                                         budget.add(jsonObject.getString("estimated_budget"));
@@ -266,7 +266,7 @@ public class EditBudget extends AppCompatActivity {
                                     candidatesPK.add(jsonObject.getString("entity"));
                                     Log.d("budget", "candidatesPk is "+ jsonObject.getString("entity"));
                                     if (jsonObject.getString("estimated_budget").equals("null")){
-                                        budget.add("0.0");
+                                        budget.add("0.00");
                                     }
                                     else{
                                         budget.add(jsonObject.getString("estimated_budget"));

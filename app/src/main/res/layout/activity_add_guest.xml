@@ -49,14 +49,15 @@
             android:dividerHeight="2px" />
 
         <Button
-            android:text="Add"
+            android:id="@+id/btnAdd"
+            style="@style/MyButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnAdd"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="28dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginBottom="28dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Add" />
 
         <TextView
             android:id="@+id/textView9"

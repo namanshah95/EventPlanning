@@ -514,15 +514,18 @@ public class EventroleFragment extends Fragment {
         String tag_json_arry = "json_array_req";
         Log.d("RoleName", "is " + RoleName);
 
-        String url = "http://planmything.tech/api/event/" + Event + "/roles/?needed_role_name="+ RoleName;
+        String url = "http://planmything.tech/api/event/" + Event + "/roles/?needed_role="+ RoleAllPK.get(position);
+        Log.d("EditReq", "url is " + url );
 
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
+
+
                         Log.d("EditReq", response.toString());
                             try {
-                                String name = response.getJSONObject(0).getString("needed_role_name");
+                                //String name = response.getJSONObject(0).getString("needed_role_name");
                                 String desc = response.getJSONObject(0).getString("description");
                                 String p_number = response.getJSONObject(0).getString("quantity_needed");
                                 String PK = response.getJSONObject(0).getString("event_needed_role");

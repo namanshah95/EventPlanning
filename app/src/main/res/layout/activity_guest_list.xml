@@ -24,14 +24,15 @@
             android:dividerHeight="2px" />
 
         <Button
-            android:text="Add"
+            android:id="@+id/btnAdd"
+            style="@style/MyButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnAdd"
-            android:layout_marginBottom="25dp"
-            android:layout_alignParentBottom="true"
             android:layout_alignLeft="@+id/guestList"
-            android:layout_alignStart="@+id/guestList" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/guestList"
+            android:layout_marginBottom="23dp"
+            android:text="Add" />
 
         <TextView
             android:id="@+id/textView12"
