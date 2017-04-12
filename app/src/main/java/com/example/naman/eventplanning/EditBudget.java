@@ -54,7 +54,7 @@ public class EditBudget extends AppCompatActivity {
 
     private String[] arrText =
             new String[]{"Alice","Bob","Cathy"
-                    };
+            };
 
     private String[] arrTemp;
     private double totalExpense = 0;
@@ -107,8 +107,10 @@ public class EditBudget extends AppCompatActivity {
                 for(int i = 0; i < arrTemp.length; i++){
                     totalExpense +=  Double.parseDouble(arrTemp[i]);
                     if(!arrTemp[i].equals("") && !(Double.parseDouble(arrTemp[i])==Double.parseDouble(budget.get(i))) ){
+                        Log.d("editBudget", "my Pk is " + myEntityPK);
+                        Log.d("eidtBudget", "candidate Pk is " + candidatesPK.get(i));
                         if(candidatesPK.get(i).equals(myEntityPK)){
-                        ChangeBudget(candidatesPK.get(i), arrTemp[i]);
+                            ChangeBudget(candidatesPK.get(i), arrTemp[i]);
 
                         }
                         else{
@@ -156,7 +158,7 @@ public class EditBudget extends AppCompatActivity {
 //
 //                setResult(1, intent);
 //                setResult(Activity.RESULT_OK, intent);
-              finish();
+                finish();
 
 
 //
@@ -223,7 +225,7 @@ public class EditBudget extends AppCompatActivity {
 
 
                             }
-                          //  getData();
+                            //  getData();
                         }
                         pDialog.hide();
 

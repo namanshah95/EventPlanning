@@ -151,9 +151,9 @@ public class EditRole3 extends AppCompatActivity {
         Intent intent = new Intent(EditRole3.this, MainActivity.class);
         intent.putExtra("Check","EventRole");
         intent.putExtra("Event", Event);
-        intent.putExtra("myEmail", myEmail);
-        intent.putExtra("myName", myName);
-        intent.putExtra("myEntityPK", myEntityPK);
+        intent.putExtra("Email", myEmail);
+        intent.putExtra("Name", myName);
+        intent.putExtra("Entity", myEntityPK);
         intent.putExtra("EventName", EventName);
         intent.putExtra("Money", Money);
 //        intent.putExtra("Descripition", Desp);

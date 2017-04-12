@@ -208,10 +208,12 @@ public class BudgetFragment extends Fragment{
                         Intent editIntent = new Intent(getContext(), EditBudget.class);
                         editIntent.putExtra("Needed_Role", Needed_Role);
                         editIntent.putExtra("Event", Event);
+                        Log.d("editbudget", "Event here is " +Event);
                         editIntent.putExtra("Role", PK);
                         editIntent.putExtra("Money",Money);
                         editIntent.putExtra("myEmail", myEmail);
                         editIntent.putExtra("myName", myName);
+                        Log.d("editbudget", "myEntity here is " +myEntityPK);
                         editIntent.putExtra("myEntityPK", myEntityPK);
                         editIntent.putExtra("EventNme", EventName);
 
